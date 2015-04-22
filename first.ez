@@ -1,0 +1,99 @@
+### <- 3 or more! == multi line comments
+this is a comment?
+This will eventually be executed
+AKA the first line of "EZ" ever
+A hello ez program
+Easy auto formating would be usefull as well which requires NON-whitespace sensitive stuff
+Capitilizeation doesn't matter in the function names but the auto-formater will make them all lowercase
+
+the mix of non-line oriented and line oriented may be tricky though...
+What if the whole file was flattened into a line with implicit "."'s between each line?
+SO LONG AS there wasn't any unclosed ()'s or []'s or {}'s?
+###
+
+# maybe this:
+
+# send to the screen (AKA print)
+print this:"Hello world!"
+print to:screen "Hello world!" # implicit parameter?
+
+# send oprator? (macros?)
+"Hello world" |> screen
+
+# I wtill kind of like this....
+print "Hello world!". print "Two things on the same line!"
+
+# Multiple lines?
+repeat times:3 [
+   print "hello,"  #newline OR comma seperated list!
+   print "goodbye\n"
+]
+
+# a box is a place to store values
+box named:mybox 
+
+# this one is named "a" and put 2 into it
+box named:a with:2
+
+# or this?
+box a 2
+
+# puts somthing in a box
+
+replace 2 in a
+a = 2     # or this
+a <- 2    # or this?
+
+
+
+###
+this does somthing diffrent than most languages, it puts a 2 in "a" but takes the old value and puts it into box "b"
+This would probably be evaluated from right to left? That might be confusing though
+Perhaps it would require them to group things in parenthesis... which are used for comments right now... ugh....
+###
+
+
+fun a(yourName) does:
+   print "Hello," yourName ". welcome to ez!"
+end
+
+# Functions can have required words inside of them for readability
+# However the first has to be unique!
+fun [put _a_ in _box_]: #<- this is both the function name AND the parameters
+   :a = :box
+end
+
+# use it:
+put 2 in a   # <- ideal but not quite practical???
+(put 2 in a) # <- Lisp style
+
+# pattern matching here?
+fun putin (a box) [
+   a <- box
+]
+
+# run a function that takes all it's parmeters
+# and prints them to the screen
+[make-string hello world] -> screen
+
+# boxes always have []'s around them? 
+[a] <- 2
+
+[oldvalue] <- [a] <- 2 # pushes 2 into "a" pushing out the old value into an "oldvalue" box
+                       # NOTE: there is two operations here
+
+{1 2 3 4 5} # <- lists (whitespace seperated)
+
+'single quotes all the way!' or are "double better"
+
+
+:) comments
+:( bad comments
+)) easier ones
+; good old lisp style
+
+
+
+
+
+
