@@ -1,5 +1,4 @@
-
-# Senior Project proposal
+# Senior Project Proposal
 
 Gage Peterson 
 
@@ -86,27 +85,29 @@ The following is considered a "success":
 # Scope
 
 ## What is included
-- A simple executable programing language which will have the following features
-   - Variables which can hold values and be replaced with other values
-   - Basic math operators including addition, subtraction, division and multiplication.
-   - Lists
-   - Repeat blocks (repeat X times)
-   - Functions
-      - Defining them
-      - Running them
-      - Returning values from them
-   - Equality operations (<=, ==, <, >, >=) on Integers, Strings and lists (structural equality)
-   - If statements 
-      
-- A simple view of the output in a separate screen
-- A visual way to view the internals variables
+A simple executable programing language which will have the following features
+- Basic data types being Floats, Strings, Lists and Booleans
+- Variables which can hold values of the data types listed above
+- A way to change what variables are pointing to.
+- Basic math operators including addition, subtraction, division and multiplication.
+- Lists
+- Repeat blocks (repeat X times)
+- Functions
+    - Defining them
+    - Running them
+    - Returning values from them
+- Equality operations (<=, ==, <, >, >=) on Floats, Strings and lists (structural equality)
+- Boolean operations (and, or and not) on booleans
+- If statements 
+- A way to print to print Strings, Floats and lists to the screen
 
 ## What is not
-- Many language features including but not limited to:
-   - Classes
-   - Pointers
-   - Very good error messages (hopefully it will though)
-   - A compiler (it will only run the code)
+Many language features including but not limited to:
+- Classes
+- Pointers
+- Very good error messages (hopefully it will though)
+- A compiler (it will only run the code)
+- Cross platform executables (it will work at least on Linux)
 
 # Tasks and Schedule
 
