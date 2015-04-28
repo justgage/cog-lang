@@ -1,33 +1,3 @@
-<!--
-# Ideas
-- Easy for people to pick up!
-- Built in tutorial
-   - Error messages encourage you
-- All in one package, easy install and run. (JVM? make that impossible?)
-- Kids and people interested in learning more
-- Auto formating for easier to read code
-- []'s for blocks
-- More English type words (Jessica approved)
-   - "Box" for a variable
-   - Action -> a function
-- Smallest amount of syntax that's easy to understand how it's parsed
-- Built in GUI
-- Make writing to a file EASY
-- Make string manipulation easy
-   - "WORDS" auto breaks on spaces
-   - "LETTERS" -> list of characters
-   - EACH letters-of a DO: [...]
-- Etc...
-
-# Names?
-- First lang (FL)
-- Easy
-- Make mistakes
-- Have fun
-- Game lang
-- etc...
-
- START OF THE REAL THING!!!! --!>
 
 # Senior Project proposal
 
@@ -120,14 +90,13 @@ The following is considered a "success":
    - Variables which can hold values and be replaced with other values
    - Basic math operators including addition, subtraction, division and multiplication.
    - Lists
-   <!-- 
-   - Maps 
-   --!>
-   - A basic way to repeat blocks of code a number of times
+   - Repeat blocks (repeat X times)
    - Functions
       - Defining them
       - Running them
       - Returning values from them
+   - Equality operations (<=, ==, <, >, >=) on Integers, Strings and lists (structural equality)
+   - If statements 
       
 - A simple view of the output in a separate screen
 - A visual way to view the internals variables
