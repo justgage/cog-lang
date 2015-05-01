@@ -90,7 +90,6 @@ A simple executable programing language which will have the following features
 - Variables which can hold values of the data types listed above
 - A way to change what variables are pointing to.
 - Basic math operators including addition, subtraction, division and multiplication.
-- Lists
 - Repeat blocks (repeat X times)
 - Functions
     - Defining them

@@ -3,3 +3,9 @@ main:
 
 ocaml:
 	ocamlbuild.native tasks.ml
+
+table:
+	rm requirements.html
+	clojure convert-reqs.clj > requirements.html
+view: 
+	firefox requirements.html

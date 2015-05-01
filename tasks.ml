@@ -5,6 +5,9 @@
 #require "core.syntax";;
 #require "calendar";;
 
+open Printf
+(* open CalendarLib *)
+
 (* why isn't this in the std lib? *)
 let round x = int_of_float (x +. 0.5)
 
@@ -16,8 +19,6 @@ let relitive_date_from_hours
 let relitive_date = relitive_date_from_hours 1.0;;
 
 
-open Printf
-(* open CalendarLib *)
 
 let main = 
    let (*  h_week   = 10 and *)

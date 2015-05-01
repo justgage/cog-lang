@@ -1,0 +1,170 @@
+{
+ :title "functional-requirements Document for the 'fun' programing language"
+ :definitions 
+ { 
+  "Abstract syntax tree (AST)"
+  " An abstract syntax tree (AST) is a tree representation of the abstract syntactic structure of source code written in a programming language.  " 
+
+  "Executer"
+  " This is the part that turns the AST into action. Action meaning making the computer do what the AST said to do based on the rules of the language.  "
+
+  "Tokenizer"
+  " Breaks a string of characters into \"tokens\" or the pieces of the programing language (if block, a function, etc...) "
+
+  "Parser"
+  " The part of the program that turns the tokens into an AST.  "
+
+  "Spec"
+  " Stands for \"functional-requirements specification\" which will be a document describing what my programing language is required to preform.  "
+  }
+
+ :reqs {
+
+        ;;  Use shall, will, and may in the functional-requirements specification. When I review your requirements, I assume that
+        ;;  shall functional-requirements shall be implemented. I also assume that will and may requirements will not be
+        ;;  implemented.
+        ;;
+        ;;  Include at least one functional-requirement regarding execution time. For example, the product shall calculate the
+        ;;  answer within one second.
+        ;;
+        ;;  Format your functional-requirements specification in four columns, as follows:
+        ;;
+        ;;  1. A unique identifier for the functional functional-requirement; sequential numbers work well
+        ;;  2. Functional functional-requirement (note: if the demonstration requires reviewing code, it's not a functional requirement)
+        ;;  3. Demonstration scenario(s) for that functional-requirement
+        ;;  4. Success measure(s) for that functional-requirement
+        ;;
+        ;;  Use a separate row for each functional-requirement.
+        ;;  Do not submit as a spreadsheet. Use a word processor.
+        ;;  The functional-requirements are due on the date specified in your proposal.
+
+
+
+        :read-and-print
+        {
+         :type :SHALL
+         :functional-requirement "read a valid code file and print the results"
+         :demonstration-scenarios 
+         [
+          "If a code file contained 
+
+          <code> (print \"hello world\") </code>
+
+          and it was ran though the executer would write the following to the standard output:
+
+          <code> hello world </code>
+          "
+
+          "If a code file contained 
+
+          <code> (print 2) </code>
+
+          and it was ran though the executer would write the following to the standard output:
+
+          <code> 2 </code>
+          "
+
+          ] 
+         :success-measure 
+         [
+
+          ] 
+         }
+
+        :if-statements
+        {
+         :type :SHALL
+         :functional-requirement "have if statements"
+         :demonstration-scenarios [] 
+         :success-measure [] 
+         }
+
+        :have-a-string-datatype
+        {
+         :type :SHALL
+         :functional-requirement "have a string data type"
+         :demonstration-scenarios [] 
+         :success-measure [] 
+         }
+
+        :have-a-float-data-type
+        {
+         :type :SHALL
+         :functional-requirement "have a float data type"
+         :demonstration-scenarios [] 
+         :success-measure [] 
+         }
+
+        :have-a-list-data-type
+        {
+         :type :SHALL
+         :functional-requirement "have a list data type"
+         :demonstration-scenarios [] 
+         :success-measure [] 
+         }
+
+        :have-a-boolean-data-type
+        {
+         :type :SHALL
+         :functional-requirement "have a boolean data type"
+         :demonstration-scenarios [] 
+         :success-measure [] 
+         }
+
+        :have-variables
+        {
+         :type :SHALL
+         :functional-requirement "have variables"
+         :demonstration-scenarios [] 
+         :success-measure [] 
+         }
+
+        :repeat-blocks
+        {
+         :type :SHALL
+         :functional-requirement "be able to repeat blocks of code"
+         :demonstration-scenarios [] 
+         :success-measure [] 
+         }
+
+:functions-define
+{
+ :type :SHALL
+ :functional-requirement "be able to define functions"
+ :demonstration-scenarios [] 
+ :success-measure [] 
+ }
+
+:functions-run 
+{
+ :type :SHALL
+ :functional-requirement "be able to run functions"
+ :demonstration-scenarios [] 
+ :success-measure [] 
+ }
+
+:functions-return
+{
+ :type :SHALL
+ :functional-requirement "have a way for functions to return values"
+ :demonstration-scenarios [] 
+ :success-measure [] 
+ }
+
+:equality
+{
+ :type :SHALL
+ :functional-requirement "equality"
+ :demonstration-scenarios [] 
+ :success-measure [] 
+ }
+
+
+
+
+
+}
+
+
+}
+
