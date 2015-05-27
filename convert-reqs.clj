@@ -4,8 +4,8 @@
   (require [clojure.string :as str])
   )
 
-(def language-name "easy-lang")
 (def reqs (read-string (slurp "requirements.edn")))
+(def language-name (reqs :lang-name))
 
 
 (defn print-headers "does what it says" []

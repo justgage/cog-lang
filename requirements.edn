@@ -1,12 +1,14 @@
-{
+;; {
  :title "functional-requirements Document for the 'fun' programing language"
+ :lang-name "The programing language"
  :definitions 
  { 
+            
   "Abstract syntax tree (AST)"
-  " An abstract syntax tree (AST) is a tree representation of the abstract syntactic structure of source code written in a programming language.  " 
+  " An abstract syntax tree (AST) is a tree representation of the abstract syntactic structure of source code written in a programming language." 
 
-  "Executer"
-  " This is the part that turns the AST into action. Action meaning making the computer do what the AST said to do based on the rules of the language.  "
+  "Interpeter"
+  " This is the part that turns the AST into action. Action meaning making the computer do what the AST said to do based on the rules of the language."
 
   "Tokenizer"
   " Breaks a string of characters into \"tokens\" or the pieces of the programing language (if block, a function, etc...) "
@@ -16,6 +18,9 @@
 
   "Spec"
   " Stands for \"functional-requirements specification\" which will be a document describing what my programing language is required to preform.  "
+
+  "Standard in"
+  "Usually the main output of a console. Some place spesified for most output of the program to go."
   }
 
  :reqs {
@@ -43,102 +48,99 @@
         :read-and-print
         {
          :type :SHALL
-         :functional-requirement "read a valid code file and print the results"
+         :functional-requirement "be able to print various primitives to standard out"
          :demonstration-scenarios 
          [
-          "If a code file contained 
-
-          <code> (print \"hello world\") </code>
-
-          and it was ran though the executer would write the following to the standard output:
-
-          <code> hello world </code>
-          "
-
-          "If a code file contained 
-
-          <code> (print 2) </code>
-
-          and it was ran though the executer would write the following to the standard output:
-
-          <code> 2 </code>
-          "
-
+          "valid code was ran through the executer that contained a print statment with a string as an argument"
+          "valid code was ran through the executer that contained a print statment with a integer as an argument"
           ] 
          :success-measure 
          [
-
+          "print out the string in the argment"
+          "print out the the integer in the argment"
           ] 
          }
 
-        :if-statements
+        :conditionals
         {
          :type :SHALL
-         :functional-requirement "have if statements"
+         :functional-requirement "have constructs that allow for a block of code to be executed or not executed based on a condition"
+         :demonstration-scenarios 
+         [
+          "valid code was ran through the interpeter that contined an if statement with a 'true' statment as it's condition and a print statement in it's body"
+          "valid code was ran through the interpeter that contined an if statement with a 'false' statment as it's condition and a print statement in it's body"
+          ] 
+         :success-measure 
+         [ 
+          "the code in the body executes the print statement showing it on standard in"
+          "the code in the body does not execute the print statement not showing it on standard in"
+          ] 
+         }
+
+        ;; :have-a-string-datatype
+        ;; {
+        ;;  :type :SHALL
+        ;;  :functional-requirement "have a string data type"
+        ;;  :demonstration-scenarios 
+        ;;  [
+        ;;   ""
+        ;;   ] 
+        ;;  :success-measure [] 
+        ;;  }
+        ;;
+
+        ;; :have-a-float-data-type
+        ;; {
+        ;;  :type :SHALL
+        ;;  :functional-requirement "have a float data type"
+        ;;  :demonstration-scenarios [] 
+        ;;  :success-measure [] 
+        ;;  }
+
+        ;; :have-a-list-data-type
+        ;; {
+        ;;  :type :SHALL
+        ;;  :functional-requirement "have a list data type"
+        ;;  :demonstration-scenarios [] 
+        ;;  :success-measure [] 
+        ;;  }
+
+        ;; :have-a-boolean-data-type
+        ;; {
+        ;;  :type :SHALL
+        ;;  :functional-requirement "have a boolean data type"
+        ;;  :demonstration-scenarios [] 
+        ;;  :success-measure [] 
+        ;;  }
+
+        :store-to-variables
+        {
+         :type :SHALL
+         :functional-requirement "be able to store primitives in temporary memory in the form of a variable"
          :demonstration-scenarios [] 
          :success-measure [] 
          }
 
-        :have-a-string-datatype
+        :retrieve-from-variables
         {
          :type :SHALL
-         :functional-requirement "have a string data type"
+         :functional-requirement "be able to retrieve a value from a variable for use in expressions and functions"
          :demonstration-scenarios [] 
          :success-measure [] 
          }
 
-        :have-a-float-data-type
-        {
-         :type :SHALL
-         :functional-requirement "have a float data type"
-         :demonstration-scenarios [] 
-         :success-measure [] 
-         }
-
-        :have-a-list-data-type
-        {
-         :type :SHALL
-         :functional-requirement "have a list data type"
-         :demonstration-scenarios [] 
-         :success-measure [] 
-         }
-
-        :have-a-boolean-data-type
-        {
-         :type :SHALL
-         :functional-requirement "have a boolean data type"
-         :demonstration-scenarios [] 
-         :success-measure [] 
-         }
-
-        :have-variables
-        {
-         :type :SHALL
-         :functional-requirement "have variables"
-         :demonstration-scenarios [] 
-         :success-measure [] 
-         }
-
-        :repeat-blocks
-        {
-         :type :SHALL
-         :functional-requirement "be able to repeat blocks of code"
-         :demonstration-scenarios [] 
-         :success-measure [] 
-         }
-
-:functions-define
+:repeat-blocks
 {
  :type :SHALL
- :functional-requirement "be able to define functions"
+ :functional-requirement "be able to repeat blocks of code"
  :demonstration-scenarios [] 
  :success-measure [] 
  }
 
-:functions-run 
+:functions-make-and-use
 {
  :type :SHALL
- :functional-requirement "be able to run functions"
+ :functional-requirement "be able to define and run functions"
  :demonstration-scenarios [] 
  :success-measure [] 
  }
@@ -151,20 +153,33 @@
  :success-measure [] 
  }
 
-:equality
+:equality-numbers
 {
  :type :SHALL
- :functional-requirement "equality"
+ :functional-requirement "be able to check if two numbers are equal"
  :demonstration-scenarios [] 
  :success-measure [] 
  }
 
-
-
-
-
+:equality-lists
+{
+ :type :SHALL
+ :functional-requirement "be able to check if two lists are structurally equivalent, meaning, they contain the same elements in the same order."
+ :demonstration-scenarios 
+ [
+  "a list which contains 1, 2 and 3 is checked against itself"
+  "a list which contains 1, 2 and 3 is checked against another list containing 1, 2, 3"
+  "a list which contains 1, 2 and 9 is checked against another list containing 1, 2, 3"
+  "a list which contains nothing is checked against another list containing 1, 2, 3"
+  ] 
+ :success-measure 
+ [
+  "returns true"
+  "returns true"
+  "returns false"
+  "returns false"
+  ] 
+ }
 }
-
-
 }
 
