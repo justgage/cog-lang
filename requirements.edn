@@ -1,4 +1,4 @@
-;; {
+{
  :title "functional-requirements Document for the 'fun' programing language"
  :lang-name "The programing language"
  :definitions 
@@ -117,69 +117,93 @@
         {
          :type :SHALL
          :functional-requirement "be able to store primitives in temporary memory in the form of a variable"
-         :demonstration-scenarios [] 
-         :success-measure [] 
-         }
+         :demonstration-scenarios 
+         [
+          "A code file is ran with the code that will store a 2 in a variable and print it to the screen"
+          ] 
+         :success-measure 
+         [
+          "The code file prints out the 2 that was stored"
+          ] 
+         } 
 
-        :retrieve-from-variables
+        :repeat-blocks
         {
          :type :SHALL
-         :functional-requirement "be able to retrieve a value from a variable for use in expressions and functions"
-         :demonstration-scenarios [] 
-         :success-measure [] 
+         :functional-requirement "be able to repeat blocks of code"
+         :demonstration-scenarios 
+         [
+          "A code file that has a print statement inside of a repeat block, with the number 5 as a  parameter"
+          ] 
+         :success-measure  
+         [
+          "The print statement inside of the repeat block will run exactly 5 times"
+          ] 
          }
 
-:repeat-blocks
-{
- :type :SHALL
- :functional-requirement "be able to repeat blocks of code"
- :demonstration-scenarios [] 
- :success-measure [] 
- }
+        :functions-make-and-use
+        {
+         :type :SHALL
+         :functional-requirement "be able to define and run functions"
+         :demonstration-scenarios 
+         [
+          "A code file contains the function definition of a 'add' fuction"
+          ] 
+         :success-measure 
+         [
+          "When the afore mentioned function is ran then it will add the numbers 3 and 2 to equal 5"
+          ] 
+         }
 
-:functions-make-and-use
-{
- :type :SHALL
- :functional-requirement "be able to define and run functions"
- :demonstration-scenarios [] 
- :success-measure [] 
- }
+        :functions-return
+        {
+         :type :SHALL
+         :functional-requirement "have a way for functions to return values"
+         :demonstration-scenarios 
+         [
+          "A function that adds two numbers returns a 5 to a print statement"
+          ] 
+         :success-measure 
+          [ 
+           "the print statement prints the 5 that was returned"
+           ] 
+         }
 
-:functions-return
-{
- :type :SHALL
- :functional-requirement "have a way for functions to return values"
- :demonstration-scenarios [] 
- :success-measure [] 
- }
+        :equality-numbers
+        {
+         :type :SHALL
+         :functional-requirement "be able to check if two numbers are equal"
+         :demonstration-scenarios 
+         [
+          "A code file contains a comparision operator returning to a print statement that is checking if 2 is equal to 2"
+          "A code file contains a comparision operator returning to a print statement that is checking if 2 is equal to 3"
+          ] 
+         :success-measure 
+         [
+          "the print statement will print out 'true'"
+          "the print statement will print out 'false'"
+          ] 
+         }
 
-:equality-numbers
-{
- :type :SHALL
- :functional-requirement "be able to check if two numbers are equal"
- :demonstration-scenarios [] 
- :success-measure [] 
- }
-
-:equality-lists
-{
- :type :SHALL
- :functional-requirement "be able to check if two lists are structurally equivalent, meaning, they contain the same elements in the same order."
- :demonstration-scenarios 
- [
-  "a list which contains 1, 2 and 3 is checked against itself"
-  "a list which contains 1, 2 and 3 is checked against another list containing 1, 2, 3"
-  "a list which contains 1, 2 and 9 is checked against another list containing 1, 2, 3"
-  "a list which contains nothing is checked against another list containing 1, 2, 3"
-  ] 
- :success-measure 
- [
-  "returns true"
-  "returns true"
-  "returns false"
-  "returns false"
-  ] 
- }
+        :equality-lists
+        {
+         :type :SHALL
+         :functional-requirement "be able to check if two lists are structurally equivalent, meaning, they contain the same elements in the same order."
+         :demonstration-scenarios 
+         [
+          "a list which contains 1, 2 and 3 is checked against itself"
+          "a list which contains 1, 2 and 3 is checked against another list containing 1, 2, 3"
+          "a list which contains 1, 2 and 9 is checked against another list containing 1, 2, 3"
+          "a list which contains nothing is checked against another list containing 1, 2, 3"
+          ] 
+         :success-measure 
+         [
+          "returns true"
+          "returns true"
+          "returns false"
+          "returns false"
+          ] 
+         }
 }
 }
 

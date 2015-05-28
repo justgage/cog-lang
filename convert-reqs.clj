@@ -3,9 +3,14 @@
   (require [clojure.pprint :as p])
   (require [clojure.string :as str])
   )
+(defn tag [tag-name contents] 
+  (str "<" tag-name ">\n" contents "\n</" tag-name ">\n")
+  )
 
 (def reqs (read-string (slurp "requirements.edn")))
 (def language-name (reqs :lang-name))
+(def header (tag "style"
+                  (slurp "style.css")))
 
 
 (defn print-headers "does what it says" []
@@ -28,6 +33,7 @@
   )
 
 
+(println header)
 (print-headers)
 (as-> reqs r
   (:reqs r) 
