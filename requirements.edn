@@ -1,5 +1,7 @@
 {
- :title "functional-requirements Document for the 'fun' programing language"
+ :title "Reqirements Document"
+ :author "Gage Peterson"
+ :date "May 30th 2015"
  :lang-name "The programing language"
  :definitions 
  { 
@@ -7,20 +9,14 @@
   "Abstract syntax tree (AST)"
   " An abstract syntax tree (AST) is a tree representation of the abstract syntactic structure of source code written in a programming language." 
 
-  "Interpeter"
+  "Interpreter"
   " This is the part that turns the AST into action. Action meaning making the computer do what the AST said to do based on the rules of the language."
 
-  "Tokenizer"
-  " Breaks a string of characters into \"tokens\" or the pieces of the programing language (if block, a function, etc...) "
-
-  "Parser"
-  " The part of the program that turns the tokens into an AST.  "
-
-  "Spec"
-  " Stands for \"functional-requirements specification\" which will be a document describing what my programing language is required to preform.  "
-
-  "Standard in"
-  "Usually the main output of a console. Some place spesified for most output of the program to go."
+  "Standard out"
+  "Usually the main output of a console. Some place specified for most output of the program to go."
+  
+  "The Primitives"
+  "The basic built in types of the langauge including: Floats, Strings, Lists and Booleans"
   }
 
  :reqs {
@@ -48,16 +44,16 @@
         :read-and-print
         {
          :type :SHALL
-         :functional-requirement "be able to print various primitives to standard out"
+         :functional-requirement "be able to print the primitives to standard out"
          :demonstration-scenarios 
          [
-          "valid code was ran through the executer that contained a print statment with a string as an argument"
-          "valid code was ran through the executer that contained a print statment with a integer as an argument"
+          "valid code was ran through the executer that contained a print statement with a string as an argument"
+          "valid code was ran through the executer that contained a print statement with a integer as an argument"
           ] 
          :success-measure 
          [
-          "print out the string in the argment"
-          "print out the the integer in the argment"
+          "print out the string in the argument"
+          "print out the integer in the argument"
           ] 
          }
 
@@ -67,13 +63,13 @@
          :functional-requirement "have constructs that allow for a block of code to be executed or not executed based on a condition"
          :demonstration-scenarios 
          [
-          "valid code was ran through the interpeter that contined an if statement with a 'true' statment as it's condition and a print statement in it's body"
-          "valid code was ran through the interpeter that contined an if statement with a 'false' statment as it's condition and a print statement in it's body"
+          "valid code was ran through the interpreter that contained an if statement with a 'true' statement as it's condition and a print statement in it's body"
+          "valid code was ran through the interpreter that contained an if statement with a 'false' statement as it's condition and a print statement in it's body"
           ] 
          :success-measure 
          [ 
-          "the code in the body executes the print statement showing it on standard in"
-          "the code in the body does not execute the print statement not showing it on standard in"
+          "the code in the body executes the print statement showing it on standard out"
+          "the code in the body does not execute the print statement not showing it on standard out"
           ] 
          }
 
@@ -147,11 +143,11 @@
          :functional-requirement "be able to define and run functions"
          :demonstration-scenarios 
          [
-          "A code file contains the function definition of a 'add' fuction"
+          "A code file contains the function definition of a 'add' function"
           ] 
          :success-measure 
          [
-          "When the afore mentioned function is ran then it will add the numbers 3 and 2 to equal 5"
+          "When the defined 'add' function is ran then it will add the numbers 3 and 2 to equal 5"
           ] 
          }
 
@@ -175,8 +171,8 @@
          :functional-requirement "be able to check if two numbers are equal"
          :demonstration-scenarios 
          [
-          "A code file contains a comparision operator returning to a print statement that is checking if 2 is equal to 2"
-          "A code file contains a comparision operator returning to a print statement that is checking if 2 is equal to 3"
+          "A code file contains a comparison operator returning to a print statement that is checking if 2 is equal to 2"
+          "A code file contains a comparison operator returning to a print statement that is checking if 2 is equal to 3"
           ] 
          :success-measure 
          [

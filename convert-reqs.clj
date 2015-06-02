@@ -7,39 +7,54 @@
   (str "<" tag-name ">\n" contents "\n</" tag-name ">\n")
   )
 
-(def reqs (read-string (slurp "requirements.edn")))
-(def language-name (reqs :lang-name))
-(def header (tag "style"
-                  (slurp "style.css")))
+(def reqs-doc (read-string (slurp "requirements.edn")))
+(def language-name (reqs-doc :lang-name))
+(def header
+  (tag "header" (str (tag "style" (slurp "style.css"))
+                     (tag "title" (:title reqs-doc)))))
+(def table-headers 
+  (str "<table>
+       <tr> 
+         <th> id </td>
+         <th> functional-requirement </td>
+         <th> demonstration scenarios </td>
+         <th> success measure </td><th>
+       </tr>"))
+(def table-footer "</table>")
 
-
-(defn print-headers "does what it says" []
-  (println "<table>")
-  (println "<tr> <th> id </td><th> functional-requirement </td><th> demonstration scenarios </td><th> success measure </td><th></tr>")
-  )
-
-(defn print-footer [] (println "</table>"))
-(defn print-out-req "This does the basic work of printing out requirements" [id content]
-  (println 
+(defn req-to-str [id content]
+  (str
     "<tr>"
     "<td>" (name id) "</td>"
-    "<td>" language-name (-> content :type name) (content :functional-requirement)"</td>"
-    "<td> <ul><li>" (str/join "</li><br /><li>" (map #(str/replace %1 "\n" "<br />\n") (content :demonstration-scenarios))) "</li></ul></td>"
-    "<td>" (str/join "" (map #(str/replace %1 "\n" "<br />\n") (content :success-measure)))
+    "<td>" language-name " " (-> content :type name) " " (content :functional-requirement)"</td>"
+    "<td> <ol><li>" (str/join "</li><br /><li>" (map #(str/replace %1 "\n" "<br />\n") (content :demonstration-scenarios))) "</li></ol></td>"
+    "<td><ol><li>  " (str/join "</li><br /><li>" (map #(str/replace %1 "\n" "<br />\n") (content :success-measure))) "</li></ol></td>"
     "</td>"
     "</tr>"
     )
   
   )
 
+(defn def-to-string [[name disc]]
+  (str (tag "h4" name) "\n" (tag "div" disc)))
+
+;;;; print them out
 
 (println header)
-(print-headers)
-(as-> reqs r
-  (:reqs r) 
-  (doseq [ [k v] r] 
-    (print-out-req k v)
-    )
-  )
 
-(print-footer)
+(println (tag "h1" (:title reqs-doc)))
+(println (tag "p" (:author reqs-doc)))
+(println (tag "p" (:date reqs-doc)))
+(println (tag "h2" "Definitions"))
+
+(doseq [defi (:definitions reqs-doc)] 
+  (println (def-to-string defi)))
+
+(println (tag "h2" "Requirements"))
+
+(println table-headers)
+
+(doseq [[key value] (:reqs reqs-doc)] 
+  (println (req-to-str key value)))
+
+(println table-footer)
