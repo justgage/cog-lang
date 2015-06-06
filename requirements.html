@@ -34,22 +34,6 @@ Definitions
 </h2>
 
 <h4>
-Abstract syntax tree (AST)
-</h4>
-
-<div>
- An abstract syntax tree (AST) is a tree representation of the abstract syntactic structure of source code written in a programming language.
-</div>
-
-<h4>
-Interpreter
-</h4>
-
-<div>
- This is the part that turns the AST into action. Action meaning making the computer do what the AST said to do based on the rules of the language.
-</div>
-
-<h4>
 Standard out
 </h4>
 
@@ -76,12 +60,37 @@ Requirements
          <th> demonstration scenarios </td>
          <th> success measure </td><th>
        </tr>
-<tr><td>read-and-print</td><td>The programing language SHALL be able to print the primitives to standard out</td><td> <ol><li>valid code was ran through the executer that contained a print statement with a string as an argument</li><br /><li>valid code was ran through the executer that contained a print statement with a integer as an argument</li></ol></td><td><ol><li>  print out the string in the argument</li><br /><li>print out the integer in the argument</li></ol></td></td></tr>
-<tr><td>conditionals</td><td>The programing language SHALL have constructs that allow for a block of code to be executed or not executed based on a condition</td><td> <ol><li>valid code was ran through the interpreter that contained an if statement with a 'true' statement as it's condition and a print statement in it's body</li><br /><li>valid code was ran through the interpreter that contained an if statement with a 'false' statement as it's condition and a print statement in it's body</li></ol></td><td><ol><li>  the code in the body executes the print statement showing it on standard out</li><br /><li>the code in the body does not execute the print statement not showing it on standard out</li></ol></td></td></tr>
-<tr><td>store-to-variables</td><td>The programing language SHALL be able to store primitives in temporary memory in the form of a variable</td><td> <ol><li>A code file is ran with the code that will store a 2 in a variable and print it to the screen</li></ol></td><td><ol><li>  The code file prints out the 2 that was stored</li></ol></td></td></tr>
-<tr><td>repeat-blocks</td><td>The programing language SHALL be able to repeat blocks of code</td><td> <ol><li>A code file that has a print statement inside of a repeat block, with the number 5 as a  parameter</li></ol></td><td><ol><li>  The print statement inside of the repeat block will run exactly 5 times</li></ol></td></td></tr>
-<tr><td>functions-make-and-use</td><td>The programing language SHALL be able to define and run functions</td><td> <ol><li>A code file contains the function definition of a 'add' function</li></ol></td><td><ol><li>  When the defined 'add' function is ran then it will add the numbers 3 and 2 to equal 5</li></ol></td></td></tr>
-<tr><td>functions-return</td><td>The programing language SHALL have a way for functions to return values</td><td> <ol><li>A function that adds two numbers returns a 5 to a print statement</li></ol></td><td><ol><li>  the print statement prints the 5 that was returned</li></ol></td></td></tr>
-<tr><td>equality-numbers</td><td>The programing language SHALL be able to check if two numbers are equal</td><td> <ol><li>A code file contains a comparison operator returning to a print statement that is checking if 2 is equal to 2</li><br /><li>A code file contains a comparison operator returning to a print statement that is checking if 2 is equal to 3</li></ol></td><td><ol><li>  the print statement will print out 'true'</li><br /><li>the print statement will print out 'false'</li></ol></td></td></tr>
-<tr><td>equality-lists</td><td>The programing language SHALL be able to check if two lists are structurally equivalent, meaning, they contain the same elements in the same order.</td><td> <ol><li>a list which contains 1, 2 and 3 is checked against itself</li><br /><li>a list which contains 1, 2 and 3 is checked against another list containing 1, 2, 3</li><br /><li>a list which contains 1, 2 and 9 is checked against another list containing 1, 2, 3</li><br /><li>a list which contains nothing is checked against another list containing 1, 2, 3</li></ol></td><td><ol><li>  returns true</li><br /><li>returns true</li><br /><li>returns false</li><br /><li>returns false</li></ol></td></td></tr>
+<tr>
+<td>0</td><td>The programing language SHALL be able to print the primitives to standard out</td><td> <ol><li>valid code was ran through the executer that contained a print statement with a string as an argument</li><br /><li>valid code was ran through the executer that contained a print statement with a integer as an argument</li></ol></td><td>
+  <ol><li>  print out the string in the argument</li><br /><li>print out the integer in the argument</li></ol></td></td>
+</tr>
+<tr>
+<td>1</td><td>The programing language SHALL have constructs that allow for a block of code to be executed or not executed based on a condition</td><td> <ol><li>valid code was ran through the interpreter that contained an if statement with a 'true' statement as it's condition and a print statement in it's body</li><br /><li>valid code was ran through the interpreter that contained an if statement with a 'false' statement as it's condition and a print statement in it's body</li></ol></td><td>
+  <ol><li>  the code in the body executes the print statement showing it on standard out</li><br /><li>the code in the body does not execute the print statement not showing it on standard out</li></ol></td></td>
+</tr>
+<tr>
+<td>2</td><td>The programing language SHALL be able to store primitives in temporary memory in the form of a variable</td><td> <ol><li>A code file is ran with the code that will store a 2 in a variable and print it to the screen</li></ol></td><td>
+  <ol><li>  The code file prints out the 2 that was stored</li></ol></td></td>
+</tr>
+<tr>
+<td>3</td><td>The programing language SHALL be able to repeat blocks of code</td><td> <ol><li>A code file that has a print statement inside of a repeat block, with the number 5 as a  parameter</li></ol></td><td>
+  <ol><li>  The print statement inside of the repeat block will run exactly 5 times</li></ol></td></td>
+</tr>
+<tr>
+<td>4</td><td>The programing language SHALL be able to define and run functions</td><td> <ol><li>A code file contains the function definition of a 'add' function</li></ol></td><td>
+  <ol><li>  When the defined 'add' function is ran then it will add the numbers 3 and 2 to equal 5</li></ol></td></td>
+</tr>
+<tr>
+<td>5</td><td>The programing language SHALL have a way for functions to return values</td><td> <ol><li>A function that adds two numbers returns a 5 to a print statement</li></ol></td><td>
+  <ol><li>  the print statement prints the 5 that was returned</li></ol></td></td>
+</tr>
+<tr>
+<td>6</td><td>The programing language SHALL be able to check if two numbers are equal</td><td> <ol><li>A code file contains a comparison operator returning to a print statement that is checking if 2 is equal to 2</li><br /><li>A code file contains a comparison operator returning to a print statement that is checking if 2 is equal to 3</li></ol></td><td>
+  <ol><li>  the print statement will print out 'true'</li><br /><li>the print statement will print out 'false'</li></ol></td></td>
+</tr>
+<tr>
+<td>7</td><td>The programing language SHALL be able to check if two lists are structurally equivalent, meaning, they contain the same elements in the same order.</td><td> <ol><li>a list which contains 1, 2 and 3 is checked against itself</li><br /><li>a list which contains 1, 2 and 3 is checked against another list containing 1, 2, 3</li><br /><li>a list which contains 1, 2 and 9 is checked against another list containing 1, 2, 3</li><br /><li>a list which contains nothing is checked against another list containing 1, 2, 3</li></ol></td><td>
+  <ol><li>  returns true</li><br /><li>returns true</li><br /><li>returns false</li><br /><li>returns false</li></ol></td></td>
+</tr>
+
 </table>
