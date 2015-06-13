@@ -1,2 +1,10 @@
 ### Starting build.
-# Compilation successful.
+# Target: timer.ml.depends, tags: { extension:ml, file:timer.ml, ocaml, ocamldep, quiet }
+/usr/bin/ocamldep.opt -modules timer.ml > timer.ml.depends
+# Target: timer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:timer.cmo, file:timer.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc.opt -c -o timer.cmo timer.ml
++ /usr/bin/ocamlc.opt -c -o timer.cmo timer.ml
+File "timer.ml", line 1, characters 0-1:
+Error: Syntax error
+Command exited with code 2.
+# Compilation unsuccessful.

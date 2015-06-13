@@ -18,8 +18,6 @@ let relitive_date_from_hours
 
 let relitive_date = relitive_date_from_hours 1.0;;
 
-
-
 let main = 
    let (*  h_week   = 10 and *)
        total    = 156.0 and

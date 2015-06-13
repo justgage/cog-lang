@@ -39,7 +39,7 @@ The part of the program that turns the tokens into an AST.
 
 _Spec_
 
-Stands for "requirements specification" which will be a document describing what my programing language is required to preform.
+Stands for "language specification" which will be a document describing the syntax of the language. This will be included in the Design Document. 
 
 
 ## Why this topic is of interest
@@ -69,8 +69,8 @@ The project consists of making a simple, easy to use programing language focused
 
 1. Preliminary research and proposal preparation
 2. Research
-3. Requirements specification
-4. Design
+3. Requirements Document
+4. Design (with spec)
 5. Writing behavior driven tests.
 6. Writing the Code to preform the given behaviors previously specified.
 
@@ -78,7 +78,7 @@ The project consists of making a simple, easy to use programing language focused
 
 The following is considered a "success":
 
-- The code from the spec parses
+- The 
 - The code from the spec runs
 - The code from the spec has the required output for any of the input examples from the spec
 
@@ -95,7 +95,8 @@ A simple executable programing language which will have the following features
     - Defining them
     - Running them
     - Returning values from them
-- Equality operations (<=, ==, <, >, >=) on Floats, Strings and lists (structural equality)
+- Equality operations (==, <, >, <=, >=) on Floats
+- Strings and lists will have the == operator (structural equality)
 - Boolean operations (and, or and not) on booleans
 - If statements 
 - A way to print to print Strings, Floats and lists to the screen

@@ -1,154 +1,312 @@
 {
- :title "Reqirements Document"
+ :title "Requirements Document"
  :author "Gage Peterson"
  :date "May 30th 2015"
  :lang-name "The programing language"
  :definitions 
  { 
-            
+
   "Standard out"
   "Usually the main output of a console. Some place specified for most output of the program to go."
-  
+
   "The Primitives"
-  "The basic built in types of the langauge including: Floats, Strings, Lists and Booleans"
+  "The basic built in types of the language including: Floats, Strings, Lists and Booleans"
   }
 
- :reqs [
-        ;;  Use shall, will, and may in the functional-requirements specification. When I review your requirements, I assume that
-        ;;  shall functional-requirements shall be implemented. I also assume that will and may requirements will not be
-        ;;  implemented.
-        ;;
-        ;;  Include at least one functional-requirement regarding execution time. For example, the product shall calculate the
-        ;;  answer within one second.
-        ;;
-        ;;  Format your functional-requirements specification in four columns, as follows:
-        ;;
-        ;;  1. A unique identifier for the functional functional-requirement; sequential numbers work well
-        ;;  2. Functional functional-requirement (note: if the demonstration requires reviewing code, it's not a functional requirement)
-        ;;  3. Demonstration scenario(s) for that functional-requirement
-        ;;  4. Success measure(s) for that functional-requirement
-        ;;
-        ;;  Use a separate row for each functional-requirement.
-        ;;  Do not submit as a spreadsheet. Use a word processor.
-        ;;  The functional-requirements are due on the date specified in your proposal.
+ :reqs
+ [
+  ;;  Use shall, will, and may in the functional-requirements specification. When I review your requirements, I assume that
+  ;;  shall functional-requirements shall be implemented. I also assume that will and may requirements will not be
+  ;;  implemented.
+  ;;
+  ;;  Include at least one functional-requirement regarding execution time. For example, the product shall calculate the
+  ;;  answer within one second.
+  ;;
+  ;;  Format your functional-requirements specification in four columns, as follows:
+  ;;
+  ;;  1. A unique identifier for the functional functional-requirement; sequential numbers work well
+  ;;  2. Functional functional-requirement (note: if the demonstration requires reviewing code, it's not a functional requirement)
+  ;;  3. Demonstration scenario(s) for that functional-requirement
+  ;;  4. Success measure(s) for that functional-requirement
+  ;;
+  ;;  Use a separate row for each functional-requirement.
+  ;;  Do not submit as a spreadsheet. Use a word processor.
+  ;;  The functional-requirements are due on the date specified in your proposal.
 
+  {
+   :type :shall
+   :functional-requirement "be able to print the primitives to standard out"
+   :demonstration-scenarios 
+   [
+    "print 1.0"
+    "print 'hi'"
+    "print [1.0 2.0 3.0]"
+    ] 
+   :success-measure 
+   [
+    "prints 1.0 to standard out"
+    "prints hi to standard out"
+    "prints [1.0 2.0 3.0] to standard out"
+    ] 
+   }
 
+  {
+   :type :shall
+   :functional-requirement "have constructs that allow for a block of code to be executed or not executed based on a condition"
+   :demonstration-scenarios 
+   [
+    "if true then print 'hello'"
+    "if false then print 'hello'"
+    ] 
+   :success-measure 
+   [ 
+    "prints 'hello' to standard out"
+    "does nothing"
+    ] 
+   }
 
-        {
-         :type :SHALL
-         :functional-requirement "be able to print the primitives to standard out"
-         :demonstration-scenarios 
-         [
-          "valid code was ran through the executer that contained a print statement with a string as an argument"
-          "valid code was ran through the executer that contained a print statement with a integer as an argument"
-          ] 
-         :success-measure 
-         [
-          "print out the string in the argument"
-          "print out the integer in the argument"
-          ] 
-         }
+  {
+   :type :shall
+   :functional-requirement "be able to store primitives in a variable"
+   :demonstration-scenarios 
+   [
+    "box a = 1.0
+    print a"
+    "box a = [1.0 2.0 3.0]
+    print a"
+    "box a = \"hello\"
+    print a"
+    ] 
+   :success-measure 
+   [
+    "1.0 is printed to standard out"
+    "[1.0 2.0 3.0] is printed to standard out"
+    "'hello' is printed to standard out"
+    ] 
+   } 
 
-        {
-         :type :SHALL
-         :functional-requirement "have constructs that allow for a block of code to be executed or not executed based on a condition"
-         :demonstration-scenarios 
-         [
-          "valid code was ran through the interpreter that contained an if statement with a 'true' statement as it's condition and a print statement in it's body"
-          "valid code was ran through the interpreter that contained an if statement with a 'false' statement as it's condition and a print statement in it's body"
-          ] 
-         :success-measure 
-         [ 
-          "the code in the body executes the print statement showing it on standard out"
-          "the code in the body does not execute the print statement not showing it on standard out"
-          ] 
-         }
+  {
+   :type :shall
+   :functional-requirement "be able to repeat blocks of code"
+   :demonstration-scenarios 
+   [
+    "repeat 4 print 'hello '"
+    ] 
+   :success-measure  
+   [
+    "standard out contains: 'hello hello hello hello'"
+    ] 
+   }
 
-        {
-         :type :SHALL
-         :functional-requirement "be able to store primitives in temporary memory in the form of a variable"
-         :demonstration-scenarios 
-         [
-          "A code file is ran with the code that will store a 2 in a variable and print it to the screen"
-          ] 
-         :success-measure 
-         [
-          "The code file prints out the 2 that was stored"
-          ] 
-         } 
+  {
+   :type :shall
+   :functional-requirement "be able to define and run functions with return values"
+   :demonstration-scenarios 
+   [
+    "fun add x y = x + y
+    print (add 2.0 5.0)"
+    ] 
+   :success-measure 
+   [
+    "7.0 is printed to standard out"
+    ] 
+   }
 
+  {
+   :type :shall
+   :functional-requirement "be able to check if two floats are equal"
+   :demonstration-scenarios 
+   [
+    "2.5 == 2.5"
+    "2.5 == 2.0"
+    "2.0 == 3.0"
+    ] 
+   :success-measure 
+   [
+    "returns true"
+    "returns false"
+    "returns false"
+    ] 
+   }
 {
- :type :SHALL
- :functional-requirement "be able to repeat blocks of code"
+ :type :shall
+ :functional-requirement "be able to check if one float is greater than another"
  :demonstration-scenarios 
  [
-  "A code file that has a print statement inside of a repeat block, with the number 5 as a  parameter"
-  ] 
- :success-measure  
- [
-  "The print statement inside of the repeat block will run exactly 5 times"
-  ] 
- }
-
-{
- :type :SHALL
- :functional-requirement "be able to define and run functions"
- :demonstration-scenarios 
- [
-  "A code file contains the function definition of a 'add' function"
+  "2.0 < 0.0"
+  "2.0 < 3.0"
+  "2.0 > 3.0"
+  "2.0 > 2.0"
   ] 
  :success-measure 
  [
-  "When the defined 'add' function is ran then it will add the numbers 3 and 2 to equal 5"
-  ] 
- }
-
-{
- :type :SHALL
- :functional-requirement "have a way for functions to return values"
- :demonstration-scenarios 
- [
-  "A function that adds two numbers returns a 5 to a print statement"
-  ] 
- :success-measure 
- [ 
-  "the print statement prints the 5 that was returned"
-  ] 
- }
-
-{
- :type :SHALL
- :functional-requirement "be able to check if two numbers are equal"
- :demonstration-scenarios 
- [
-  "A code file contains a comparison operator returning to a print statement that is checking if 2 is equal to 2"
-  "A code file contains a comparison operator returning to a print statement that is checking if 2 is equal to 3"
-  ] 
- :success-measure 
- [
-  "the print statement will print out 'true'"
-  "the print statement will print out 'false'"
-  ] 
- }
-
-{
- :type :SHALL
- :functional-requirement "be able to check if two lists are structurally equivalent, meaning, they contain the same elements in the same order."
- :demonstration-scenarios 
- [
-  "a list which contains 1, 2 and 3 is checked against itself"
-  "a list which contains 1, 2 and 3 is checked against another list containing 1, 2, 3"
-  "a list which contains 1, 2 and 9 is checked against another list containing 1, 2, 3"
-  "a list which contains nothing is checked against another list containing 1, 2, 3"
-  ] 
- :success-measure 
- [
-  "returns true"
+  "returns false"
   "returns true"
   "returns false"
   "returns false"
   ] 
  }
+
+{
+ :type :shall
+ :functional-requirement "be able to tell if one float is less than or equal to another"
+ :demonstration-scenarios 
+ [
+  "2.0 <= 3.0"
+  "2.0 <= 1.0"
+  "2.0 <= 2.0"
+  ] 
+ :success-measure 
+ [
+  "returns true"
+  "returns false"
+  "returns true"
+  ] 
+ }
+
+{
+ :type :shall
+ :functional-requirement "be able to tell if one float is greater than or equal to another"
+ :demonstration-scenarios 
+ [
+  "2.0 >= 3.0"
+  "2.0 >= 1.0"
+  "2.0 >= 2.0"
+  ] 
+ :success-measure 
+ [
+  "returns false"
+  "returns true"
+  "returns true"
+  ] 
+ }
+
+
+{
+ :type :shall
+ :functional-requirement "be able to tell if two lists are equal"
+ :demonstration-scenarios 
+ [
+  "[] == []"
+  "[1.0 2.0 3.0] == [1.0 2.0 3.0]"
+  "[1.0 10.0 3.0] == [1.0 2.0 3.0]"
+  "[] == [1.0 2.0 3.0]"
+  ] 
+ :success-measure 
+ [
+  "return true"
+  "return true"
+  "return false"
+  "return false"
+  ] 
+ }
+
+{
+ :type :shall
+ :functional-requirement "be able to tell if two strings are equal"
+ :demonstration-scenarios 
+ [
+  "'' == ''"
+  "'a' == 'a'"
+  "'yellow' == 'hello'"
+  "'yellow' == 'yellow'"
+  ] 
+ :success-measure 
+ [
+  "return true"
+  "return true"
+  "return false"
+  "return true"
+  ] 
+ }
+
+{
+ :type :shall
+ :functional-requirement "be able to negate a boolean statement"
+ :demonstration-scenarios 
+ [
+  "not true"
+  "not false"
+  ] 
+ :success-measure 
+ [
+  "returns false"
+  "returns true"
+  ] 
+ }
+
+{
+ :type :shall
+ :functional-requirement "be able to connect two boolean statements with an 'and' operator"
+ :demonstration-scenarios 
+ [
+  "false and false"
+  "false and true"
+  "true and false"
+  "true and true"
+  ] 
+ :success-measure 
+ [
+  "returns false"
+  "returns false"
+  "returns false"
+  "returns true"
+  ] 
+ }
+
+{
+ :type :shall
+ :functional-requirement "be able to connect two boolean expressions with a 'or' operator"
+ :demonstration-scenarios 
+ [
+  "false or false"
+  "false or true"
+  "true  or false"
+  "true  or true"
+  ] 
+ :success-measure 
+ [
+  "returns false"
+  "returns true"
+  "returns true"
+  "returns true"
+  ] 
+ }
+
+{
+ :type :SHALL
+ :functional-requirement "be able to parse and execute the basic statement outlined in demonstration scenarios in a file in 1 second"
+ :demonstration-scenarios 
+ [
+  "print 'hello'"
+  "print 2+2"
+  ] 
+ :success-measure 
+ [
+  "the program prints 'hello' and exits within 1 second"
+  "the program prints '4' and exits within 1 second"
+  ] 
+ }
+
+{
+ :type :MAY
+ :functional-requirement "be able to step through the code line by line and see how variables change"
+ :demonstration-scenarios 
+ [
+  "debugger run on a code file containing:
+  
+  box a = 2
+  box a = a + 2"
+  ] 
+ :success-measure 
+ [
+  "The debugger outputs:
+  box a = 2
+  box a = 4
+  "
+  ] 
+ }
+
 ]
 }
 

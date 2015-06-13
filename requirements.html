@@ -12,13 +12,13 @@ td, th {
 
 </style>
 <title>
-Reqirements Document
+Requirements Document
 </title>
 
 </header>
 
 <h1>
-Reqirements Document
+Requirements Document
 </h1>
 
 <p>
@@ -46,51 +46,198 @@ The Primitives
 </h4>
 
 <div>
-The basic built in types of the langauge including: Floats, Strings, Lists and Booleans
+The basic built in types of the language including: Floats, Strings, Lists and Booleans
 </div>
 
 <h2>
 Requirements
 </h2>
 
-<table>
-       <tr> 
-         <th> id </td>
-         <th> functional-requirement </td>
-         <th> demonstration scenarios </td>
-         <th> success measure </td><th>
-       </tr>
+<table> <tr>
+<th>
+id
+</th>
+<th>
+functional-requirement
+</th>
+<th>
+demonstration scenarios
+</th>
+<th>
+success measure
+</th>
+
+</tr>
+
 <tr>
-<td>0</td><td>The programing language SHALL be able to print the primitives to standard out</td><td> <ol><li>valid code was ran through the executer that contained a print statement with a string as an argument</li><br /><li>valid code was ran through the executer that contained a print statement with a integer as an argument</li></ol></td><td>
-  <ol><li>  print out the string in the argument</li><br /><li>print out the integer in the argument</li></ol></td></td>
+<td>
+0
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to print the primitives to standard out</td><td> <ol><li>print 1.0</li><li>print 'hi'</li><li>print [1.0 2.0 3.0]</li></ol></td><td>
+  <ol><li>  prints 1.0 to standard out</li><li>prints hi to standard out</li><li>prints [1.0 2.0 3.0] to standard out</li></ol></td></td>
 </tr>
 <tr>
-<td>1</td><td>The programing language SHALL have constructs that allow for a block of code to be executed or not executed based on a condition</td><td> <ol><li>valid code was ran through the interpreter that contained an if statement with a 'true' statement as it's condition and a print statement in it's body</li><br /><li>valid code was ran through the interpreter that contained an if statement with a 'false' statement as it's condition and a print statement in it's body</li></ol></td><td>
-  <ol><li>  the code in the body executes the print statement showing it on standard out</li><br /><li>the code in the body does not execute the print statement not showing it on standard out</li></ol></td></td>
+<td>
+1
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ have constructs that allow for a block of code to be executed or not executed based on a condition</td><td> <ol><li>if true then print 'hello'</li><li>if false then print 'hello'</li></ol></td><td>
+  <ol><li>  prints 'hello' to standard out</li><li>does nothing</li></ol></td></td>
 </tr>
 <tr>
-<td>2</td><td>The programing language SHALL be able to store primitives in temporary memory in the form of a variable</td><td> <ol><li>A code file is ran with the code that will store a 2 in a variable and print it to the screen</li></ol></td><td>
-  <ol><li>  The code file prints out the 2 that was stored</li></ol></td></td>
+<td>
+2
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to store primitives in a variable</td><td> <ol><li>box a = 1.0<br />
+    print a</li><li>box a = [1.0 2.0 3.0]<br />
+    print a</li><li>box a = "hello"<br />
+    print a</li></ol></td><td>
+  <ol><li>  1.0 is printed to standard out</li><li>[1.0 2.0 3.0] is printed to standard out</li><li>'hello' is printed to standard out</li></ol></td></td>
 </tr>
 <tr>
-<td>3</td><td>The programing language SHALL be able to repeat blocks of code</td><td> <ol><li>A code file that has a print statement inside of a repeat block, with the number 5 as a  parameter</li></ol></td><td>
-  <ol><li>  The print statement inside of the repeat block will run exactly 5 times</li></ol></td></td>
+<td>
+3
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to repeat blocks of code</td><td> <ol><li>repeat 4 print 'hello '</li></ol></td><td>
+  <ol><li>  standard out contains: 'hello hello hello hello'</li></ol></td></td>
 </tr>
 <tr>
-<td>4</td><td>The programing language SHALL be able to define and run functions</td><td> <ol><li>A code file contains the function definition of a 'add' function</li></ol></td><td>
-  <ol><li>  When the defined 'add' function is ran then it will add the numbers 3 and 2 to equal 5</li></ol></td></td>
+<td>
+4
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to define and run functions with return values</td><td> <ol><li>fun add x y = x + y<br />
+    print (add 2.0 5.0)</li></ol></td><td>
+  <ol><li>  7.0 is printed to standard out</li></ol></td></td>
 </tr>
 <tr>
-<td>5</td><td>The programing language SHALL have a way for functions to return values</td><td> <ol><li>A function that adds two numbers returns a 5 to a print statement</li></ol></td><td>
-  <ol><li>  the print statement prints the 5 that was returned</li></ol></td></td>
+<td>
+5
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to check if two floats are equal</td><td> <ol><li>2.5 == 2.5</li><li>2.5 == 2.0</li><li>2.0 == 3.0</li></ol></td><td>
+  <ol><li>  returns true</li><li>returns false</li><li>returns false</li></ol></td></td>
 </tr>
 <tr>
-<td>6</td><td>The programing language SHALL be able to check if two numbers are equal</td><td> <ol><li>A code file contains a comparison operator returning to a print statement that is checking if 2 is equal to 2</li><br /><li>A code file contains a comparison operator returning to a print statement that is checking if 2 is equal to 3</li></ol></td><td>
-  <ol><li>  the print statement will print out 'true'</li><br /><li>the print statement will print out 'false'</li></ol></td></td>
+<td>
+6
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to check if one float is greater than another</td><td> <ol><li>2.0 < 0.0</li><li>2.0 < 3.0</li><li>2.0 > 3.0</li><li>2.0 > 2.0</li></ol></td><td>
+  <ol><li>  returns false</li><li>returns true</li><li>returns false</li><li>returns false</li></ol></td></td>
 </tr>
 <tr>
-<td>7</td><td>The programing language SHALL be able to check if two lists are structurally equivalent, meaning, they contain the same elements in the same order.</td><td> <ol><li>a list which contains 1, 2 and 3 is checked against itself</li><br /><li>a list which contains 1, 2 and 3 is checked against another list containing 1, 2, 3</li><br /><li>a list which contains 1, 2 and 9 is checked against another list containing 1, 2, 3</li><br /><li>a list which contains nothing is checked against another list containing 1, 2, 3</li></ol></td><td>
-  <ol><li>  returns true</li><br /><li>returns true</li><br /><li>returns false</li><br /><li>returns false</li></ol></td></td>
+<td>
+7
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to tell if one float is less than or equal to another</td><td> <ol><li>2.0 <= 3.0</li><li>2.0 <= 1.0</li><li>2.0 <= 2.0</li></ol></td><td>
+  <ol><li>  returns true</li><li>returns false</li><li>returns true</li></ol></td></td>
+</tr>
+<tr>
+<td>
+8
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to tell if one float is greater than or equal to another</td><td> <ol><li>2.0 >= 3.0</li><li>2.0 >= 1.0</li><li>2.0 >= 2.0</li></ol></td><td>
+  <ol><li>  returns false</li><li>returns true</li><li>returns true</li></ol></td></td>
+</tr>
+<tr>
+<td>
+9
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to tell if two lists are equal</td><td> <ol><li>[] == []</li><li>[1.0 2.0 3.0] == [1.0 2.0 3.0]</li><li>[1.0 10.0 3.0] == [1.0 2.0 3.0]</li><li>[] == [1.0 2.0 3.0]</li></ol></td><td>
+  <ol><li>  return true</li><li>return true</li><li>return false</li><li>return false</li></ol></td></td>
+</tr>
+<tr>
+<td>
+10
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to tell if two strings are equal</td><td> <ol><li>'' == ''</li><li>'a' == 'a'</li><li>'yellow' == 'hello'</li><li>'yellow' == 'yellow'</li></ol></td><td>
+  <ol><li>  return true</li><li>return true</li><li>return false</li><li>return true</li></ol></td></td>
+</tr>
+<tr>
+<td>
+11
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to negate a boolean statement</td><td> <ol><li>not true</li><li>not false</li></ol></td><td>
+  <ol><li>  returns false</li><li>returns true</li></ol></td></td>
+</tr>
+<tr>
+<td>
+12
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to connect two boolean statements with an 'and' operator</td><td> <ol><li>false and false</li><li>false and true</li><li>true and false</li><li>true and true</li></ol></td><td>
+  <ol><li>  returns false</li><li>returns false</li><li>returns false</li><li>returns true</li></ol></td></td>
+</tr>
+<tr>
+<td>
+13
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to connect two boolean expressions with a 'or' operator</td><td> <ol><li>false or false</li><li>false or true</li><li>true  or false</li><li>true  or true</li></ol></td><td>
+  <ol><li>  returns false</li><li>returns true</li><li>returns true</li><li>returns true</li></ol></td></td>
+</tr>
+<tr>
+<td>
+14
+</td>
+<td>The programing language <strong>
+shall
+</strong>
+ be able to parse and execute the basic statement outlined in demonstration scenarios in a file in 1 second</td><td> <ol><li>print 'hello'</li><li>print 2+2</li></ol></td><td>
+  <ol><li>  the program prints 'hello' and exits within 1 second</li><li>the program prints '4' and exits within 1 second</li></ol></td></td>
+</tr>
+<tr>
+<td>
+15
+</td>
+<td>The programing language <strong>
+may
+</strong>
+ be able to step through the code line by line and see how variables change</td><td> <ol><li>debugger run on a code file containing:<br />
+  <br />
+  box a = 2<br />
+  box a = a + 2</li></ol></td><td>
+  <ol><li>  The debugger outputs:<br />
+  box a = 2<br />
+  box a = 4<br />
+  </li></ol></td></td>
 </tr>
 
 </table>

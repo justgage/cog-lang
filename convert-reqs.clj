@@ -33,27 +33,42 @@
             (tag :title (:title reqs-doc)))))
 
 (def table-headers 
-  (str "<table>
-       <tr> 
-         <th> id </td>
-         <th> functional-requirement </td>
-         <th> demonstration scenarios </td>
-         <th> success measure </td><th>
-       </tr>"))
+  (str "<table> "
+       (tag :tr 
+            (tag :th "id")
+            (tag :th "functional-requirement")
+            (tag :th "demonstration scenarios") 
+            (tag :th "success measure"))))
+
 (def table-footer "</table>")
+
+;; Functions to make the table
 
 (defn req-to-str [id content]
   (tag :tr 
-  "<td>" id "</td>"
-  "<td>" language-name " " (-> content :type name) " " (content :functional-requirement)"</td>"
-  "<td> <ol><li>" (str/join "</li><br /><li>" (map #(str/replace %1 "\n" "<br />\n") (content :demonstration-scenarios))) "</li></ol></td>"
+  (tag  :td id) 
+  "<td>" language-name " " (->> content :type name str/lower-case (tag :strong)) " " (content :functional-requirement)"</td>"
+  "<td> <ol><li>" (str/join "</li><li>" (map #(str/replace %1 "\n" "<br />\n") (content :demonstration-scenarios))) "</li></ol></td>"
   "<td>
-  <ol><li>  " (str/join "</li><br /><li>" (map #(str/replace %1 "\n" "<br />\n") (content :success-measure))) "</li></ol></td>"
+  <ol><li>  " (str/join "</li><li>" (map #(str/replace %1 "\n" "<br />\n") (content :success-measure))) "</li></ol></td>"
   "</td>"
        ))
 
 (defn def-to-string [[name disc]]
   (str (tag :h4 name) "\n" (tag :div disc)))
+
+;;; validation functions
+;; (defn matching-sinario [reqs]
+;;   (map (fn [req] 
+;;          (if (not= (count (req :demonstration-scenarios)) 
+;;                    (count (req :success-measure))) 
+;;            (throw (Exception. (str "No matching sinaro to success mesure :" (req :name))))
+;;            req
+;;            ))
+;;        reqs))
+;;
+;; (defn validate "Throws an exeption if there's somthing wrong" [reqs]
+;;   (-> reqs matching-sinario))
 
 ;;;; print them out
 
@@ -72,7 +87,8 @@
 (println table-headers)
 
 (println
-  (reduce-kv #(str %1 (req-to-str %2 %3 )) ""
-             (:reqs reqs-doc) ))
+  (->> (:reqs reqs-doc)
+       ;; (validate)
+       (reduce-kv #(str %1 (req-to-str %2 %3 )) "")))
 
 (println table-footer)
