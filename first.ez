@@ -1,8 +1,8 @@
+first?
+Perhaps the first line of the file is the module name? OR implicit from the filename :) even better
 ### <- 3 or more! == multi line comments
 this is a comment?
 This will eventually be executed
-AKA the first line of "EZ" ever
-A hello ez program
 Easy auto formating would be usefull as well which requires NON-whitespace sensitive stuff
 Capitilizeation doesn't matter in the function names but the auto-formater will make them all lowercase
 
@@ -11,39 +11,24 @@ What if the whole file was flattened into a line with implicit "."'s between eac
 SO LONG AS there wasn't any unclosed ()'s or []'s or {}'s?
 ###
 
-# maybe this:
-
 # send to the screen (AKA print)
-print this:"Hello world!"
-print to:screen "Hello world!" # implicit parameter?
+print "Hello world!" # less things to type = the less thigns (heh) to mess up
+print to:screen "Hello world!" # named?
 
-# send oprator? (macros?)
-"Hello world" |> screen
+# you can put two statements on one line possibly
+print "Hello world!"; print "Two things on the same line!"
 
-# I wtill kind of like this....
-print "Hello world!". print "Two things on the same line!"
-
-# Multiple lines?
-repeat times:3 [
-   print "hello,"  #newline OR comma seperated list!
+repeat 3 do
+   print "hello,"  
    print "goodbye\n"
-]
+end
 
-# a box is a place to store values
-box named:mybox 
-
-# this one is named "a" and put 2 into it
-box named:a with:2
-
-# or this?
-box a 2
+box mybox = 15 # easier to type?
 
 # puts somthing in a box
-
-replace 2 in a
-a = 2     # or this
-a <- 2    # or this?
-
+a <- 2     # ?
+a = 2      # ?
+put 2 in a # ?
 
 
 ###
@@ -53,44 +38,18 @@ Perhaps it would require them to group things in parenthesis... which are used f
 ###
 
 
-fun a(yourName) does:
+fun hello (yourName) do
    print "Hello," yourName ". welcome to ez!"
 end
 
-# Functions can have required words inside of them for readability
-# However the first has to be unique!
-fun [put _a_ in _box_]: #<- this is both the function name AND the parameters
-   :a = :box
-end
-
 # use it:
-put 2 in a   # <- ideal but not quite practical???
-(put 2 in a) # <- Lisp style
+hello("Gage")
+hello ("Gage") # whitesapce is ok.
 
-# pattern matching here?
-fun putin (a box) [
-   a <- box
-]
-
-# run a function that takes all it's parmeters
-# and prints them to the screen
-[make-string hello world] -> screen
-
-# boxes always have []'s around them? 
-[a] <- 2
-
-[oldvalue] <- [a] <- 2 # pushes 2 into "a" pushing out the old value into an "oldvalue" box
-                       # NOTE: there is two operations here
-
-{1 2 3 4 5} # <- lists (whitespace seperated)
-
-'single quotes all the way!' or are "double better"
+[ 1 2 3 4 5 ] # <- lists (whitespace seperated)
 
 
-:) comments
-:( bad comments
-)) easier ones
-; good old lisp style
+
 
 
 
