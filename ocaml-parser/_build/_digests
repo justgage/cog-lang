@@ -1,0 +1,8 @@
+"Rule: ocaml: ml & cmi -> cmx & o (%=parser )": "\251\023\193\130r\158\187\203\156O4q}F\147v"
+"Rule: ocaml: ml -> cmo & cmi (%=parser )": "\017\222\224\223<\012\173\232\1441o\027\139\193iP"
+"Rule: ocaml dependencies ml (%=parser )": "|\228\146:\210\168\142|-\217*c\205\234uC"
+"Resource: /home/justgage/code/senior-project/ocaml-parser/parser.mli": "\212\029\140\217\143\000\178\004\233\128\t\152\236\248B~"
+"Rule: ocaml: cmx* & o* -> native (%=parser )": "\197k\006\154KV\165\018\228\133\214\151I\019.g"
+"Rule: ocaml dependencies mli (%=parser )": "7o\1504\148\2184\"\235\237\199\226x\216\003L"
+"Resource: /home/justgage/code/senior-project/ocaml-parser/parser.ml": "\159S\194\228\232m\029\138\149M5\128\177\243\244A"
+"Rule: ocaml: mli -> cmi (%=parser )": "\007\171\160Yj\237\004\139\161\206\133\201\172\158\238\029"
