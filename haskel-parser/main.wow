@@ -1,0 +1,44 @@
+# this represents a the score of player1
+box score = 2
+
+display("I'm printing out something")
+
+display(score) # 2
+
+score = score + 1 
+
+display("your score is:" score) # your score is: 3
+
+box name = get_result()
+
+repeat_till turns >= 10
+  display("Enter your guess:")
+  box guess = get_result()
+end
+
+if score > 100
+  display("You won! your score is:")
+  display(score)
+else
+  display("You lost.")
+end
+
+
+# defining a function
+
+func say_hi()
+  display("Hello")
+end
+
+say_hi() 
+
+
+# Defining a function with a parameter
+
+func say_hi_to(name)
+  display("Hello," name)
+end
+
+say_hi_to("Gage")
+
+
