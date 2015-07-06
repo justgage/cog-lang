@@ -11,9 +11,8 @@ let split_up = String.split ~on:' '
 
 (* this will eat up all space and make space around things that need it 
  * 
- * TODO: probably this needs to just be the real parser
- *
  * *)
+(*
 let rec spacer char_list = match char_list with
   | ' ':: rest -> ' ' :: (space_eater rest) (* take one space then start eating spaces *)
   |  x :: rest -> x :: (spacer rest)
@@ -22,12 +21,19 @@ let rec spacer char_list = match char_list with
   | ' ' :: rest -> space_eater rest
   |  x  :: rest -> spacer (x :: rest)
   | []          -> []
+  *)
 
-let spacer_str str = 
-  str 
-  |> String.to_list 
-  |> spacer 
-  |> String.of_char_list
+module Token = struct
+  val token = Word x
+  let rec tokenize word = 
+
+
+    let rec tokenize_line line = 
+end
+
+
+
+
 
 let rec print_tokens lis = match lis with
 | x::xs -> printf "%s " (Colors.cyan x); print_tokens xs
@@ -36,8 +42,9 @@ let rec print_tokens lis = match lis with
 let parse filename = 
    let lines = Core.In_channel.read_lines filename in
    lines
-   |> List.map ~f:spacer_str
+   (* |> List.map ~f:spacer_str *)
    |> List.map ~f:split_up
+   |> List.map ~f:tokenize_line
    |> List.iter ~f:(print_tokens);
    ();;
 

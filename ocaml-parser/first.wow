@@ -19,6 +19,11 @@ repeat_till turns >= 10
 end
 
 if score > 100
+  repeat 10
+        display("Enter your guess:")
+        box guess = get_result()
+  end
+
   display("You won! your score is:")
   display(score)
 else
