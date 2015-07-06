@@ -9,7 +9,11 @@ end
 
 let split_up = String.split ~on:' '
 
-(* this will eat up all space and make space around things that need it *)
+(* this will eat up all space and make space around things that need it 
+ * 
+ * TODO: probably this needs to just be the real parser
+ *
+ * *)
 let rec spacer char_list = match char_list with
   | ' ':: rest -> ' ' :: (space_eater rest) (* take one space then start eating spaces *)
   |  x :: rest -> x :: (spacer rest)
