@@ -1,5 +1,6 @@
 # this represents a the score of player1
 box score = 2
+box scores = [1 2 4]
 
 display("I'm printing out something")
 
