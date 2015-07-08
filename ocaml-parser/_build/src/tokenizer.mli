@@ -55,5 +55,5 @@ type token =
 (* type ast = token : l *)
 
 val print_token : token -> unit
-val print_tokens : token list -> unit list
+val print_tokens : token list -> unit
 val from_str_list : bytes list -> token list list

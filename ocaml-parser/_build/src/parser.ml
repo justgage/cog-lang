@@ -17,8 +17,8 @@ let parse filename =
    lines
    (* |> List.map ~f:spacer_str *)
    |> List.map ~f:split_up
-   |> List.map ~f:Tokenizer.from_str_list
-   |> List.map ~f:Tokenizer.print_tokens;
+   |> Tokenizer.from_str_list
+   |> List.iter ~f:(Tokenizer.print_token);
    ();;
 
 
