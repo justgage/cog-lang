@@ -1,3 +1,4 @@
+open Core.Std
 open Printf
 type l = string
 
@@ -55,7 +56,6 @@ type token =
 
 (* type ast = token : l *)
 
-let from_str_list _str_list = [Boolean True]
 
 let print_token x =
   match x with
@@ -68,5 +68,7 @@ let print_token x =
   | Statement _ -> printf "statement "
   | End -> printf "end "
 
-let print_tokens tokens = List.map tokens ~f: print_token
+let from_str_list = List.map ~f:(fun _ -> Boolean True)
+
+let print_tokens tokens = List.iter ~f:(print_token) tokens; print_endline "" 
 

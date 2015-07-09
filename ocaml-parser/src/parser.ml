@@ -13,13 +13,10 @@ let rec print_tokens lis = match lis with
 | []    -> printf "\n"
 
 let parse filename = 
-   let lines = Core.In_channel.read_lines filename in
-   lines
-   (* |> List.map ~f:spacer_str *)
+   Core.In_channel.read_lines filename
    |> List.map ~f:split_up
    |> List.map ~f:Tokenizer.from_str_list
-   |> List.map ~f:Tokenizer.print_tokens;
-   ();;
+   |> List.iter ~f:Tokenizer.print_tokens
 
 
 let spec =
@@ -32,7 +29,7 @@ let command =
   ~summary: "Add a jrnl entry :)"
   ~readme:(fun () -> "More detailed info")
   spec
-  (fun filename () -> parse filename)
+  (fun filename () -> parse filename; ())
 
 let () =
   Command.run ~version:"0.1" ~build_info:"RWO" command

@@ -15,7 +15,6 @@ type bolean_expression =
 type user_func
 type built_in
 
-
 type function_exec = 
   | BuiltIn of built_in
   | UserFunc of user_func
@@ -56,4 +55,5 @@ type token =
 
 val print_token : token -> unit
 val print_tokens : token list -> unit
-val from_str_list : bytes list -> token list list
+val from_str_list : bytes list -> token list
+

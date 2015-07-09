@@ -1,4 +1,10 @@
 ### Starting build.
+# Target: src/parser.ml.depends, tags: { bin_annot, debug, extension:ml, file:src/parser.ml, ocaml, ocamldep, package(bin_prot.syntax), package(core), package(sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax), quiet, short_paths, syntax(camlp4o), thread }
+ocamlfind ocamldep -syntax camlp4o -package core -package bin_prot.syntax -package sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax -modules src/parser.ml > src/parser.ml.depends # cached
+# Target: src/parser.mli.depends, tags: { bin_annot, debug, extension:mli, file:src/parser.mli, ocaml, ocamldep, package(bin_prot.syntax), package(core), package(sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax), quiet, short_paths, syntax(camlp4o), thread }
+ocamlfind ocamldep -syntax camlp4o -package core -package bin_prot.syntax -package sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax -modules src/parser.mli > src/parser.mli.depends # cached
+# Target: src/parser.cmi, tags: { bin_annot, byte, compile, debug, extension:mli, file:src/parser.mli, interf, ocaml, package(bin_prot.syntax), package(core), package(sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax), quiet, short_paths, syntax(camlp4o), thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -syntax camlp4o -package core -package bin_prot.syntax -package sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax -I src -o src/parser.cmi src/parser.mli # cached
 # Target: src/tokenizer.ml.depends, tags: { bin_annot, debug, extension:ml, file:src/tokenizer.ml, ocaml, ocamldep, package(bin_prot.syntax), package(core), package(sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax), quiet, short_paths, syntax(camlp4o), thread }
 ocamlfind ocamldep -syntax camlp4o -package core -package bin_prot.syntax -package sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax -modules src/tokenizer.ml > src/tokenizer.ml.depends # cached
 # Target: src/tokenizer.mli.depends, tags: { bin_annot, debug, extension:mli, file:src/tokenizer.mli, ocaml, ocamldep, package(bin_prot.syntax), package(core), package(sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax), quiet, short_paths, syntax(camlp4o), thread }
@@ -6,11 +12,12 @@ ocamlfind ocamldep -syntax camlp4o -package core -package bin_prot.syntax -packa
 # Target: src/tokenizer.cmi, tags: { bin_annot, byte, compile, debug, extension:mli, file:src/tokenizer.mli, interf, ocaml, package(bin_prot.syntax), package(core), package(sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax), quiet, short_paths, syntax(camlp4o), thread }
 ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -syntax camlp4o -package core -package bin_prot.syntax -package sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax -I src -o src/tokenizer.cmi src/tokenizer.mli # cached
 # Target: src/tokenizer.cmx, tags: { bin_annot, compile, debug, extension:cmx, extension:ml, file:src/tokenizer.cmx, file:src/tokenizer.ml, implem, native, ocaml, package(bin_prot.syntax), package(core), package(sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax), quiet, short_paths, syntax(camlp4o), thread }
-ocamlfind ocamlopt -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -syntax camlp4o -package core -package bin_prot.syntax -package sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax -I src -o src/tokenizer.cmx src/tokenizer.ml
-+ ocamlfind ocamlopt -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -syntax camlp4o -package core -package bin_prot.syntax -package sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax -I src -o src/tokenizer.cmx src/tokenizer.ml
-findlib: [WARNING] Interface parser.cmi occurs in several directories: ., src
-File "src/tokenizer.ml", line 71, characters 46-57:
-Error: The function applied to this argument has type 'a list -> 'b list
-This argument cannot be applied with label ~f
-Command exited with code 2.
-# Compilation unsuccessful.
+ocamlfind ocamlopt -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -syntax camlp4o -package core -package bin_prot.syntax -package sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax -I src -o src/tokenizer.cmx src/tokenizer.ml # cached
+# Target: src/parser.cmx, tags: { bin_annot, compile, debug, extension:cmx, extension:ml, file:src/parser.cmx, file:src/parser.ml, implem, native, ocaml, package(bin_prot.syntax), package(core), package(sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax), quiet, short_paths, syntax(camlp4o), thread }
+ocamlfind ocamlopt -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -syntax camlp4o -package core -package bin_prot.syntax -package sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax -I src -o src/parser.cmx src/parser.ml
++ ocamlfind ocamlopt -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -syntax camlp4o -package core -package bin_prot.syntax -package sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax -I src -o src/parser.cmx src/parser.ml
+File "src/parser.ml", line 11, characters 8-20:
+Warning 32: unused value print_tokens.
+# Target: src/parser.native, tags: { bin_annot, debug, dont_link_with, extension:native, file:src/parser.native, link, native, ocaml, package(bin_prot.syntax), package(core), package(sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax), program, quiet, short_paths, syntax(camlp4o), thread }
+ocamlfind ocamlopt -linkpkg -g -thread -syntax camlp4o -package core -package bin_prot.syntax -package sexplib.syntax,comparelib.syntax,fieldslib.syntax,variantslib.syntax src/tokenizer.cmx src/parser.cmx -o src/parser.native
+# Compilation successful.
