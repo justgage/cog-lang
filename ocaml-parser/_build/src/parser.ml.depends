@@ -1,1 +1,1 @@
-src/parser.ml: Command Core List Printf String Tokenizer
+src/parser.ml: Command Core List Printf Tokenizer

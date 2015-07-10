@@ -1,21 +1,9 @@
 open Core.Std
 open Printf
 
-module Colors = struct
-  let normal = "\027[22m"
-  let cyan str = "\027[36m" ^ str ^ normal
-end
-
-let split_up = String.split ~on:' '
-
-let rec print_tokens lis = match lis with
-| x::xs -> printf "%s " (Colors.cyan x); print_tokens xs
-| []    -> printf "\n"
-
 let parse filename = 
    Core.In_channel.read_lines filename
-   |> List.map ~f:split_up
-   |> List.map ~f:Tokenizer.from_str_list
+   |> List.map ~f:Tokenizer.tokenize
    |> List.iter ~f:Tokenizer.print_tokens
 
 

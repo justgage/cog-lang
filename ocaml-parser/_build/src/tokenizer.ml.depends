@@ -1,1 +1,1 @@
-src/tokenizer.ml: Core List Printf
+src/tokenizer.ml: Char Colors Core List Printf String

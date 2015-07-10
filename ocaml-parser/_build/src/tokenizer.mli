@@ -42,18 +42,29 @@ type function_def = {
 }
 
 type token =
-  | String of string
-  | Float of float
-  | Expression of expression
   | Boolean of boolean
-  | Whitespace of string
-  | List of l
-  | Statement of statement
+  | If
+  | Box
+  | Assignment 
+  | DoubleQuote
   | End (* end tags *)
+  | Float of float
+  | FuncDef
+  | GreaterThan
+  | GreaterThanOrEqual
+  | LessThan
+  | LessThanOrEqual
+  | OpenRound
+  | ClosingRound
+  | OpenSquare
+  | ClosingSquare
+  | Symbol of symbol
+  | Whitespace
+  | Newline
+  | CommentBegin
 
-(* type ast = token : l *)
-
+val tokenize : string -> token list
 val print_token : token -> unit
 val print_tokens : token list -> unit
-val from_str_list : bytes list -> token list
+val from_str_list : string list -> token list
 
