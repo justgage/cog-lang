@@ -42,26 +42,35 @@ type function_def = {
 }
 
 type token =
-  | Boolean of boolean
-  | If
-  | Box
   | Assignment 
+  | Boolean of boolean
+  | Box
+  | ClosingRound
+  | ClosingSquare
+  | CommentBegin
   | DoubleQuote
+  | Else
   | End (* end tags *)
   | Float of float
   | FuncDef
   | GreaterThan
   | GreaterThanOrEqual
+  | If
   | LessThan
   | LessThanOrEqual
-  | OpenRound
-  | ClosingRound
-  | OpenSquare
-  | ClosingSquare
-  | Symbol of symbol
-  | Whitespace
+  | LogicAnd
+  | LogicOr
+  | Minus
   | Newline
-  | CommentBegin
+  | OpenRound
+  | OpenSquare
+  | Plus
+  | Repeat
+  | RepeatTill
+  | Slash
+  | Star
+  | Symbol of symbol
+  | Then
 
 val tokenize : string -> token list
 val print_token : token -> unit

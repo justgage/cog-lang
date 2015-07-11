@@ -12,6 +12,8 @@ display("your score is:" score) # your score is: 3
 
 box name = get_result()
 
+display(score) ; display(2) # two things on one line!
+
                     # this is indented a huge amount
 
 repeat_till turns >= 10
@@ -19,7 +21,10 @@ repeat_till turns >= 10
         box guess = get_result()
 end
 
-if score > 100
+if score == 0 or score == 1 then display("your score is tiny")
+
+
+if score > 100 and score < 100
   repeat 10
         display("Enter your guess:")
         box guess = get_result()

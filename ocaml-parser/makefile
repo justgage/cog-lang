@@ -1,6 +1,7 @@
 main:
-	corebuild -pkg core src/tokenizer.native
-	corebuild -pkg core src/colors.native
-	corebuild -pkg core src/parser.native
+	corebuild -pkg core src/tokenizer.byte
+	corebuild -pkg core src/colors.byte
+	corebuild -pkg core src/parser.byte
+	corebuild -pkg core src/main.native
 test:
-	./parser.native -f first.wow
+	./main.native -f first.wow

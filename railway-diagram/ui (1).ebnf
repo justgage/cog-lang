@@ -1,0 +1,22 @@
+StatementList ::= (Statement ';')*
+
+Statement ::= Print | Return | Function
+
+Print ::= 'print' Returnable
+
+Return ::= 'return' Returnable
+
+Returnable ::= Literal | Function
+
+Literal ::= Symbol | Number
+
+Symbol ::= [a-Z] [_a-Z0-9]*
+
+Number ::= [0-9] [0-9,]*
+
+Function ::= '(' Symbol (Whitespace Returnable)* Whitespace* ')'
+
+List ::= '[' (Returnable (Whitespace Returnable)*)? ']'
+
+Whitespace ::= ('\n' | '\t' | ' ')+
+
