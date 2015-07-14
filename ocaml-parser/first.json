@@ -1,0 +1,5 @@
+[
+  ["box", "score", 2 ],
+  ["box", "scores", [1,2,3]],
+  ["display", "score", ["score"]]
+]

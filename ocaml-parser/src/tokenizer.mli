@@ -4,6 +4,11 @@ type boolean =
   | True
   | False
 
+(**
+ * These are simple meaningful or non-meaningful symbols
+ * this step of the process does not structure it, it just
+ * makes it more consumeable 
+ **)
 type token =
   | Assignment 
   | Boolean of boolean

@@ -1,3 +1,4 @@
+(** look in the .mli file for docs *)
 open Core.Std
 open Printf
 open Colors
@@ -9,46 +10,6 @@ type boolean =
   | True
   | False
 
-type bolean_expression =
-  | LessThan of (boolean * boolean)
-  | GreaterThan of (boolean * boolean)
-  | LessThanOrEqual of (boolean * boolean)
-  | GreaterThanOrEqual of (boolean * boolean)
-
-type user_func
-type built_in
-
-type function_exec = 
-  | BuiltIn of built_in
-  | UserFunc of user_func
-
-
-type expression =
-  | FunctionExec of function_exec
-  | Adition of (expression * expression)
-  | Division of (expression * expression)
-  | Boolean of boolean
-
-
-type statement =
-  | Display
-  | BoxDef of (symbol * expression)
-  | BoxAssign
-  | RepeatTill
-  | Expression of expression
-
-
-type function_def = {
-  name : symbol;
-  args : expression list;
-  body : statement list;
-}
-
-(**
- * These are simple meaningful or non-meaningful symbols
- * this step of the process does not structure it, it just
- * makes it more consumeable 
- **)
 type token =
   | Assignment
   | Boolean of boolean

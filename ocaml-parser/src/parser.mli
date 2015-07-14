@@ -14,7 +14,6 @@ type bolean_expression =
   | LessThanOrEqual of (boolean * boolean)
   | GreaterThanOrEqual of (boolean * boolean)
 
-
 (**
  * This represents a function call
  * *)
@@ -22,7 +21,7 @@ type function_exec =
   | Keyword of keyword
   | UserFunc of user_func
 
-
+(* things that return a real value *)
 type expression =
   | FunctionExec of function_exec
   | Adition of (expression * expression)
@@ -30,6 +29,7 @@ type expression =
   | Boolean of boolean
 
 
+(* things that return io_side_effects *)
 type statement =
   | Display
   | BoxDef of (symbol * expression)
@@ -41,5 +41,10 @@ type statement =
 type function_def = {
   name : symbol;
   args : expression list;
-  body : statement list;
+  body : expression list; (* or statment? *)
 }
+
+type ast
+
+type parse = Tokenizer.token -> ast
+
