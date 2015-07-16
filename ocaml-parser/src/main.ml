@@ -4,7 +4,10 @@ open Printf
 let parse filename = 
    Core.In_channel.read_lines filename
    |> List.map ~f:Tokenizer.tokenize
-   |> List.iter ~f:Tokenizer.print_tokens
+   (* |> List.iter ~f:Tokenizer.print_tokens *)
+   |> Parser.parse
+   |> Parser.print_tree
+   
 
 
 let spec =

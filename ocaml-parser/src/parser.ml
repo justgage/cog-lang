@@ -1,7 +1,5 @@
 type symbol
-
 type user_func
-
 type keyword
 
 type boolean =
@@ -27,18 +25,49 @@ type expression =
   | Adition of (expression * expression)
   | Division of (expression * expression)
   | Boolean of boolean
+  | String of string
 
 
-type statement =
-  | Display
+type statement  =
+  | Display of string
   | BoxDef of (symbol * expression)
   | BoxAssign
   | RepeatTill
   | Expression of expression
 
-
 type function_def = {
   name : symbol;
   args : expression list;
-  body : statement list;
+  body : expression list;
 }
+
+type ast = statement list
+
+(* gets the things till the closing paren *)
+let rec get_args args = match args with
+| Tokenizer.ClosingRound::rest -> 
+    []
+| x::rest -> 
+    x :: (get_args rest)
+| [] -> 
+    failwith "Unexpected end of file! I was looking for a closing parenthesis ')'.
+\n Please make sure you haven't missed one!"
+
+let grab_string tokens = 
+  String (* should we be doing this in the tokenizer*)
+
+let rec str_parse tokens tokens = match tokens with
+| Tokenizer.DoubleQuote :: rest ->  rest
+| [] -> 
+    failwith "Unexpected end of file! I was looking for a closing double quote -> \" 
+\n Please make sure you haven't missed one!"
+
+let rec parse x = match x with
+| Tokenizer.Symbol a :: Tokenizer.OpenRound :: s :: Tokenizer.ClosingRound :: rest  -> Display s
+| x::_ -> failwith (Printf.sprintf "There seems to be an error in parsing %s" (Tokenizer.to_string x))
+| [] -> []
+
+
+let print_tree x = ()
+
+

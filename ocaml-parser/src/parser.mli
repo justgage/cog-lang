@@ -1,8 +1,7 @@
 type symbol
-
 type user_func
-
 type keyword
+type ast (* abstract syntax tree *)
 
 type boolean =
   | True
@@ -44,7 +43,6 @@ type function_def = {
   body : expression list; (* or statment? *)
 }
 
-type ast
-
-type parse = Tokenizer.token -> ast
+val parse : Tokenizer.token list list -> ast
+val print_tree : ast -> unit
 
