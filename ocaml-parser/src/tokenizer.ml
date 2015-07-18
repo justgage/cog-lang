@@ -17,6 +17,7 @@ type token =
   | ClosingRound
   | ClosingSquare
   | CommentBegin
+  | Comment of string
   | DoubleQuote
   | Else
   | End (* end tags *)
@@ -151,9 +152,29 @@ let print_token t = match t with
 | x -> (* tokens I just haven't spesified a color for *)
     Printf.printf "%s " (Colors.magenta @@ to_string x)
 
+let str_split_1 str index = 
+  (
+    String.slice str 0 index , 
+    String.slice str index (String.length str)
+  )
+
+let next_token str = match String.index str ' ' with
+| Some index -> Some (take_str str index)
+| None  -> None
 
 let split_up = String.split ~on:' '
-let from_str_list list = (List.map ~f:from_str list) @ [Newline]
+
+let rec from_str str = 
+  let nt = next_token str in
+  match nt with
+  | first :: rest -> 
+      let ftoken = from_str first in
+      match ftoken with
+      | CommentBegin -> Comment rest
+      | x -> x :: from_str_list
+  | [] ->  [Newline]
+
+  (List.map ~f:from_str list) @ [Newline]
 let print_tokens tokens = List.iter ~f:(print_token) tokens
 
 (* the high level function used to tokenize a string *)
