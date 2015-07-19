@@ -16,6 +16,7 @@ type token =
   | ClosingRound
   | ClosingSquare
   | CommentBegin
+  | Comment of string
   | DoubleQuote
   | Else
   | End (* end tags *)
@@ -43,5 +44,5 @@ type token =
 val tokenize : string -> token list
 val print_token : token -> unit
 val print_tokens : token list -> unit
-val from_str_list : string list -> token list
+val from_char_list : symbol -> token list
 val to_string : token -> string

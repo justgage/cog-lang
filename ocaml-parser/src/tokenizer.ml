@@ -73,6 +73,7 @@ let to_string x =
   | Then -> "then"
   | Newline -> "\n"
   | CommentBegin -> "#"
+  | Comment x -> "#" ^ x
   | Symbol x -> x 
 
 let str_is_float str =  
@@ -152,29 +153,28 @@ let print_token t = match t with
 | x -> (* tokens I just haven't spesified a color for *)
     Printf.printf "%s " (Colors.magenta @@ to_string x)
 
-let str_split_1 str index = 
+let split_1 str index = 
   (
     String.slice str 0 index , 
-    String.slice str index (String.length str)
+    String.slice str (index + 1) (String.length str) 
+    (*                      ^-  that this takes out the space *)
   )
 
-let next_token str = match String.index str ' ' with
-| Some index -> Some (take_str str index)
-| None  -> None
+(* grabs everything from the head to the next space *)
+let next_str str = match String.index str ' ' with
+| Some index -> Some (split_1 str index)
+| None -> None
 
-let split_up = String.split ~on:' '
-
-let rec from_str str = 
-  let nt = next_token str in
-  match nt with
-  | first :: rest -> 
-      let ftoken = from_str first in
+(* takes a string ant turns in into a string of tokens *)
+let rec from_char_list str = 
+  match (next_str str) with
+  | None -> []
+  | Some (next, rest) ->
+      let ftoken = from_str next in
       match ftoken with
-      | CommentBegin -> Comment rest
-      | x -> x :: from_str_list
-  | [] ->  [Newline]
+       | CommentBegin -> [Comment rest]
+       | x            -> x :: (from_char_list rest)
 
-  (List.map ~f:from_str list) @ [Newline]
 let print_tokens tokens = List.iter ~f:(print_token) tokens
 
 (* the high level function used to tokenize a string *)
@@ -182,5 +182,5 @@ let tokenize str =
   str
   |> String.to_list
   |> spacer
-  |> split_up
-  |> from_str_list
+  |> from_char_list
+

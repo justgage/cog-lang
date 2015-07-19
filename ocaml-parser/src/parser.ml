@@ -53,19 +53,15 @@ let rec get_args args = match args with
     failwith "Unexpected end of file! I was looking for a closing parenthesis ')'.
 \n Please make sure you haven't missed one!"
 
-let grab_string tokens = 
-  String (* should we be doing this in the tokenizer*)
 
-let rec str_parse tokens tokens = match tokens with
-| Tokenizer.DoubleQuote :: rest ->  rest
-| [] -> 
-    failwith "Unexpected end of file! I was looking for a closing double quote -> \" 
-\n Please make sure you haven't missed one!"
-
-let rec parse x = match x with
-| Tokenizer.Symbol a :: Tokenizer.OpenRound :: s :: Tokenizer.ClosingRound :: rest  -> Display s
-| x::_ -> failwith (Printf.sprintf "There seems to be an error in parsing %s" (Tokenizer.to_string x))
-| [] -> []
+let rec parse x = 
+  let open Tokenizer in
+  match x with
+  (* function call *)
+  | Symbol a :: OpenRound :: s :: ClosingRound :: rest ->
+      Display s
+  | x::_ -> failwith (Printf.sprintf "There seems to be an error in parsing %s" (Tokenizer.to_string x))
+  | [] -> []
 
 
 let print_tree x = ()
