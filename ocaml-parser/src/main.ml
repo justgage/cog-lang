@@ -2,9 +2,9 @@ open Core.Std
 open Printf
 
 let parse filename = 
-   Core.In_channel.read_lines filename
-   |> List.map ~f:Tokenizer.tokenize
-   (* |> List.iter ~f:Tokenizer.print_tokens *)
+   Core.In_channel.read_all filename
+   |> Tokenizer.tokenize
+   |> Tokenizer.print_tokens_debug
    |> Parser.parse
    |> Parser.print_tree
    

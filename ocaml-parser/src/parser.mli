@@ -23,14 +23,15 @@ type function_exec =
 (* things that return a real value *)
 type expression =
   | FunctionExec of function_exec
-  | Adition of (expression * expression)
+  | Addition of (expression * expression)
   | Division of (expression * expression)
   | Boolean of boolean
+  | String of string
 
 
 (* things that return io_side_effects *)
 type statement =
-  | Display
+  | Display of string
   | BoxDef of (symbol * expression)
   | BoxAssign
   | RepeatTill
@@ -40,9 +41,9 @@ type statement =
 type function_def = {
   name : symbol;
   args : expression list;
-  body : expression list; (* or statment? *)
+  body : expression list; (* or statement? *)
 }
 
-val parse : Tokenizer.token list list -> ast
+val parse : Tokenizer.token list -> ast
 val print_tree : ast -> unit
 

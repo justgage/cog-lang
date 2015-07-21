@@ -22,7 +22,7 @@ type function_exec =
 
 type expression =
   | FunctionExec of function_exec
-  | Adition of (expression * expression)
+  | Addition of (expression * expression)
   | Division of (expression * expression)
   | Boolean of boolean
   | String of string
@@ -54,13 +54,14 @@ let rec get_args args = match args with
 \n Please make sure you haven't missed one!"
 
 
+(* This is the main parsing function *)
 let rec parse x = 
   let open Tokenizer in
   match x with
   (* function call *)
   | Symbol a :: OpenRound :: s :: ClosingRound :: rest ->
-      Display s
-  | x::_ -> failwith (Printf.sprintf "There seems to be an error in parsing %s" (Tokenizer.to_string x))
+      Display "FIXME: contents of the display" :: (parse rest)
+  | x::_ -> failwith (Printf.sprintf "Did not understand token: `%s`" (Tokenizer.to_string x))
   | [] -> []
 
 

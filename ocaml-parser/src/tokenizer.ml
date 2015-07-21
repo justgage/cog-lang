@@ -74,7 +74,7 @@ let to_string x =
   | Newline -> "\n"
   | CommentBegin -> "#"
   | Comment x -> "#" ^ x
-  | Symbol x -> x 
+  | Symbol x -> "Symbol=" ^ x 
 
 let str_is_float str =  
   let maybe_float = Option.try_with (
@@ -165,6 +165,17 @@ let next_str str = match String.index str ' ' with
 | Some index -> Some (split_1 str index)
 | None -> None
 
+
+let rec comment_grab str =
+  match (str) with
+  | [] -> []
+  | '\n' :: rest -> rest
+  | x :: rest -> x :: (comment_grab rest)
+
+let rec comment_grab_str str =
+  ( comment_grab @@ String.to_list str)
+  |> String.of_char_list
+
 (* takes a string ant turns in into a string of tokens *)
 let rec from_char_list str = 
   match (next_str str) with
@@ -172,10 +183,14 @@ let rec from_char_list str =
   | Some (next, rest) ->
       let ftoken = from_str next in
       match ftoken with
-       | CommentBegin -> [Comment rest]
+       | CommentBegin -> [Comment (comment_grab_str rest)]
        | x            -> x :: (from_char_list rest)
 
-let print_tokens tokens = List.iter ~f:(print_token) tokens
+let print_tokens tokens = 
+ tokens |> List.iter ~f:(print_token) 
+
+let print_tokens_debug tokens = 
+ tokens |> List.map ~f:(fun x -> print_token x; x) 
 
 (* the high level function used to tokenize a string *)
 let tokenize str = 

@@ -44,5 +44,6 @@ type token =
 val tokenize : string -> token list
 val print_token : token -> unit
 val print_tokens : token list -> unit
+val print_tokens_debug : token list -> token list
 val from_char_list : symbol -> token list
 val to_string : token -> string
