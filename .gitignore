@@ -1,2 +1,3 @@
 ocaml-parser/_build/
 crenshaw-txt/
+*.byte

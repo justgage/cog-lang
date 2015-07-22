@@ -4,9 +4,9 @@ open Printf
 let parse filename = 
    Core.In_channel.read_all filename
    |> Tokenizer.tokenize
-   |> Tokenizer.print_tokens_debug
-   |> Parser.parse
-   |> Parser.print_tree
+   |> Tokenizer.print_tokens
+   (* |> Parser.parse *)
+   (* |> Parser.print_tree *)
    
 
 

@@ -177,15 +177,15 @@ let comment_grab str =
 let rec comment_grab_str str =
   ( comment_grab @@ String.to_list str)
 
-(* takes a string ant turns in into a string of tokens *)
+(* takes a string and turns in into a string of tokens *)
 let rec from_char_list str = 
   match (next_str str) with
   | None -> []
   | Some (next, rest) ->
       let ftoken = from_str next in
       match ftoken with
-       | CommentBegin -> let (comment, rest) = comment_grab_str rest in
-           comment :: (from_char_list (String.of_char_list rest))
+       | CommentBegin -> let (comment, after_comment) = comment_grab_str rest in
+           comment :: (from_char_list (String.of_char_list after_comment))
        | x            -> x :: (from_char_list rest)
 
 let print_tokens tokens = 
