@@ -148,10 +148,10 @@ let print_token t = match t with
     Printf.printf "%s " (Colors.green @@ Float.to_string x)
 | Newline -> 
     Printf.printf "%s" (Colors.blue "⏎\n")
-| CommentBegin ->
-    Printf.printf "%s " (Colors.magenta "#")
+| Comment x ->
+    Printf.printf "%s " (Colors.magenta ("#" ^ x))
 | x -> (* tokens I just haven't spesified a color for *)
-    Printf.printf "%s " (Colors.magenta @@ to_string x)
+    Printf.printf "%s " (Colors.red @@ to_string x)
 
 let split_1 str index = 
   (
@@ -166,15 +166,16 @@ let next_str str = match String.index str ' ' with
 | None -> None
 
 
-let rec comment_grab str =
-  match (str) with
-  | [] -> []
-  | '\n' :: rest -> rest
-  | x :: rest -> x :: (comment_grab rest)
+let comment_grab str =
+  let i_opt = List.findi ~f:(fun _ x -> x = '\n') str in
+  match i_opt with
+  | Some (i , _) -> let (comment, rest) = List.split_n str i in
+      (Comment (String.of_char_list comment), rest)
+  | None -> 
+      (Comment (String.of_char_list str), [])
 
 let rec comment_grab_str str =
   ( comment_grab @@ String.to_list str)
-  |> String.of_char_list
 
 (* takes a string ant turns in into a string of tokens *)
 let rec from_char_list str = 
@@ -183,7 +184,8 @@ let rec from_char_list str =
   | Some (next, rest) ->
       let ftoken = from_str next in
       match ftoken with
-       | CommentBegin -> [Comment (comment_grab_str rest)]
+       | CommentBegin -> let (comment, rest) = comment_grab_str rest in
+           comment :: (from_char_list (String.of_char_list rest))
        | x            -> x :: (from_char_list rest)
 
 let print_tokens tokens = 
