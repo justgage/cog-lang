@@ -4,7 +4,7 @@ open Printf
 open Colors
 type l = string
 
-type symbol = string
+type symbol = char list
 
 type boolean =
   | True
@@ -19,6 +19,7 @@ type token =
   | CommentBegin
   | Comment of string
   | DoubleQuote
+  | QuoteString of string
   | Else
   | End (* end tags *)
   | Float of float
@@ -39,7 +40,7 @@ type token =
   | RepeatTill
   | Slash
   | Star
-  | Symbol of symbol
+  | Symbol of string
   | Then
 
 let to_string x =
@@ -74,6 +75,7 @@ let to_string x =
   | Newline -> "\n"
   | CommentBegin -> "#"
   | Comment x -> "#" ^ x
+  | QuoteString x -> "\"" ^ x ^ "\""
   | Symbol x -> "Symbol=" ^ x 
 
 let str_is_float str =  
@@ -118,21 +120,32 @@ let from_str x =
       Float (Float.of_string x)
   | x -> Symbol x
 
+
+(* Butterfly operator? (this is my first operator in OCaml so I must
+ * give it a name, obviously)
+ *
+ * This is an operator that will take a string and append it to
+ * a char list
+ * *)
+let (><) (left: string) (right : char list) = 
+  List.append (String.to_list left) right
+
+
 (** This will mostly put spaces around things that need it *)
 let rec spacer str_list = match str_list with
-  | '"' ::rest -> " \" " ^ spacer rest
-  | '(' ::rest -> " ( " ^ spacer rest
-  | ')' ::rest -> " ) " ^ spacer rest
-  | '[' ::rest -> " [ " ^ spacer rest
-  | ']' ::rest -> " ] " ^ spacer rest
-  | '+' ::rest -> " + " ^ spacer rest
-  | '-' ::rest -> " - " ^ spacer rest
-  | '/' ::rest -> " / " ^ spacer rest
-  | '*' ::rest -> " * " ^ spacer rest
-  | '\n'::rest -> " \n " ^ spacer rest
-  | '#'::rest  -> " # " ^ spacer rest
-  | []         -> ""
-  | x::rest    -> Char.to_string x ^ spacer rest
+  | '"' ::rest -> " \" " >< spacer rest
+  | '(' ::rest -> " ( "  >< spacer rest
+  | ')' ::rest -> " ) "  >< spacer rest
+  | '[' ::rest -> " [ "  >< spacer rest
+  | ']' ::rest -> " ] "  >< spacer rest
+  | '+' ::rest -> " + "  >< spacer rest
+  | '-' ::rest -> " - "  >< spacer rest
+  | '/' ::rest -> " / "  >< spacer rest
+  | '*' ::rest -> " * "  >< spacer rest
+  | '\n'::rest -> " \n " >< spacer rest
+  | '#'::rest  -> " # "  >< spacer rest
+  | []         -> []
+  | x::rest    -> x :: spacer rest
 
 (* An easy way to see how the tokenizer works *)
 let print_token t = match t with
@@ -153,43 +166,42 @@ let print_token t = match t with
 | x -> (* tokens I just haven't spesified a color for *)
     Printf.printf "%s " (Colors.red @@ to_string x)
 
-let split_1 str index = 
-  (
-    String.slice str 0 index , 
-    String.slice str (index + 1) (String.length str) 
-    (*                      ^-  that this takes out the space *)
-  )
-
-(* grabs everything from the head to the next space *)
-let next_str str = match String.index str ' ' with
-| Some index -> Some (split_1 str index)
-| None -> None
-
-
 (* This will split the string by the first split_char, if not found,
  * everything is placed in the first return of the tuple *)
-let split_first split_char str =
-  let i_opt = List.findi ~f:(fun _ x -> x = split_char) str in
+let split_on_first split_char char_list =
+  let i_opt = List.findi ~f:(fun _ x -> x = split_char) char_list in
   match i_opt with
-  | Some (i,_) -> List.split_n str i 
-  | None       -> (str, [])
+  | Some (i,_) -> let (x, xs) = List.split_n char_list i in
+                  (x, (List.drop xs 1))
+  | None       -> (char_list, [])
 
+
+(*** Special tokens ***) 
+
+(* This will grab a comment *)
 let comment_grab str =
-  let (comment, rest) = split_first '\n' str in
+  let (comment, rest) = split_on_first '\n' str in
   (Comment (String.of_char_list comment), rest)
 
-let comment_grab_str str =
-  ( comment_grab @@ String.to_list str)
+(* This will grab a string *)
+let string_grab str =
+  let (str, rest) = split_on_first '"' str in
+  (QuoteString (String.of_char_list str), rest)
+
+(* grabs everything from the head to the next space *)
+let next_str = split_on_first ' '
 
 (* takes a string and turns in into a string of tokens *)
-let rec from_char_list str = 
+let rec from_char_list (str : char list) = 
   match (next_str str) with
-  | None -> []
-  | Some (next, rest) ->
-      let ftoken = from_str next in
+  | ([], []) -> []
+  | (next, rest) ->
+      let ftoken = from_str @@ String.of_char_list next in
       match ftoken with
-       | CommentBegin -> let (comment, after_comment) = comment_grab_str rest in
-           comment :: (from_char_list (String.of_char_list after_comment))
+       | CommentBegin -> let (comment, after_comment) = comment_grab rest in
+           comment :: Newline :: (from_char_list after_comment)
+       | DoubleQuote -> let (str, after_comment) = string_grab rest in
+           str :: (from_char_list after_comment)
        | x            -> x :: (from_char_list rest)
 
 let print_tokens tokens = 

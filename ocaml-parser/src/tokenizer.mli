@@ -18,6 +18,7 @@ type token =
   | CommentBegin
   | Comment of string
   | DoubleQuote
+  | QuoteString of string
   | Else
   | End (* end tags *)
   | Float of float
@@ -38,7 +39,7 @@ type token =
   | RepeatTill
   | Slash
   | Star
-  | Symbol of symbol
+  | Symbol of string
   | Then
 
 val tokenize : string -> token list
