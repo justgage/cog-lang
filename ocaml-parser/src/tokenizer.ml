@@ -166,15 +166,19 @@ let next_str str = match String.index str ' ' with
 | None -> None
 
 
-let comment_grab str =
-  let i_opt = List.findi ~f:(fun _ x -> x = '\n') str in
+(* This will split the string by the first split_char, if not found,
+ * everything is placed in the first return of the tuple *)
+let split_first split_char str =
+  let i_opt = List.findi ~f:(fun _ x -> x = split_char) str in
   match i_opt with
-  | Some (i , _) -> let (comment, rest) = List.split_n str i in
-      (Comment (String.of_char_list comment), rest)
-  | None -> 
-      (Comment (String.of_char_list str), [])
+  | Some (i,_) -> List.split_n str i 
+  | None       -> (str, [])
 
-let rec comment_grab_str str =
+let comment_grab str =
+  let (comment, rest) = split_first '\n' str in
+  (Comment (String.of_char_list comment), rest)
+
+let comment_grab_str str =
   ( comment_grab @@ String.to_list str)
 
 (* takes a string and turns in into a string of tokens *)
