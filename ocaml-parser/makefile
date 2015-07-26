@@ -4,4 +4,4 @@ main:
 	corebuild -pkg core src/parser.byte
 	corebuild -pkg core src/main.native
 test:
-	./main.native -f first.wow
+	./main.native -f first.cog

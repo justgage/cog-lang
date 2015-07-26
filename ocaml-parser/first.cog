@@ -1,3 +1,4 @@
+# NOTE: this is my behvior driven tests
 # this represents a the score of player1
 box score = 2
 box scores = [1 2 4]
@@ -52,9 +53,15 @@ func say_hi_to(name)
   display("Hello," name)
 end
 
+func add(x y)
+  x + y # implicit return value
+end
+
 say_hi_to("Gage")
 
-box multi_line_str = "Multi-line 
+box multi_line_str = "Multi-line stuff that doesn't parse tokens:
+(1 + 2)
+(note: none of this should)
 is a string that has multiple
 lines"
 
