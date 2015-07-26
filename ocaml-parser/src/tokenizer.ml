@@ -150,21 +150,21 @@ let rec spacer str_list = match str_list with
 (* An easy way to see how the tokenizer works *)
 let print_token t = match t with
 | Symbol x ->
-    Printf.printf "%s " x
+    Printf.printf "%s" x
 | (FuncDef | Box | If | Else | End | Repeat | RepeatTill) as x ->
-    Printf.printf "%s " (Colors.cyan @@ to_string x)
+    Printf.printf "%s" (Colors.cyan @@ to_string x)
 | (Assignment | Plus | Minus | Star) as x ->
-    Printf.printf "%s " (Colors.yellow @@ to_string x)
+    Printf.printf "%s" (Colors.yellow @@ to_string x)
 | (GreaterThan | GreaterThanOrEqual | LessThan | LessThanOrEqual) as x ->
-    Printf.printf "%s " (Colors.yellow @@ to_string x)
+    Printf.printf "%s" (Colors.yellow @@ to_string x)
 | Float x ->
-    Printf.printf "%s " (Colors.green @@ Float.to_string x)
+    Printf.printf "%s" (Colors.green @@ Float.to_string x)
 | Newline -> 
     Printf.printf "%s" (Colors.blue "⏎\n")
 | Comment x ->
-    Printf.printf "%s " (Colors.magenta ("#" ^ x))
+    Printf.printf "%s" (Colors.magenta ("#" ^ x))
 | x -> (* tokens I just haven't spesified a color for *)
-    Printf.printf "%s " (Colors.red @@ to_string x)
+    Printf.printf "%s" (Colors.red @@ to_string x)
 
 (* This will split the string by the first split_char, if not found,
  * everything is placed in the first return of the tuple *)

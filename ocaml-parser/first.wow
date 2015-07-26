@@ -54,4 +54,8 @@ end
 
 say_hi_to("Gage")
 
+box multi_line_str = "Multi-line 
+is a string that has multiple
+lines"
+
 
