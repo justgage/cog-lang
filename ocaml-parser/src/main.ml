@@ -1,13 +1,8 @@
 open Core.Std
 open Printf
+open Cog
 
-let parse filename = 
-   Core.In_channel.read_all filename
-   |> Tokenizer.tokenize
-   |> Tokenizer.print_tokens
-   (* |> Parser.parse *)
-   (* |> Parser.print_tree *)
-   
+let parse = Cog.run
 
 
 let spec =
