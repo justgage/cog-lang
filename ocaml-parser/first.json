@@ -1,5 +1,10 @@
 [
-  ["box", "score", 2 ],
-  ["box", "scores", [1,2,3]],
-  ["display", "score", ["score"]]
+  ["boxdef", "score", 2 ],
+  ["boxdef", "scores", [1,2,3]],
+  ["display", ["I'm printing out something"]],
+  ["display", [:score]],
+  ["=", "score", [["+" "score" 1]]],
+  ["display", ["your score is:", :score]],
+  ["boxdef", "name", [1,2,3]],
+
 ]

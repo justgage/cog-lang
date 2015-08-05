@@ -1,51 +1,49 @@
 module Parser : sig
-  type symbol
-  type user_func
-  type keyword
-  type ast (* abstract syntax tree *)
-
+  open Core.Std
   open Tokenizer
+
+  type ast (* abstract syntax tree *)
+  type symbol
 
   type boolean =
     | True
     | False
 
   type boolean_expression =
-    | LessThan of (boolean * boolean)
-    | GreaterThan of (boolean * boolean)
-    | LessThanOrEqual of (boolean * boolean)
-    | GreaterThanOrEqual of (boolean * boolean)
+    | LessThan of           ( boolean_expression * boolean_expression)
+    | GreaterThan of        ( boolean_expression * boolean_expression)
+    | LessThanOrEqual of    ( boolean_expression * boolean_expression)
+    | GreaterThanOrEqual of ( boolean_expression * boolean_expression)
+    | Boolean of boolean
 
-  (**
-   * This represents a function call
-   * *)
-  type function_exec = 
-    | Keyword of keyword
-    | UserFunc of user_func
-
-  (* things that return a real value *)
   type expression =
-    | FunctionExec of function_exec
     | Addition of (expression * expression)
+    | BadToken of string 
+    | BooleanEx of  boolean_expression
+    | BoxAssign of box_assign
+    | BoxDef of (symbol * expression)
+    | Display of expression
     | Division of (expression * expression)
-    | Boolean of boolean_expression
-    | StringEx of string
+    | Expression of expression
     | Float of float
-
-
-  type box_assign = {
+    | FunctionExec of function_exec
+    | IfEx of if_ex
+    | RepeatTill
+    | StringEx of string
+  and box_assign = {
     var_name : string;
     expression : expression;
+  } 
+  and if_ex = {
+    condition : boolean_expression Option.t;
+    body : expression list;
+    else_body : expression list;
   }
-
-  (* things that return io_side_effects *)
-  type statement =
-    | Display of string
-    | BoxDef of (symbol * expression)
-    | BoxAssign of box_assign
-    | RepeatTill
-    | Expression of expression
-    | BadToken of int * string 
+  (* a function call *)
+ and function_exec = {
+     name : string;
+    args : expression list;
+  }
 
 
   type function_def = {
@@ -55,7 +53,6 @@ module Parser : sig
   }
 
   val parse : Tokenizer.token list -> ast
-  val parse_linenum : linenum:int -> Tokenizer.token list ->  ast
   val print_tree : ast -> unit
 
 end

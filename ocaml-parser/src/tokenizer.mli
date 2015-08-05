@@ -37,6 +37,7 @@ module Tokenizer : sig
     | OpenSquare
     | Plus
     | Repeat
+    | Display
     | RepeatTill
     | Slash
     | Star

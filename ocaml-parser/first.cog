@@ -50,7 +50,8 @@ say_hi()
 # Defining a function with a parameter
 
 func say_hi_to(name)
-  display("Hello," name)
+  display("Hello,")
+  display(name)
 end
 
 func add(x y)

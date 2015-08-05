@@ -4,49 +4,48 @@ module Parser = struct
 
 
   type symbol
-  type user_func = {
-    name : string
-  }
-  type keyword
 
   type boolean =
     | True
     | False
 
   type boolean_expression =
-    | LessThan of (boolean * boolean)
-    | GreaterThan of (boolean * boolean)
-    | LessThanOrEqual of (boolean * boolean)
-    | GreaterThanOrEqual of (boolean * boolean)
-
-  (**
-   * This represents a function call
-   * *)
-  type function_exec = 
-    | Keyword of keyword
-    | UserFunc of user_func
+    | LessThan of           ( boolean_expression * boolean_expression)
+    | GreaterThan of        ( boolean_expression * boolean_expression)
+    | LessThanOrEqual of    ( boolean_expression * boolean_expression)
+    | GreaterThanOrEqual of ( boolean_expression * boolean_expression)
+    | Boolean of boolean
 
 
   type expression =
-    | FunctionExec of function_exec
     | Addition of (expression * expression)
+    | BadToken of string 
+    | BooleanEx of  boolean_expression
+    | BoxAssign of box_assign
+    | BoxDef of (symbol * expression)
+    | Display of expression
     | Division of (expression * expression)
-    | Boolean of boolean_expression
-    | StringEx of string
+    | Expression of expression
     | Float of float
-
-  type box_assign = {
+    | FunctionExec of function_exec
+    | IfEx of if_ex
+    | RepeatTill
+    | StringEx of string
+  and box_assign = {
     var_name : string;
     expression : expression;
+  } 
+  and if_ex = {
+    condition : boolean_expression Option.t;
+    body : expression list;
+    else_body : expression list;
+  }
+  (* a function call *)
+ and function_exec = {
+     name : string;
+    args : expression list;
   }
 
-  type statement  =
-    | Display of string
-    | BoxDef of (symbol * expression)
-    | BoxAssign of box_assign
-    | RepeatTill
-    | Expression of expression
-    | BadToken of int * string 
 
   type function_def = {
     name : symbol;
@@ -54,7 +53,12 @@ module Parser = struct
     body : expression list;
   }
 
-  type ast = statement list
+  type ast = expression list
+
+
+  let is_func x = match x with
+  | x :: Tokenizer.OpenRound :: rest -> true
+  | _ -> false
 
   (* gets the things till the closing paren *)
   let rec get_args args = match args with
@@ -75,39 +79,67 @@ module Parser = struct
                     (x, (List.drop xs 1))
     | None       -> (char_list, [])
 
-  let grab_assignment = grab Tokenizer.End
-
   (* This is the main parsing function *)
-  let rec parse_linenum ~linenum x = 
-    let open Tokenizer in
+  let rec parse x = 
+    let module T = Tokenizer in
+    
     match x with
-    | QuoteString x :: rest ->
-        Expression (StringEx x) :: (parse_linenum ~linenum:(linenum + 1) rest)
+    | T.QuoteString x :: rest ->
+        Expression (StringEx x) :: (parse rest)
 
-    | Float x :: rest ->
-        Expression (Float x) :: (parse_linenum ~linenum:(linenum + 1) rest)
+    | T.Float x :: rest ->
+        Expression (Float x) :: (parse rest)
 
-    | Newline :: rest ->
+    | T.Newline :: rest ->
         (* increment line counts *)
-        (parse_linenum ~linenum:(linenum + 1) rest)
+        (parse  rest)
 
-    | Comment x :: rest ->
+    | T.Comment x :: rest ->
         (* ignore comments *)
-        (parse_linenum ~linenum:linenum rest)
+        (parse  rest)
 
-    | Box :: Symbol var_name :: Assignment :: rest  ->
-        let (body, rest) =  grab_assignment rest in
-        BoxAssign {var_name=var_name; expression = (parse_expr body) }
+    | T.Box :: T.Symbol var_name :: T.Assignment :: rest  ->
+        let (body, rest) =  grab T.Newline rest in
+        BoxAssign {var_name=var_name; expression = (parseexpr body) }
         ::
-        (parse_linenum ~linenum:linenum rest)
-    | End :: _ | [] -> []
-    | x::rest -> 
-        (BadToken (linenum, (to_string x))) :: (parse_linenum ~linenum:linenum rest)
+        (parse rest)
 
-  and parse_expr x = match x with
+
+    | T.If :: rest -> 
+        let (condition, rest) =  grab T.Newline rest in
+        let (body, rest) =  grab T.Else rest in
+        let (else_body, rest) =  grab T.End rest in
+        let body_parsed = (parse body) in
+        let else_body_parsed = (parse else_body) in
+        IfEx {  
+          condition = parseboolean condition ;
+          body = body_parsed;
+          else_body = else_body_parsed;
+        } :: parse rest
+
+    | T.End :: _ | [] -> []
+
+    | T.Display :: T.OpenRound :: rest -> 
+        let (args, rest) =  grab T.ClosingRound rest in
+        Display (parseexpr args) :: (parse rest)
+
+    (* Function *)
+    | T.Symbol name :: T.OpenRound :: rest -> 
+        let (args, rest) =  grab T.ClosingRound rest in
+        FunctionExec { 
+          name = name;
+          args = (parse args)
+        } :: (parse rest)
+
+    | x::rest -> (BadToken (Tokenizer.to_string x)) :: parse rest
+    (* ---------------- end of main parser ---------------------*)
+
+  and parseboolean x = match x with
+  | _ -> Some (Boolean False)
+
+  and parseexpr x = match x with
   | _ -> Float 2.0
 
-  let parse = parse_linenum ~linenum:1
 
 
   let print_tree _ = ()

@@ -38,6 +38,7 @@ module Tokenizer = struct
     | OpenSquare
     | Plus
     | Repeat
+    | Display
     | RepeatTill
     | Slash
     | Star
@@ -57,6 +58,7 @@ module Tokenizer = struct
     | Slash-> "/"
     | Star-> "*"
     | Repeat -> "repeat" 
+    | Display -> "display" 
     | RepeatTill -> "repeat_till" 
     | Box -> "box" 
     | Assignment -> "=" 
@@ -116,6 +118,7 @@ module Tokenizer = struct
     | ("\n" | ";" | "then") -> Newline
     | "#" -> CommentBegin
     | "repeat" -> Repeat
+    | "display" -> Display
     | "repeat_till" -> RepeatTill
     | x when str_is_float x -> 
         Float (Float.of_string x)
@@ -165,7 +168,7 @@ module Tokenizer = struct
   | Comment x ->
       Printf.printf "%s" (Colors.magenta ("#" ^ x))
   | x -> (* tokens I just haven't spesified a color for *)
-      Printf.printf "%s" (Colors.red @@ to_string x)
+      Printf.printf "%s" (":" ^ (Colors.red @@ to_string  x) )
 
   (* This will split the string by the first split_char, if not found,
    * everything is placed in the first return of the tuple *)
