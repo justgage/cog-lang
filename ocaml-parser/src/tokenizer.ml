@@ -43,7 +43,6 @@ module Tokenizer = struct
     | Slash
     | Star
     | Symbol of string
-    | Then
 
   let to_string x =
     match x with
@@ -74,7 +73,6 @@ module Tokenizer = struct
     | ClosingRound -> ")"
     | OpenSquare -> "["
     | ClosingSquare -> "]"
-    | Then -> "then"
     | Newline -> "\n"
     | CommentBegin -> "#"
     | Comment x -> "#" ^ x

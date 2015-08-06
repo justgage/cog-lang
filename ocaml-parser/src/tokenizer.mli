@@ -42,7 +42,6 @@ module Tokenizer : sig
     | Slash
     | Star
     | Symbol of string
-    | Then
 
   val tokenize : string -> token list
   val print_token : token -> unit

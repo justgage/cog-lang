@@ -1,0 +1,45 @@
+func first_func(a, abc, d)
+   # checks for if statement return types 
+   box result = if a == 1
+     if abc > 1
+       box guess = 0
+       repeat_till turns >= 10
+         display("Enter your guess:")
+         guess = get_result()
+         if guess == 13
+            display("You got it!")
+         end
+       end
+       "asdf"
+     else
+       "zzzz"
+     end
+   else
+     if abc <= 1
+       "Back"
+     else
+       "Asdf"
+     end
+   end
+
+   result
+end
+
+# func double(x) = x*2
+
+func double(x)
+   x*2
+end
+
+func crazy_math(x, y)
+   1 + 2 - 3 * 2 / 3 * (1 + (1 - # newline shouldn't be a problem
+   1) * 2 + 30)
+end
+
+if [] == []
+   display("empty_lists compare works")
+else
+   display("empty_lists compare does NOT work")
+end
+
+first_func(2+2, 7*9, double(double(double(2)))))

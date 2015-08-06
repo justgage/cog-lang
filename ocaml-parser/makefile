@@ -7,4 +7,4 @@ main:
 	echo "Compiled sucsessfully :)\n"
 
 test:
-	./main.native -f first.cog
+	./main.native -f recursive.cog

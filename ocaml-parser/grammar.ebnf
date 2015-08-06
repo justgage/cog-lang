@@ -1,0 +1,26 @@
+AST ::= Expression*
+
+Expression ::= If | Operator | InfixExp | FuncDef | FuncCall | String | List | Float | BoxDef
+
+InfixExp ::= Expression Operator Expression
+
+Operator ::= "+" | "-" | "/" | "*" | "or" | "and" | 
+
+FuncCall ::= VarName Args
+
+Args ::= "(" (Expression ("," Expression)*)? ")"
+
+FuncDef ::= "func" VarName Args Sep Expression+ End
+
+End ::= "end"
+
+Sep ::= "\n" | "then" | "is"
+
+If ::= "if" Expression Sep Expression* "else" Expression* End
+
+Repeat ::= "repeat" Float
+
+Float ::= "`numbers!`"
+
+BoxDef ::= "box" VarName "=" Expression "Sep"
+
