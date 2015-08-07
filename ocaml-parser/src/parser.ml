@@ -2,145 +2,146 @@ module Parser = struct
   open Core.Std
   open Tokenizer
 
-
   type symbol
 
-  type boolean =
-    | True
-    | False
-
-  type boolean_expression =
-    | LessThan of           ( boolean_expression * boolean_expression)
-    | GreaterThan of        ( boolean_expression * boolean_expression)
-    | LessThanOrEqual of    ( boolean_expression * boolean_expression)
-    | GreaterThanOrEqual of ( boolean_expression * boolean_expression)
-    | Boolean of boolean
-
+  type boolean = bool
 
   type expression =
-    | Addition of (expression * expression)
-    | BadToken of string 
-    | BooleanEx of  boolean_expression
-    | BoxAssign of box_assign
-    | BoxDef of (symbol * expression)
-    | Display of expression
-    | Division of (expression * expression)
-    | Expression of expression
-    | Float of float
-    | FunctionExec of function_exec
     | IfEx of if_ex
-    | RepeatTill
+    | Operator of operator (* infix expressions *)
+    | BoxDef of box_def
+    | BoxAssign of box_assign
+    | Display of expression
+    | Expression of expression
+    | FunctionExec of function_exec
+    | FunctionDef of function_def
+    | Repeat of repeat
+    | RepeatTill of repeat_till
     | StringEx of string
+    | Float of float
+    | BadToken of string 
+    | ParenExp of expression
+    | Boolean of bool
+    | MissingExpression
+  and operator = { 
+    symbol: string;
+    lhand : expression;
+    rhand : expression;
+  }
+  and box_def = {
+    new_var_name : string;
+    contents : expression;
+    def_context : expression;
+  }
   and box_assign = {
     var_name : string;
-    expression : expression;
+    new_contents : expression;
+    context : expression;
   } 
   and if_ex = {
-    condition : boolean_expression Option.t;
-    body : expression list;
-    else_body : expression list;
+    condition : expression;
+    true_body : expression;
+    else_body : expression;
   }
-  (* a function call *)
- and function_exec = {
-     name : string;
+  and function_exec = {
+    name : string;
     args : expression list;
   }
-
-
-  type function_def = {
-    name : symbol;
-    args : expression list;
-    body : expression list;
+  and repeat_till = {
+    done_condition : expression;
+    body : expression;
   }
+  and repeat = {
+    times : float;
+    repeated_body : expression;
+  }
+  and function_def = {
+    func_name : symbol;
+    new_args : expression;
+    new_body : expression; 
+  }
+  and ast = expression (* abstract syntax tree *)
 
-  type ast = expression list
-
+  (********** TYPES END **********)
 
   let is_func x = match x with
   | x :: Tokenizer.OpenRound :: rest -> true
   | _ -> false
-
-  (* gets the things till the closing paren *)
-  let rec get_args args = match args with
-  | Tokenizer.ClosingRound::rest -> 
-      []
-  | x::rest -> 
-      x :: (get_args rest)
-  | [] -> 
-      failwith "Unexpected end of file! I was looking for a closing parenthesis ')'.
-  \n Please make sure you haven't missed one!"
   
-  (* This is used *)
-  let grab split_token char_list =
+  (* 
+   *
+   * returns: touple of left of split_token and right of split_token*)
+  let split ~on_token tokens =
     (* if we find the token, split the list there *)
-    let i_opt = List.findi ~f:(fun _ x -> x = split_token) char_list in
-    match i_opt with
-    | Some (i,_) -> let (x, xs) = List.split_n char_list i in
-                    (x, (List.drop xs 1))
-    | None       -> (char_list, [])
+    let (inside, rest) = 
+      tokens |> List.split_while ~f:((<>) on_token) in
+    (inside, (List.drop rest 1))
+
+  (* Splits args appart at the comma
+   * returns a list of args *)
+  let rec split_args args = 
+    let module T = Tokenizer in
+    match split ~on_token:T.Comma args with
+    | (x,[]) -> [x]
+    | (x,rest) -> x :: split_args rest
 
   (* This is the main parsing function *)
-  let rec parse x = 
+  let rec parse tokens = 
     let module T = Tokenizer in
-    
-    match x with
+
+    match tokens with
     | T.QuoteString x :: rest ->
-        Expression (StringEx x) :: (parse rest)
+        StringEx x
 
     | T.Float x :: rest ->
-        Expression (Float x) :: (parse rest)
+        Expression (Float x)
 
     | T.Newline :: rest ->
-        (* increment line counts *)
+        (* increment line counts? *)
+        (* ignore *)
         (parse  rest)
 
     | T.Comment x :: rest ->
-        (* ignore comments *)
+        (* ignore *)
         (parse  rest)
 
     | T.Box :: T.Symbol var_name :: T.Assignment :: rest  ->
-        let (body, rest) =  grab T.Newline rest in
-        BoxAssign {var_name=var_name; expression = (parseexpr body) }
-        ::
-        (parse rest)
-
+        let (body, rest) = split ~on_token:T.Newline rest in
+        BoxDef {
+          new_var_name = var_name; 
+          contents = (parse body);
+          def_context = (parse rest);
+        }
 
     | T.If :: rest -> 
-        let (condition, rest) =  grab T.Newline rest in
-        let (body, rest) =  grab T.Else rest in
-        let (else_body, rest) =  grab T.End rest in
+        let (condition, rest) =  split ~on_token:T.Newline rest in
+        let (body, rest) =  split ~on_token:T.Else rest in
+        let (else_body, rest) =  split ~on_token:T.End rest in
         let body_parsed = (parse body) in
         let else_body_parsed = (parse else_body) in
         IfEx {  
-          condition = parseboolean condition ;
-          body = body_parsed;
+          condition = ( parse condition );
+          true_body = body_parsed;
           else_body = else_body_parsed;
-        } :: parse rest
+        } 
 
-    | T.End :: _ | [] -> []
 
     | T.Display :: T.OpenRound :: rest -> 
-        let (args, rest) =  grab T.ClosingRound rest in
-        Display (parseexpr args) :: (parse rest)
+        let (args, rest) =  split ~on_token:T.ClosingRound rest in
+        Display (parse args)
 
     (* Function *)
     | T.Symbol name :: T.OpenRound :: rest -> 
-        let (args, rest) =  grab T.ClosingRound rest in
+        let (args, rest) =  split ~on_token:T.ClosingRound rest in
         FunctionExec { 
           name = name;
-          args = (parse args)
-        } :: (parse rest)
+          args = split_args args |> List.map ~f:parse
+        }
 
-    | x::rest -> (BadToken (Tokenizer.to_string x)) :: parse rest
+    | x::rest -> (BadToken (Tokenizer.to_string x))
+
+    | [] -> MissingExpression (* best way to handle it? *)
     (* ---------------- end of main parser ---------------------*)
-
-  and parseboolean x = match x with
-  | _ -> Some (Boolean False)
-
-  and parseexpr x = match x with
-  | _ -> Float 2.0
-
-
 
   let print_tree _ = ()
 end

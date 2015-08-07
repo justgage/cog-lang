@@ -9,7 +9,7 @@ display(score) # 2
 
 score = score + 1 
 
-display("your score is:" score) # your score is: 3
+display("your score is:", score) # your score is: 3
 
 box name = get_result()
 
@@ -54,7 +54,7 @@ func say_hi_to(name)
   display(name)
 end
 
-func add(x y)
+func add(x, y)
   x + y # implicit return value
 end
 
@@ -62,7 +62,7 @@ say_hi_to("Gage")
 
 box multi_line_str = "Multi-line stuff that doesn't parse tokens:
 (1 + 2)
-(note: none of this should)
+(note: none of this should be touched by the tokenizer)
 is a string that has multiple
 lines"
 

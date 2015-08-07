@@ -43,6 +43,7 @@ module Tokenizer = struct
     | Slash
     | Star
     | Symbol of string
+    | Comma
 
   let to_string x =
     match x with
@@ -77,6 +78,7 @@ module Tokenizer = struct
     | CommentBegin -> "#"
     | Comment x -> "#" ^ x
     | QuoteString x -> "\"" ^ x ^ "\""
+    | Comma -> ","
     | Symbol x -> "Symbol=" ^ x 
 
   let str_is_float str =  
@@ -118,6 +120,7 @@ module Tokenizer = struct
     | "repeat" -> Repeat
     | "display" -> Display
     | "repeat_till" -> RepeatTill
+    | "," -> Comma
     | x when str_is_float x -> 
         Float (Float.of_string x)
     | x -> Symbol x
