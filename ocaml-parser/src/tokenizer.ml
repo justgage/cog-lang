@@ -39,11 +39,12 @@ module Tokenizer = struct
     | Plus
     | Repeat
     | Display
-    | RepeatTill
+    | Until
     | Slash
     | Star
     | Symbol of string
     | Comma
+    | Then
 
   let to_string x =
     match x with
@@ -59,7 +60,7 @@ module Tokenizer = struct
     | Star-> "*"
     | Repeat -> "repeat" 
     | Display -> "display" 
-    | RepeatTill -> "repeat_till" 
+    | Until -> "until" 
     | Box -> "box" 
     | Assignment -> "=" 
     | DoubleQuote -> "\""
@@ -80,6 +81,7 @@ module Tokenizer = struct
     | QuoteString x -> "\"" ^ x ^ "\""
     | Comma -> ","
     | Symbol x -> "Symbol=" ^ x 
+    | Then -> "then"
 
   let str_is_float str =  
     let maybe_float = Option.try_with (
@@ -115,11 +117,12 @@ module Tokenizer = struct
     | ")" -> ClosingRound
     | "[" -> OpenSquare
     | "]" -> ClosingSquare
-    | ("\n" | ";" | "then") -> Newline
+    | ("\n" | ";") -> Newline
+    | ("then") -> Then
     | "#" -> CommentBegin
     | "repeat" -> Repeat
     | "display" -> Display
-    | "repeat_till" -> RepeatTill
+    | "until" -> Until
     | "," -> Comma
     | x when str_is_float x -> 
         Float (Float.of_string x)
@@ -138,6 +141,7 @@ module Tokenizer = struct
 
   (** This will mostly put spaces around things that need it *)
   let rec spacer str_list = match str_list with
+    | ',' ::rest -> " , " >< spacer rest
     | '"' ::rest -> " \" " >< spacer rest
     | '(' ::rest -> " ( "  >< spacer rest
     | ')' ::rest -> " ) "  >< spacer rest
@@ -156,7 +160,7 @@ module Tokenizer = struct
   let print_token t = match t with
   | Symbol x ->
       Printf.printf "%s" x
-  | (FuncDef | Box | If | Else | End | Repeat | RepeatTill) as x ->
+  | (FuncDef | Box | If | Else | End | Repeat | Until) as x ->
       Printf.printf "%s" (Colors.cyan @@ to_string x)
   | (Assignment | Plus | Minus | Star) as x ->
       Printf.printf "%s" (Colors.yellow @@ to_string x)

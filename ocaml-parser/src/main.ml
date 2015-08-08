@@ -2,9 +2,6 @@ open Core.Std
 open Printf
 open Cog
 
-let parse = Cog.run
-
-
 let spec =
   let open Command.Spec in
   empty
@@ -15,7 +12,7 @@ let command =
   ~summary: "Add a jrnl entry :)"
   ~readme:(fun () -> "More detailed info")
   spec
-  (fun filename () -> parse filename; ())
+  (fun filename () -> Cog.run_fmt filename; ())
 
 let () =
   Command.run ~version:"0.1" ~build_info:"RWO" command

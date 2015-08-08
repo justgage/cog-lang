@@ -8,6 +8,12 @@ module Cog = struct
        |> Tokenizer.tokenize
        |> Parser.parse
 
+    let run_fmt filename = 
+      Core.In_channel.read_all filename
+       |> Tokenizer.tokenize
+       |> Parser.parse
+       |> Parser.print_tree
+
     let run filename = 
       Core.In_channel.read_all filename
        |> Tokenizer.tokenize

@@ -5,13 +5,8 @@ module Tokenizer : sig
     | True
     | False
 
-  (**
-   * These are simple meaningful or non-meaningful symbols
-   * this step of the process does not structure it, it just
-   * makes it more consumeable 
-   **)
   type token =
-    | Assignment 
+    | Assignment
     | Boolean of boolean
     | Box
     | ClosingRound
@@ -38,11 +33,12 @@ module Tokenizer : sig
     | Plus
     | Repeat
     | Display
-    | RepeatTill
+    | Until
     | Slash
     | Star
     | Symbol of string
     | Comma
+    | Then
 
   val tokenize : string -> token list
   val print_token : token -> unit

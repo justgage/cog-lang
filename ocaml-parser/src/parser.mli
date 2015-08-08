@@ -6,50 +6,57 @@ module Parser : sig
 
   type boolean = bool
 
+  type errors = 
+    | WrongExpression
+
   type expression =
     | IfEx of if_ex
     | Operator of operator (* infix expressions *)
-    | BoxDef of box_def
-    | BoxAssign of box_assign
-    | Display of expression
+    | BoxDef of box_set
+    | BoxAssign of box_set
+    | Display of display
     | Expression of expression
     | FunctionExec of function_exec
     | FunctionDef of function_def
     | Repeat of repeat
-    | RepeatTill of repeat_till
+    | Until of until
     | StringEx of string
     | Float of float
-    | BadToken of string 
+    | BadToken of bad_token 
     | ParenExp of expression
     | Boolean of bool
-    | MissingExpression
+    | List of expression list 
+    | VarGet of string
+    | NoExpression
+    | Error of errors
   and operator = { 
     symbol: string;
     lhand : expression;
     rhand : expression;
   }
-  and box_def = {
+  and box_set = {
     new_var_name : string;
     contents : expression;
     def_context : expression;
   }
-  and box_assign = {
-    var_name : string;
-    new_contents : expression;
-    context : expression;
-  } 
+  and display = {
+    display_args : expression list;
+    display_context : expression;
+  }
   and if_ex = {
     condition : expression;
     true_body : expression;
     else_body : expression;
+    if_contex : expression;
   }
   and function_exec = {
     name : string;
     args : expression list;
   }
-  and repeat_till = {
+  and until = {
     done_condition : expression;
     body : expression;
+    after : expression;
   }
   and repeat = {
     times : float;
@@ -59,6 +66,10 @@ module Parser : sig
     func_name : symbol;
     new_args : expression;
     new_body : expression; 
+  }
+  and bad_token = {
+    bad_token : Tokenizer.token;
+    bad_context : expression;
   }
   and ast = expression (* abstract syntax tree *)
 
