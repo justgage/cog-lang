@@ -18,5 +18,5 @@ module Cog = struct
       Core.In_channel.read_all filename
        |> Tokenizer.tokenize
        |> Parser.parse
-       |> Parser.print_tree
+       (*|>  Executor.run *)
 end

@@ -22,12 +22,13 @@ module Parser = struct
     | Until of until
     | StringEx of string
     | Float of float
-    | BadToken of bad_token 
     | ParenExp of expression
     | Boolean of bool
     | List of expression list 
     | VarGet of string
+    | BadToken of bad_token 
     | NoExpression
+    | Newline of new_line
     | Error of errors
   and operator = { 
     symbol: string;
@@ -71,6 +72,9 @@ module Parser = struct
     bad_token : Tokenizer.token;
     bad_context : expression;
   }
+  and new_line = {
+    new_line_context : expression;
+  }
   and ast = expression (* abstract syntax tree *)
 
   (********** TYPES END **********)
@@ -95,7 +99,7 @@ module Parser = struct
 
 
 
-  (* This is the main parsing function *)
+  (* -------------- This is the main parsing function --------------- *)
   let rec parse tokens = 
     let module T = Tokenizer in
 
@@ -109,7 +113,7 @@ module Parser = struct
     | T.Newline :: rest ->
         (* increment line counts? *)
         (* ignore *)
-        (parse  rest)
+        Newline { new_line_context = (parse rest) }
 
     | T.Comment x :: rest ->
         (* ignore *)
@@ -186,31 +190,66 @@ module Parser = struct
     split_on_commas args |> List.map ~f:parse
     (* ---------------- end of main parser ---------------------*)
 
-  let rec print_tree expression = 
+  (*
+   * Will print out a (maybe) pretty represenation of the tree
+   * for debugging and hopefully soon for pretty printing
+   *)
+  let rec string_tree expression = 
     let open Printf in
     match expression with
-    | Operator this -> sprintf "<operator>"
+    | Operator this -> sprintf "<Operator : To be written>"
     | IfEx this -> 
         sprintf "if %s then \n %s \n else \n %s end %s" 
-          (print_tree this.condition)
-          (print_tree this.true_body)
-          (print_tree this.else_body)
-          (print_tree this.if_context)
-    | BoxDef this -> sprintf "box %s = " "foobar"
-    | BoxAssign this -> sprintf "%s = " "foobar"
-    | Display this -> sprintf "<TO BE WRITTEN>" 
-    | Expression x-> sprintf "<TO BE WRITTEN>" 
-    | FunctionExec this -> sprintf "<TO BE WRITTEN>" 
-    | FunctionDef this -> sprintf "<TO BE WRITTEN>" 
-    | Repeat this -> sprintf "<TO BE WRITTEN>" 
-    | Until this -> sprintf "<TO BE WRITTEN>" 
-    | StringEx this -> sprintf "<TO BE WRITTEN>" 
-    | Float this -> sprintf "<TO BE WRITTEN>" 
-    | BadToken this -> sprintf "<TO BE WRITTEN>" 
-    | ParenExp this -> sprintf "<TO BE WRITTEN>" 
-    | Boolean this -> sprintf "<TO BE WRITTEN>" 
-    | List this -> sprintf "<TO BE WRITTEN>" 
-    | VarGet this -> sprintf "<TO BE WRITTEN>" 
-    | NoExpression  -> sprintf "<TO BE WRITTEN>" 
-    | Error this -> sprintf "<TO BE WRITTEN>" 
+          (string_tree this.condition)
+          (string_tree this.true_body)
+          (string_tree this.else_body)
+          (string_tree this.if_context)
+    | BoxDef this -> 
+        sprintf "box %s = %s%s" 
+          (this.new_var_name)
+          (string_tree this.contents)
+          (string_tree this.def_context)
+    | BoxAssign this -> 
+        sprintf "%s = %s%s" 
+          (this.new_var_name)
+          (string_tree this.contents)
+          (string_tree this.def_context)
+    | Display this -> 
+        sprintf "display(%s)%s" 
+          (string_args this.display_args)
+          (string_tree this.display_context)
+    | Expression x-> sprintf "<Expression : TO BE WRITTEN>" 
+    | FunctionExec this -> sprintf "<FunctionExec : TO BE WRITTEN>" 
+    | FunctionDef this -> sprintf "<FunctionDef : TO BE WRITTEN>" 
+    | Repeat this -> sprintf "<Repeat : TO BE WRITTEN>" 
+    | Until this -> sprintf "<Until : TO BE WRITTEN>" 
+    | StringEx str ->
+        sprintf "\"%s\"" str
+    | Float num -> 
+        sprintf "\"%f\"" num
+    | ParenExp this -> sprintf "<ParenExp : TO BE WRITTEN>" 
+    | Boolean this -> sprintf "<Boolean : TO BE WRITTEN>" 
+    | List this -> sprintf "<List : TO BE WRITTEN>" 
+    | VarGet str -> 
+        sprintf "%s" str
+    | NoExpression -> sprintf "" 
+    | Newline nl ->
+        sprintf "\n%s" (string_tree nl.new_line_context)
+    | BadToken this -> 
+        sprintf "<BadToken %s>%s" 
+          (Tokenizer.to_string this.bad_token) 
+          (string_tree this.bad_context)
+    | Error this -> sprintf "<Error : TO BE WRITTEN>" 
+  and string_args args = 
+    let combine_str = sprintf "%s, %s" in
+    let args_opt = args
+                  |>  List.map ~f:string_tree 
+                  |>  List.reduce ~f:combine_str
+    in
+    match args_opt with
+    | None -> ""
+    | Some x -> x
+
+
+  let print_tree tree = printf "%s\n" (string_tree tree)
 end
