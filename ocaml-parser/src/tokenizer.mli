@@ -40,6 +40,13 @@ module Tokenizer : sig
     | Comma
     | Then
 
+  type operator_cat = 
+    | InfixOperator
+    | PrefixOperator
+    | Value
+
+  val operator_type : token -> operator_cat
+
   val tokenize : string -> token list
   val print_token : token -> unit
   val print_tokens : token list -> unit

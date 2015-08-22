@@ -83,6 +83,8 @@ module Tokenizer = struct
     | Symbol x -> "Symbol=" ^ x 
     | Then -> "then"
 
+
+
   let str_is_float str =  
     let maybe_float = Option.try_with (
       fun () -> Float.of_string str
@@ -128,6 +130,16 @@ module Tokenizer = struct
         Float (Float.of_string x)
     | x -> Symbol x
 
+  type operator_cat = 
+    | InfixOperator
+    | PrefixOperator
+    | Value
+
+  let operator_type token = 
+    match token with
+    | (Plus | Star | Slash | Assignment) -> InfixOperator
+    | (Boolean _ | Float _ ) -> Value
+    | _ -> Value
 
   (* Butterfly operator? (this is my first operator in OCaml so I must
    * give it a name, obviously)

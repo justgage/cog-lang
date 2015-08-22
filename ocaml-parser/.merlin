@@ -1,4 +1,5 @@
 S src
+S test
 
 PKG core
 
