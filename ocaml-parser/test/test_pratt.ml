@@ -8,7 +8,7 @@ let trial_tokens =
 let basic_parser test_ctxt = 
   assert_equal 
    [] 
-    PrattParser.expression trial_tokens
+   PrattParser.expression trial_tokens
 
 (* Name the test cases and group them together *)
 let suite =
