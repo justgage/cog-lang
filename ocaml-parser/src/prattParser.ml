@@ -6,6 +6,8 @@ module PrattParser = struct
 
   let (|>=) ex f =  ex >>= fun x -> f x
 
+  let print_end name x = (* printf "<- %s\n" name; *) x
+
   (* NOTE:
     * p and pm are used to mean "parser monad" which is
     * an extension of the Result monad that represents
@@ -39,14 +41,13 @@ module PrattParser = struct
 
   let getErr x = x
 
-  let expected_err exp got = Error (err @@ sprintf "COG: Expected a `%s` but got %s" exp got)
+  let expected_err exp got = Error (err @@ sprintf "Expected a `%s` but got %s" exp got)
 
   (**
    * This is what represents the parsed state
    *)
   type parse_state = 
     { 
-      current_rbp : int;
       parsed : ast;
       rest : Tokenizer.token list;
      }
@@ -54,21 +55,31 @@ module PrattParser = struct
 
   (* END OF TYPES *)
 
-  let set_rbp new_val p = Result.return {
-    current_rbp = new_val;
-    parsed = p.parsed;
-    rest = p.rest;
-  }
+  let rec ast_to_string op : string =
+    begin match op with 
+    | InfixOperator infix -> 
+        sprintf "(%s  %s  %s)" 
+          (ast_to_string infix.left)
+          (Tokenizer.to_string infix.token)
+          (ast_to_string infix.right)
+    | Term x -> begin
+      match x with 
+      | Float f -> sprintf "%.f" f;
+      end
+      | Blank -> sprintf "<blank>"
+    end
+
+
+  let scope_rest =
+    List.take_while
 
   let set_parsed new_val p : parse_monad =
     Result.return {
-    current_rbp = p.current_rbp;
     parsed = new_val;
     rest = p.rest;
   }
 
   let set_rest new_val p  = Result.return {
-    current_rbp = p.current_rbp;
     parsed = p.parsed;
     rest = new_val;
   }
@@ -82,7 +93,7 @@ let lbp token =
   | T.Star   -> 20
   | T.Plus   -> 10
   | T.Minus  -> 10
-  | _        -> 0 (* TODO:  probably don't want this in the future *)
+  | x        -> failwith ("lbp called on something that isn't good" ^ (Tokenizer.to_string x))
 
 let rbp token = 
   let module T = Tokenizer in
@@ -91,19 +102,27 @@ let rbp token =
   | T.Star   -> 20
   | T.Plus   -> 10
   | T.Minus  -> 10
-  | _        -> 0 (* TODO:  probably don't want this in the future *)
+  | x        -> failwith ("lbp called on something that isn't good" ^ (Tokenizer.to_string x))
 
 let advance p = 
     match List.hd p.rest with
-      |  None -> expected_err "something after this operator" "nothing"
+      |  None -> expected_err (sprintf "something after %s" @@ ast_to_string p.parsed) "nothing"
       |  Some head -> Ok {
-        current_rbp = p.current_rbp;
         parsed = p.parsed;
         rest   = List.drop p.rest 1;
-  } 
+      } 
 
 let is_more p =  p.rest <> []
 let next p = List.hd p.rest
+let bigger p rbp = 
+  match next p with
+  | Some token -> rbp < (lbp token)
+  | None -> false (* to end progression *)
+
+let print_p name p rbp = 
+  printf "%s (%d) : " name rbp ;
+  printf "   tokens="; Tokenizer.print_tokens p.rest;
+  printf "   parsed=%s\n" (ast_to_string p.parsed)
 
 (* 
  *  WHERE THE PARSER STARTS
@@ -117,20 +136,33 @@ let next p = List.hd p.rest
     while rbp < token.lbp:
       prev_t = token
       token = next()          // side effects to continue
-      left = prev_t.led(left) // set above
+      left = prev_t.led(left) // old_left
+      // these two are set to the new stuff
 
     return left
 
   *)
-let rec expression ?(rbp = 0) start_state : parse_monad = 
-  pre_or_term start_state           >>= fun left        -> 
-  advance @@ start_state >>= fun next_state  -> (
-    if is_more next_state then
-      parse_infix left next_state
-    else
-      Result.return left
+let rec power_loop (left_state : parse_state) ~rbp  = 
+  print_p "-> power_loop!" left_state rbp;
+  if is_more left_state && bigger left_state rbp then (
+    (* printf "   There's more big tokens! \n"; *)
+    led left_state left_state >>= fun left -> 
+      (* rec -> *) power_loop left ~rbp 
   )
-and pre_or_term p : parse_monad = 
+  else (
+    printf "<- power: There's no more big tokens \n";
+    Result.return left_state
+  )
+
+and expression ?(rbp = 0) state : parse_monad = 
+  print_p "-> expression" state rbp;
+  nud state >>= fun left -> 
+  state |> advance  >>= fun infix_state -> (
+    power_loop infix_state ~rbp
+  )
+  |> print_end "expression"
+
+and nud p : parse_monad = 
   let module T = Tokenizer in
   (match p.rest with
   | T.Float f :: rest -> (
@@ -138,24 +170,29 @@ and pre_or_term p : parse_monad =
       |> set_parsed (Term (Float f))  
       |>= advance
   )
-  | x :: _ -> Error (err ("Token was not a literal or a prefix operator! -->" ^ (T.to_string x)))
-  | []     -> Error (err "I was expecting a token! But you gave me none :,-(")
+  | x :: _ -> Error (err ("nud: Token was not a literal or a prefix operator! -->" ^ (T.to_string x)))
+  | []     -> Error (err "nud: I was expecting a token! But you gave me none :,-(")
   )
-and parse_infix left_m next_state : parse_monad =
+  |> print_end "nud"
+
+
+and led left_m next_state : parse_monad =
+  printf "->  led  \n";
   let module T = Tokenizer in
   let infix_option = next(next_state) in
   match infix_option with
-  | None -> Error (err "I was especting some sort of infix operator but got an end of file")
+  | None -> Error (err "I was especting some sort of infix/postfix operator but got an end of file")
   | Some infix -> 
   match T.operator_type infix with
   | T.InfixOperator -> (
+    (* get right hand *)
     next_state
-    |>  advance 
+    |> advance (* get rid of infix operator *)
     |>= expression ~rbp:(rbp infix) 
     >>= fun right ->
+      print_p ("<- led of operator " ^ (Tokenizer.to_string infix)) right (rbp infix);
       Ok
       {
-        current_rbp = (rbp infix);
         rest = right.rest;
         parsed = InfixOperator {
           token = infix;
@@ -164,12 +201,11 @@ and parse_infix left_m next_state : parse_monad =
         };
       }
   )
-  | _ -> expected_err "some sort if infix operator like a `+`" "nothing"
+  | _ -> expected_err "led: some sort if infix operator like a `+`" "nothing"
 
 
 let blank_parse : parse_state = 
   {
-    current_rbp = 0;
     parsed = Blank;
     rest = [];
   }

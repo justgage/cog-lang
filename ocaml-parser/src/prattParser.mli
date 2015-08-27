@@ -51,7 +51,6 @@ module PrattParser : sig
    *)
   type parse_state = 
     { 
-      current_rbp : int;
       parsed : ast;
       rest : Tokenizer.token list;
      }
@@ -69,7 +68,7 @@ module PrattParser : sig
 
   (* This is prefix operators 
    * or terminating characters *)
-  val pre_or_term : parse_state -> parse_monad
+  val nud : parse_state -> parse_monad
 
   (* 
    * This will be the main parsing function
