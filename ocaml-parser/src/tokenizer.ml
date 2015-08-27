@@ -108,7 +108,7 @@ module Tokenizer = struct
     | "end" -> End (* end tags *)
     | "func" -> FuncDef
     | "+" -> Plus
-    | " -" -> Minus
+    | "-" -> Minus
     | "/" -> Slash
     | "*" -> Star
     | ">" -> GreaterThan
@@ -137,7 +137,7 @@ module Tokenizer = struct
 
   let operator_type token = 
     match token with
-    | (Plus | Star | Slash | Assignment) -> InfixOperator
+    | (Plus | Star | Slash | Assignment | Minus) -> InfixOperator
     | (Boolean _ | Float _ ) -> Value
     | _ -> Value
 
