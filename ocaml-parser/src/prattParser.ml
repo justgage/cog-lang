@@ -4,7 +4,13 @@ module PrattParser = struct
   open Tokenizer
   open Result.Monad_infix
 
-  let (|>=) ex f =  ex >>= fun x -> f x
+  (* the monadic |> *)
+  let (|>=) ex f = ex >>= fun x -> f x
+
+  let (<|>) l r = 
+    match l with
+    | Ok x -> x
+    | Error _ -> r
 
   (* print and pass through *)
   let print_end name x = (* printf "<- %s\n" name; *) x
@@ -27,6 +33,7 @@ module PrattParser = struct
 
   type ast = (* represents the tree *)
     | Blank
+    | Statements of ast list
     | Term of term
     | InfixOperator of infix_operator
   and infix_operator = 
@@ -35,6 +42,11 @@ module PrattParser = struct
       right : ast;
        left : ast;
     }
+  and parse_state = 
+    { 
+      parsed : ast;
+      rest : Tokenizer.token list;
+     }
 
   type error = string
 
@@ -47,18 +59,26 @@ module PrattParser = struct
   (**
    * This is what represents the parsed state
    *)
-  type parse_state = 
-    { 
-      parsed : ast;
-      rest : Tokenizer.token list;
-     }
   type parse_monad = (parse_state, error) Core.Result.t
 
   (* END OF TYPES *)
 
+  let blank_parse : parse_state = 
+    {
+      parsed = Blank;
+      rest = [];
+    }
+
 
   let rec ast_to_string op : string =
     begin match op with 
+    | Statements ls -> 
+        (
+        List.fold 
+        ls
+        ~init:"" 
+        ~f: (fun left right ->  left ^ (ast_to_string right))
+        )
     | InfixOperator infix -> 
         sprintf "(%s  %s  %s)" 
           (ast_to_string infix.left)
@@ -140,6 +160,7 @@ module PrattParser = struct
         else (expected_err (Tokenizer.to_string expected_token) (Tokenizer.to_string found_token))
     | None -> 
         (expected_err (Tokenizer.to_string expected_token) "end of expression or file")
+
 
   
   let bigger p rbp = 
@@ -229,13 +250,19 @@ module PrattParser = struct
     )
     | T.PrefixOperator -> expected_err "led: some sort if infix operator like a `+`" "a Prefix operator"
     | T.Value -> expected_err "led: some sort if infix operator like a `+`" "a normal value"
+
+  let rec match_many (p : parse_state) ~rbp : parse_monad =
+    (
+      expression p ~rbp >>= fun exp -> 
+      match_many p ~rbp >>= fun rest_maybe ->
+      match rest_maybe.parsed with
+      | Statements rest -> 
+        Result.return 
+      ( blank_parse |> set_parsed (Statements (exp.parsed :: rest)))
+      | _ -> Error "IDK something crazy with match_many"
+    ) <|> (set_parsed (Statements []) p) (* base case *)
   
   
-  let blank_parse : parse_state = 
-    {
-      parsed = Blank;
-      rest = [];
-    }
   
   
   let begin_parse tlist =  
