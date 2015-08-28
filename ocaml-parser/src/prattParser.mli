@@ -80,4 +80,5 @@ module PrattParser : sig
   (* get the next expression that's lower than *)
   val next_higher : parse_state -> parse_monad
 
+  val print : parse_monad -> unit
 end

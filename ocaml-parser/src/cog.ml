@@ -1,22 +1,22 @@
 module Cog = struct
   open Core.Std
   open Tokenizer
-  open Parser
+  open PrattParser
 
-    let run_ast filename = 
-      Core.In_channel.read_all filename
-       |> Tokenizer.tokenize
-       |> Parser.parse
+  let run_ast str = 
+    str
+     |> Tokenizer.tokenize
+     |> PrattParser.begin_parse
+  ;;
 
-    let run_fmt filename = 
-      Core.In_channel.read_all filename
-       |> Tokenizer.tokenize
-       |> Parser.parse
-       |> Parser.print_tree
+    let run_fmt str = 
+      str
+      |> run_ast
+      |> PrattParser.print
+    ;;
 
-    let run filename = 
+    let run_file filename = 
       Core.In_channel.read_all filename
-       |> Tokenizer.tokenize
-       |> Parser.parse
+      |> run_ast
        (*|>  Executor.run *)
 end

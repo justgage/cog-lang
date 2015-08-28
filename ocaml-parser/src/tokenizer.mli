@@ -21,6 +21,7 @@ module Tokenizer : sig
     | FuncDef
     | GreaterThan
     | GreaterThanOrEqual
+    | Equal
     | If
     | LessThan
     | LessThanOrEqual

@@ -27,6 +27,7 @@ module Tokenizer = struct
     | FuncDef
     | GreaterThan
     | GreaterThanOrEqual
+    | Equal
     | If
     | LessThan
     | LessThanOrEqual
@@ -69,6 +70,7 @@ module Tokenizer = struct
     | FuncDef -> "func"
     | GreaterThan -> ">"
     | GreaterThanOrEqual -> ">="
+    | Equal -> "=="
     | LessThan -> "<"
     | LessThanOrEqual -> "<="
     | OpenRound -> "("
@@ -112,6 +114,7 @@ module Tokenizer = struct
     | "/" -> Slash
     | "*" -> Star
     | ">" -> GreaterThan
+    | "==" -> Equal
     | ">=" -> GreaterThanOrEqual
     | "<" -> LessThan
     | "<=" -> LessThanOrEqual
@@ -137,8 +140,21 @@ module Tokenizer = struct
 
   let operator_type token = 
     match token with
-    | (Plus | Star | Slash | Assignment | Minus) -> InfixOperator
-    | (Boolean _ | Float _ ) -> Value
+    | ( Plus 
+      | Star 
+      | Slash 
+      | Assignment 
+      | Minus
+      | LogicOr
+      | LogicAnd
+      | GreaterThan
+      | GreaterThanOrEqual
+      | LessThan
+      | LessThanOrEqual
+        ) -> InfixOperator
+    | (Boolean _ 
+      | Float _ 
+      ) -> Value
     | _ -> Value
 
   (* Butterfly operator? (this is my first operator in OCaml so I must
