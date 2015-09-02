@@ -4,6 +4,8 @@ module PrattParser = struct
   open Tokenizer
   open Result.Monad_infix
 
+  let debugging = false
+
   (* the monadic |> *)
   let (|>=) ex f = ex >>= fun x -> f x
 
@@ -11,9 +13,6 @@ module PrattParser = struct
     match l with
     | Ok x -> x
     | Error _ -> r
-
-  (* print and pass through *)
-  let print_end name x = (* printf "<- %s\n" name; *) x
 
   (* NOTE:
     * p and pm are used to mean "parser monad" which is
@@ -36,17 +35,30 @@ module PrattParser = struct
     | Statements of ast list
     | Term of term
     | InfixOperator of infix_operator
+    | PrefixOperator of prefix_operator
+    | IfStatement of if_statement
   and infix_operator = 
     {
       token : Tokenizer.token;
       right : ast;
        left : ast;
     }
+  and prefix_operator = 
+    {
+      token_pre : Tokenizer.token;
+      right_pre : ast;
+    }
   and parse_state = 
     { 
       parsed : ast;
       rest : Tokenizer.token list;
      }
+   and if_statement = 
+     {
+       condition: ast;
+       true_branch : ast;
+       false_branch : ast;
+    }
 
   type error = string
 
@@ -54,7 +66,7 @@ module PrattParser = struct
 
   let getErr x = x
 
-  let expected_err exp got = Error (err @@ sprintf "Expected a `%s` but got %s" exp got)
+  let expected_err exp got = Error (err @@ sprintf "Expected a `%s` but got `%s`" exp got)
 
   (**
    * This is what represents the parsed state
@@ -84,22 +96,27 @@ module PrattParser = struct
           (ast_to_string infix.left)
           (Tokenizer.to_string infix.token)
           (ast_to_string infix.right)
+    | PrefixOperator prefix -> 
+        sprintf "(%s %s)" 
+          (Tokenizer.to_string prefix.token_pre)
+          (ast_to_string prefix.right_pre)
     | Term x -> begin
       match x with 
       | Float f -> sprintf "%.f" f;
       end
-      | Blank -> sprintf "<blank>"
+    | Blank -> sprintf "<blank>"
+    | IfStatement ifs -> 
+        sprintf 
+        "if %s \n  then %s \n  else %s end" 
+          (ast_to_string ifs.condition) 
+          (ast_to_string ifs.true_branch) 
+          (ast_to_string ifs.false_branch)
     end
-
 
   let print pm =
     match pm with
-    | Ok {parsed} -> printf "printing result: %s\n" (ast_to_string parsed)
-    | Error x -> printf "Sorry that AST is broken :( with error: %s" x
-
-
-  let scope_rest =
-    List.take_while
+    | Ok {parsed; _} -> printf "printing result:\n %s\n" (ast_to_string parsed)
+    | Error x -> printf "Sorry that AST is broken\n\terror: %s" x
 
   let set_parsed new_val p : parse_monad =
     Result.return {
@@ -115,53 +132,110 @@ module PrattParser = struct
   let lbp token = 
     let module T = Tokenizer in
     match token with
-    | (T.Slash | T.Star)  -> 200
-    | (T.Plus | T.Minus)  -> 100
-    | (T.LogicOr | T.LogicAnd)   -> 60
+    | (T.Slash | T.Star) -> 200
+    | (T.Plus | T.Minus) -> 100
+    | T.LogicAnd -> 60
+    | T.LogicOr  -> 50
     | ( T.GreaterThan 
       | T.GreaterThanOrEqual 
       | T.LessThan 
       | T.LessThanOrEqual
       | T.Equal
-    )   -> 50
-    | T.ClosingRound -> 0 (* always stop parsing *)
-    | x        -> failwith ("lbp called on something that isn't good ->  " ^ (Tokenizer.to_string x))
+      ) -> 40
+    | T.EndOfStatement -> 20
+    | ( T.ClosingRound
+      | T.Then
+      | T.Else
+      | T.End
+      | T.Newline 
+      ) -> 0 (* always stop parsing *)
+    | (T.Assignment
+      | T.LogicNot (* this is a prefix operator *)
+      | T.QuoteString _
+      | T.Boolean _
+      | T.Box
+      | T.ClosingSquare
+      | T.CommentBegin
+      | T.Comment _
+      | T.DoubleQuote
+      | T.Float _
+      | T.FuncDef
+      | T.If
+      | T.OpenRound
+      | T.OpenSquare
+      | T.Repeat
+      | T.Display
+      | T.Until
+      | T.Symbol _
+      | T.Comma)
+    as x -> 
+        (*TODO convert to result *) 
+        failwith ("lbp called on something that isn't good ->  " ^ (Tokenizer.to_string_debug x))
   
   let rbp token = 
     let module T = Tokenizer in
     match token with
     | (T.Slash | T.Star)  -> 200
     | (T.Plus | T.Minus)  -> 100
-    | (T.LogicOr | T.LogicAnd)   -> 60
-    |   ( T.GreaterThan 
-        | T.GreaterThanOrEqual 
-        | T.LessThan 
-        | T.LessThanOrEqual)   -> 50
-    | x        -> failwith ("rbp called on something that isn't good" ^ (Tokenizer.to_string x))
+    | T.LogicNot -> 65
+    | T.LogicAnd -> 60
+    | T.LogicOr  -> 50
+    | ( T.GreaterThan 
+      | T.GreaterThanOrEqual 
+      | T.LessThan 
+      | T.LessThanOrEqual
+      | T.Equal) -> 40
+    | (T.Assignment
+      |T.Boolean _
+      |T.Box
+      |T.ClosingRound
+      |T.ClosingSquare
+      |T.CommentBegin
+      |T.Comment _
+      |T.DoubleQuote
+      |T.QuoteString _
+      |T.Else
+      |T.End
+      |T.Float _
+      |T.FuncDef
+      |T.If
+      |T.Newline
+      |T.OpenRound
+      |T.OpenSquare
+      |T.Repeat
+      |T.Display
+      |T.Until
+      |T.Symbol _
+      |T.Comma
+      |T.Then
+      |T.EndOfStatement)   
+    as x -> failwith ("rbp called on something that isn't good" ^ (Tokenizer.to_string_debug x))
   
   let advance p = 
       match List.hd p.rest with
         |  None -> expected_err (sprintf "something after %s" @@ ast_to_string p.parsed) "nothing"
-        |  Some head -> Ok {
+        |  Some _ -> Ok {
           parsed = p.parsed;
           rest   = List.drop p.rest 1;
         } 
   
-  let is_more p =  p.rest <> []
+  let is_more_tokens p =  p.rest <> []
   
   (* gets the next token and returns an option *)
   let next p = List.hd p.rest
 
+  (* checks to see if the curent token is the right one. 
+   * If so it advances. Else it errors. *)
   let match_next expected_token p =
+    let exp_err = expected_err (Tokenizer.to_string_debug expected_token) in
+    (* note the currying --^ *)
     match next p with
     | Some found_token -> 
         if expected_token = found_token 
         then p |> advance 
-        else (expected_err (Tokenizer.to_string expected_token) (Tokenizer.to_string found_token))
+        else exp_err (Tokenizer.to_string_debug found_token)
     | None -> 
-        (expected_err (Tokenizer.to_string expected_token) "end of expression or file")
-
-
+        exp_err "end of expression or file"
   
   let bigger p rbp = 
     match next p with
@@ -169,40 +243,41 @@ module PrattParser = struct
     | None -> false (* to end progression *)
   
   let print_p name p rbp = 
-    printf "%s (%d) : " name rbp ;
-    printf "   tokens="; Tokenizer.print_tokens p.rest;
-    printf "   parsed=%s\n" (ast_to_string p.parsed)
+    if debugging then (
+      printf "%s (%d) : " name rbp ;
+      printf "   tokens="; Tokenizer.print_tokens p.rest;
+      printf "   parsed=%s\n" (ast_to_string p.parsed)
+    ) else ()
+  
+  (* The python code I was working off of
+      while rbp < token.lbp:
+        prev_t = token
+        token = next()          // side effects to continue
+        left = prev_t.led(left) // old_left
+        // these two are set to the new stuff
+    *)
+  let rec power_loop (left_state : parse_state) ~rbp  = 
+    print_p "-> power_loop!" left_state rbp;
+    if is_more_tokens left_state 
+       && bigger left_state rbp     
+        then (left_state 
+              |> led 
+              |>= power_loop ~rbp)
+        else Result.return left_state
 
   
-  (* 
-   *  WHERE THE PARSER STARTS
-   * 
+  (* The python code I was working off of
     def expression(rbp=0):
       global token
       t = token              // current one
       left = t.nud()         // assume it's a prefix / term char
       token = next()         // move token marker to next one
   
-      while rbp < token.lbp:
-        prev_t = token
-        token = next()          // side effects to continue
-        left = prev_t.led(left) // old_left
-        // these two are set to the new stuff
+      // insert "power_loop" here
   
       return left
   
     *)
-  let rec power_loop (left_state : parse_state) ~rbp  = 
-    print_p "-> power_loop!" left_state rbp;
-    if is_more left_state && bigger left_state rbp then (
-      left_state 
-      |> led 
-      |>= power_loop ~rbp 
-    )
-    else (
-      Result.return left_state
-    )
-  
   and expression ?(rbp = 0) state : parse_monad = 
     print_p "-> expression" state rbp;
     state 
@@ -211,15 +286,47 @@ module PrattParser = struct
   
   and nud p : parse_monad = 
     let module T = Tokenizer in
+    (* TODO: transfer to using is_more_tokens *)
     (match p.rest with
-    | T.Float f :: rest -> p
+
+    | T.Float f :: _ -> 
+        p
         |> set_parsed (Term (Float f))  
         |>= advance
-    | T.OpenRound :: rest ->
+    | T.LogicNot :: _ -> 
+        p
+        |> advance (* past LogicNot *)
+        |>= expression ~rbp:(rbp T.LogicNot) >>= fun right_exp ->
+        right_exp |> set_parsed (PrefixOperator {
+          token_pre = T.LogicNot;
+          right_pre = right_exp.parsed;
+        })
+    | T.OpenRound :: _ ->
         p
         |>  advance
         |>= expression
-        |>=  match_next T.ClosingRound
+        |>= match_next T.ClosingRound
+    | T.If :: _ ->
+        p
+        |>  advance
+        |>= expression
+        |>= match_next T.Then 
+        >>= fun condition_p -> 
+          condition_p
+        |>  match_many ~rbp:0
+        |>= match_next T.Else
+        >>= fun true_branch -> 
+          true_branch
+        |>  match_many ~rbp:0
+        |>= match_next T.End
+        >>= fun false_branch ->
+          false_branch 
+          |> set_parsed (IfStatement {
+            condition = condition_p.parsed;
+            true_branch = true_branch.parsed;
+            false_branch = false_branch.parsed;
+        }) 
+
     | x :: _ -> Error (err ("nud: Token was not a literal or a prefix operator! It was:" ^ (T.to_string x)))
     | []     -> Error (err "nud: I was expecting a literal or prefix operator! But there none :,-(")
     )
@@ -237,7 +344,7 @@ module PrattParser = struct
       |> advance (* get rid of infix operator *)
       |>= expression ~rbp:(rbp infix) 
       >>= fun right ->
-        print_p ("<- led of operator " ^ (Tokenizer.to_string infix)) right (rbp infix);
+        print_p ("<- led of operator " ^ (Tokenizer.to_string_debug infix)) right (rbp infix);
         Ok
         {
           rest = right.rest;
@@ -250,19 +357,18 @@ module PrattParser = struct
     )
     | T.PrefixOperator -> expected_err "led: some sort if infix operator like a `+`" "a Prefix operator"
     | T.Value -> expected_err "led: some sort if infix operator like a `+`" "a normal value"
-
-  let rec match_many (p : parse_state) ~rbp : parse_monad =
+    | T.PleaseAddThisToOperatorTypeFunction -> Error (err "The creator of this language needs to define this")
+  and match_many (p : parse_state) ~rbp : parse_monad =
     (
-      expression p ~rbp >>= fun exp -> 
-      match_many p ~rbp >>= fun rest_maybe ->
+      expression p   ~rbp >>= fun exp -> 
+      match_many exp ~rbp >>= fun rest_maybe ->
       match rest_maybe.parsed with
       | Statements rest -> 
-        Result.return 
-      ( blank_parse |> set_parsed (Statements (exp.parsed :: rest)))
+        Result.return (
+          rest_maybe |> set_parsed (Statements (exp.parsed :: rest)))
       | _ -> Error "IDK something crazy with match_many"
     ) <|> (set_parsed (Statements []) p) (* base case *)
-  
-  
+
   
   
   let begin_parse tlist =  

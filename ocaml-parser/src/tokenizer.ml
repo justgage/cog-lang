@@ -33,6 +33,7 @@ module Tokenizer = struct
     | LessThanOrEqual
     | LogicAnd
     | LogicOr
+    | LogicNot
     | Minus
     | Newline
     | OpenRound
@@ -46,6 +47,7 @@ module Tokenizer = struct
     | Symbol of string
     | Comma
     | Then
+    | EndOfStatement
 
   let to_string x =
     match x with
@@ -55,6 +57,7 @@ module Tokenizer = struct
     | Else -> "else" 
     | LogicOr -> "or"
     | LogicAnd -> "and"
+    | LogicNot -> "not"
     | Plus -> "+" 
     | Minus -> "-"
     | Slash-> "/"
@@ -84,7 +87,7 @@ module Tokenizer = struct
     | Comma -> ","
     | Symbol x -> "Symbol=" ^ x 
     | Then -> "then"
-
+    | EndOfStatement -> ";"
 
 
   let str_is_float str =  
@@ -105,6 +108,7 @@ module Tokenizer = struct
     | "box" -> Box
     | "or" -> LogicOr
     | "and" -> LogicAnd
+    | "not" -> LogicNot
     | "=" -> Assignment
     | "\"" -> DoubleQuote
     | "end" -> End (* end tags *)
@@ -122,13 +126,14 @@ module Tokenizer = struct
     | ")" -> ClosingRound
     | "[" -> OpenSquare
     | "]" -> ClosingSquare
-    | ("\n" | ";") -> Newline
-    | ("then") -> Then
+    | "\n" -> Newline
+    | "then" -> Then
     | "#" -> CommentBegin
     | "repeat" -> Repeat
     | "display" -> Display
     | "until" -> Until
     | "," -> Comma
+    | ";" -> EndOfStatement
     | x when str_is_float x -> 
         Float (Float.of_string x)
     | x -> Symbol x
@@ -137,6 +142,7 @@ module Tokenizer = struct
     | InfixOperator
     | PrefixOperator
     | Value
+    | PleaseAddThisToOperatorTypeFunction
 
   let operator_type token = 
     match token with
@@ -149,13 +155,15 @@ module Tokenizer = struct
       | LogicAnd
       | GreaterThan
       | GreaterThanOrEqual
+      | Equal
       | LessThan
       | LessThanOrEqual
+      | EndOfStatement
         ) -> InfixOperator
     | (Boolean _ 
       | Float _ 
       ) -> Value
-    | _ -> Value
+    | _ -> PleaseAddThisToOperatorTypeFunction (* FIX ME *)
 
   (* Butterfly operator? (this is my first operator in OCaml so I must
    * give it a name, obviously)
@@ -181,27 +189,31 @@ module Tokenizer = struct
     | '*' ::rest -> " * "  >< spacer rest
     | '\n'::rest -> " \n " >< spacer rest
     | '#'::rest  -> " # "  >< spacer rest
+    | ';'::rest  -> " ; "  >< spacer rest
     | []         -> []
     | x::rest    -> x :: spacer rest
 
+
   (* An easy way to see how the tokenizer works *)
-  let print_token t = match t with
+  let to_string_debug t = match t with
   | Symbol x ->
-      Printf.printf "%s" x
+      Printf.sprintf "%s" x
   | (FuncDef | Box | If | Else | End | Repeat | Until) as x ->
-      Printf.printf "%s" (Colors.cyan @@ to_string x)
+      Printf.sprintf "%s" (Colors.cyan @@ to_string x)
   | (Assignment | Plus | Minus | Star) as x ->
-      Printf.printf "%s" (Colors.yellow @@ to_string x)
+      Printf.sprintf "%s" (Colors.yellow @@ to_string x)
   | (GreaterThan | GreaterThanOrEqual | LessThan | LessThanOrEqual) as x ->
-      Printf.printf "%s" (Colors.yellow @@ to_string x)
+      Printf.sprintf "%s" (Colors.yellow @@ to_string x)
   | Float x ->
-      Printf.printf "%s" (Colors.green @@ Float.to_string x)
+      Printf.sprintf "%s" (Colors.green @@ Float.to_string x)
   | Newline -> 
-      Printf.printf "%s" (Colors.blue "⏎\n")
+      Printf.sprintf "%s" (Colors.blue "⏎\n")
   | Comment x ->
-      Printf.printf "%s" (Colors.magenta ("#" ^ x))
+      Printf.sprintf "%s" (Colors.magenta ("#" ^ x))
   | x -> (* tokens I just haven't spesified a color for *)
-      Printf.printf "%s" (":" ^ (Colors.red @@ to_string  x) )
+      Printf.sprintf "%s" (":" ^ (Colors.red @@ to_string  x) )
+
+  let print_token t = Printf.printf "%s" (to_string_debug t)
 
   (* This will split the string by the first split_char, if not found,
    * everything is placed in the first return of the tuple *)
@@ -239,8 +251,8 @@ module Tokenizer = struct
              comment :: Newline :: (from_char_list after_comment)
          | DoubleQuote -> let (str, after_comment) = string_grab rest in
              str :: (from_char_list after_comment)
-         | Symbol "" ->  (from_char_list rest)
-         | x            -> x :: (from_char_list rest)
+         | (Symbol "" | Newline) ->  from_char_list rest (* ignore *)
+         | x            -> x :: from_char_list rest
 
   let print_tokens tokens = 
    tokens |> List.iter ~f:(print_token) 
@@ -254,5 +266,4 @@ module Tokenizer = struct
     |> String.to_list
     |> spacer
     |> from_char_list
-
 end

@@ -34,13 +34,21 @@ module PrattParser : sig
   (* abstract syntax tree *)
   type ast = 
     | Blank (* null :( *)
+    | Statements of ast list
     | Term of term (* terminating character, eg: a float, a string, etc... *)
     | InfixOperator of infix_operator (* an infix operator like `+` *)
+    | IfStatement of if_statement
   and infix_operator =  
      {
         token : Tokenizer.token;
         right : ast;
          left : ast;
+     }
+   and if_statement = 
+     {
+       condition: ast;
+       true_branch : ast;
+       false_branch : ast;
      }
 
   type error
