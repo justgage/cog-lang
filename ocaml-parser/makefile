@@ -9,7 +9,8 @@ main:
 	echo "Compiled sucsessfully :)\n"
 
 tests:
-	corebuild -pkg core -I src src/testPrattParser.byte
+	corebuild -pkg core src/testPrattParser.native
+	./testPrattParser.native
 
 run:
 	./main.native -f first.cog
