@@ -81,7 +81,6 @@ module PrattParser = struct
       rest = [];
     }
 
-
   let rec ast_to_string op : string =
     begin match op with 
     | Statements ls -> 
@@ -113,10 +112,12 @@ module PrattParser = struct
           (ast_to_string ifs.false_branch)
     end
 
-  let print pm =
+  let to_string pm =
     match pm with
-    | Ok {parsed; _} -> printf "printing result:\n %s\n" (ast_to_string parsed)
-    | Error x -> printf "Sorry that AST is broken\n\terror: %s" x
+    | Ok {parsed; _} -> sprintf "printing result:\n %s\n" (ast_to_string parsed)
+    | Error x -> sprintf "Sorry that AST is broken\n\terror: %s" x
+
+  let print pm = printf "%s" (to_string pm)
 
   let set_parsed new_val p : parse_monad =
     Result.return {

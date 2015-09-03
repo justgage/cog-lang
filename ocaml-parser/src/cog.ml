@@ -7,16 +7,19 @@ module Cog = struct
     str
      |> Tokenizer.tokenize
      |> PrattParser.begin_parse
-  ;;
+
+    let run_string str = 
+      str
+      |> run_ast
+      |> PrattParser.to_string
 
     let run_fmt str = 
       str
       |> run_ast
       |> PrattParser.print
-    ;;
 
     let run_file filename = 
       Core.In_channel.read_all filename
       |> run_ast
-       (*|>  Executor.run *)
+    (*|>  Executor.run *)
 end

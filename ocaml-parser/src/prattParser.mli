@@ -37,6 +37,7 @@ module PrattParser : sig
     | Statements of ast list
     | Term of term (* terminating character, eg: a float, a string, etc... *)
     | InfixOperator of infix_operator (* an infix operator like `+` *)
+    | PrefixOperator of prefix_operator
     | IfStatement of if_statement
   and infix_operator =  
      {
@@ -44,6 +45,11 @@ module PrattParser : sig
         right : ast;
          left : ast;
      }
+  and prefix_operator = 
+    {
+      token_pre : Tokenizer.token;
+      right_pre : ast;
+    }
    and if_statement = 
      {
        condition: ast;
@@ -89,4 +95,5 @@ module PrattParser : sig
   val next_higher : parse_state -> parse_monad
 
   val print : parse_monad -> unit
+  val to_string : parse_monad -> string
 end
