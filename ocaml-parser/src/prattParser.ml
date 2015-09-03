@@ -28,6 +28,7 @@ module PrattParser = struct
 
   type term =
     | Float of float
+    | QuoteString of string
 
 
   type ast = (* represents the tree *)
@@ -102,6 +103,7 @@ module PrattParser = struct
     | Term x -> begin
       match x with 
       | Float f -> sprintf "%.f" f;
+      | QuoteString s -> sprintf "\"%s\"" s
       end
     | Blank -> sprintf "<blank>"
     | IfStatement ifs -> 
@@ -293,6 +295,10 @@ module PrattParser = struct
     | T.Float f :: _ -> 
         p
         |> set_parsed (Term (Float f))  
+        |>= advance
+    | T.QuoteString s :: _ -> 
+        p
+        |> set_parsed (Term (QuoteString s))  
         |>= advance
     | T.LogicNot :: _ -> 
         p

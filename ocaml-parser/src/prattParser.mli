@@ -30,6 +30,7 @@ module PrattParser : sig
   (* terminating character *)
   type term = 
     | Float of float
+    | QuoteString of string
 
   (* abstract syntax tree *)
   type ast = 

@@ -1,30 +1,29 @@
 # NOTE: this is my behvior driven tests
 # this represents a the score of player1
-box score = 2
-box scores = [1, 2, 4]
+box score = 2;
+box scores = [1, 2, 4];
 
-display("I'm printing out something")
+display("I'm printing out something");
 
-display(score) # 2
+display(score); # 2
 
-score = score + 1 
+score = score + 1; 
 
 
-display("your score is:", score) # your score is: 3
+display("your score is:", score); # your score is: 3
 
-box name = get_result()
+box name = get_result();
 
-display(score) ; display(2) # two things on one line!
+display(score) ; display(2); # two things on one line!
 
               # this is indented a huge amount
 
 until turns >= 10 then
-        display("Enter your guess:")
-        box guess = get_result()
+        display("Enter your guess:");
+        box guess = get_result();
 end
 
-if score == 0 or score == 1 then display("your score is tiny")
-
+if score == 0 or score == 1 then display("your score is tiny") else "nothing" end;
 
 if score > 0 then
    and score < 1000
