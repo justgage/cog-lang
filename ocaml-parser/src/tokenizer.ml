@@ -51,22 +51,22 @@ module Tokenizer = struct
 
   let to_string x =
     match x with
-    | Boolean True -> "true" 
-    | Boolean False -> "false" 
-    | If -> "if" 
-    | Else -> "else" 
+    | Boolean True -> "true"
+    | Boolean False -> "false"
+    | If -> "if"
+    | Else -> "else"
     | LogicOr -> "or"
     | LogicAnd -> "and"
     | LogicNot -> "not"
-    | Plus -> "+" 
+    | Plus -> "+"
     | Minus -> "-"
     | Slash-> "/"
     | Star-> "*"
-    | Repeat -> "repeat" 
-    | Display -> "display" 
-    | Until -> "until" 
-    | Box -> "box" 
-    | Assignment -> "=" 
+    | Repeat -> "repeat"
+    | Display -> "display"
+    | Until -> "until"
+    | Box -> "box"
+    | Assignment -> "="
     | DoubleQuote -> "\""
     | End -> "end"
     | Float x -> Printf.sprintf "%f" x
@@ -85,12 +85,12 @@ module Tokenizer = struct
     | Comment x -> "#" ^ x
     | QuoteString x -> "\"" ^ x ^ "\""
     | Comma -> ","
-    | Symbol x -> "Symbol=" ^ x 
+    | Symbol x -> "Symbol=" ^ x
     | Then -> "then"
     | EndOfStatement -> ";"
 
 
-  let str_is_float str =  
+  let str_is_float str =
     let maybe_float = Option.try_with (
       fun () -> Float.of_string str
       )
@@ -134,22 +134,22 @@ module Tokenizer = struct
     | "until" -> Until
     | "," -> Comma
     | ";" -> EndOfStatement
-    | x when str_is_float x -> 
+    | x when str_is_float x ->
         Float (Float.of_string x)
     | x -> Symbol x
 
-  type operator_cat = 
+  type operator_cat =
     | InfixOperator
     | PrefixOperator
     | Value
     | PleaseAddThisToOperatorTypeFunction
 
-  let operator_type token = 
+  let operator_type token =
     match token with
-    | ( Plus 
-      | Star 
-      | Slash 
-      | Assignment 
+    | ( Plus
+      | Star
+      | Slash
+      | Assignment
       | Minus
       | LogicOr
       | LogicAnd
@@ -160,8 +160,8 @@ module Tokenizer = struct
       | LessThanOrEqual
       | EndOfStatement
         ) -> InfixOperator
-    | (Boolean _ 
-      | Float _ 
+    | (Boolean _
+      | Float _
       ) -> Value
     | _ -> PleaseAddThisToOperatorTypeFunction (* FIX ME *)
 
@@ -171,7 +171,7 @@ module Tokenizer = struct
    * This is an operator that will take a string and append it to
    * a char list
    * *)
-  let (><) (left: string) (right : char list) = 
+  let (><) (left: string) (right : char list) =
     List.append (String.to_list left) right
 
 
@@ -206,7 +206,7 @@ module Tokenizer = struct
       Printf.sprintf "%s" (Colors.yellow @@ to_string x)
   | Float x ->
       Printf.sprintf "%s" (Colors.green @@ Float.to_string x)
-  | Newline -> 
+  | Newline ->
       Printf.sprintf "%s" (Colors.blue "⏎\n")
   | Comment x ->
       Printf.sprintf "%s" (Colors.magenta ("#" ^ x))
@@ -225,7 +225,7 @@ module Tokenizer = struct
     | None       -> (char_list, [])
 
 
-  (*** Special tokens ***) 
+  (*** Special tokens ***)
 
   (* This will grab a comment *)
   let comment_grab str =
@@ -241,7 +241,7 @@ module Tokenizer = struct
   let next_str = split_on_first ' '
 
   (* takes a string and turns in into a string of tokens *)
-  let rec from_char_list (str : char list) = 
+  let rec from_char_list (str : char list) =
     match (next_str str) with
     | ([], []) -> []
     | (next, rest) ->
@@ -254,14 +254,14 @@ module Tokenizer = struct
          | (Symbol "" | Newline) ->  from_char_list rest (* ignore *)
          | x            -> x :: from_char_list rest
 
-  let print_tokens tokens = 
-   tokens |> List.iter ~f:(print_token) 
+  let print_tokens tokens =
+   tokens |> List.iter ~f:(print_token)
 
-  let print_tokens_debug tokens = 
-   tokens |> List.map ~f:(fun x -> print_token x; x) 
+  let print_tokens_debug tokens =
+   tokens |> List.map ~f:(fun x -> print_token x; x)
 
   (* the high level function used to tokenize a string *)
-  let tokenize str = 
+  let tokenize str =
     str
     |> String.to_list
     |> spacer

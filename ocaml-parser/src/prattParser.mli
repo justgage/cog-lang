@@ -1,19 +1,19 @@
 (**
  * Pratt termonology:
- * 
- *     Name: 
+ *
+ *     Name:
    *     The symbol name matches either a token’s
    *     name or value
- *     Lbp: 
-   *     The left binding power of this symbol. 
-   *     Determines if it will grab the previous 
+ *     Lbp:
+   *     The left binding power of this symbol.
+   *     Determines if it will grab the previous
    *     expression.
- *     Nud: 
-   *     The function called 
-   *     when this symbol is executed with no 
+ *     Nud:
+   *     The function called
+   *     when this symbol is executed with no
    *     arguments
- *     Led: 
-   *     The function called when this symbol 
+ *     Led:
+   *     The function called when this symbol
    *     is executed with the previous expression’s
    *     result.
  * Questions------------
@@ -28,34 +28,42 @@ module PrattParser : sig
   (**** TYPES ****)
 
   (* terminating character *)
-  type term = 
+  type term =
     | Float of float
     | QuoteString of string
+    | Symbol of string
 
   (* abstract syntax tree *)
-  type ast = 
+  type ast =
     | Blank (* null :( *)
     | Statements of ast list
     | Term of term (* terminating character, eg: a float, a string, etc... *)
     | InfixOperator of infix_operator (* an infix operator like `+` *)
     | PrefixOperator of prefix_operator
     | IfStatement of if_statement
-  and infix_operator =  
+    | Assignment of assignment
+  and infix_operator =
      {
         token : Tokenizer.token;
         right : ast;
          left : ast;
      }
-  and prefix_operator = 
+  and prefix_operator =
     {
       token_pre : Tokenizer.token;
       right_pre : ast;
     }
-   and if_statement = 
+   and if_statement =
      {
        condition: ast;
        true_branch : ast;
        false_branch : ast;
+     }
+   and assignment =
+     {
+       var_name : string;
+       set_to : ast;
+       context : ast;
      }
 
   type error
@@ -64,8 +72,8 @@ module PrattParser : sig
   (**
    * This is what represents the parsed state
    *)
-  type parse_state = 
-    { 
+  type parse_state =
+    {
       parsed : ast;
       rest : Tokenizer.token list;
      }
@@ -81,11 +89,11 @@ module PrattParser : sig
   val rbp : Tokenizer.token ->  int
 
 
-  (* This is prefix operators 
+  (* This is prefix operators
    * or terminating characters *)
   val nud : parse_state -> parse_monad
 
-  (* 
+  (*
    * This will be the main parsing function
    * *)
   val expression : ?rbp:int -> parse_state -> parse_monad

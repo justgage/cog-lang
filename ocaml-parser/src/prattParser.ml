@@ -9,7 +9,7 @@ module PrattParser = struct
   (* the monadic |> *)
   let (|>=) ex f = ex >>= fun x -> f x
 
-  let (<|>) l r = 
+  let (<|>) l r =
     match l with
     | Ok x -> x
     | Error _ -> r
@@ -29,7 +29,7 @@ module PrattParser = struct
   type term =
     | Float of float
     | QuoteString of string
-
+    | Symbol of string
 
   type ast = (* represents the tree *)
     | Blank
@@ -38,28 +38,35 @@ module PrattParser = struct
     | InfixOperator of infix_operator
     | PrefixOperator of prefix_operator
     | IfStatement of if_statement
-  and infix_operator = 
+    | Assignment of assignment
+  and infix_operator =
     {
       token : Tokenizer.token;
       right : ast;
        left : ast;
     }
-  and prefix_operator = 
+  and prefix_operator =
     {
       token_pre : Tokenizer.token;
       right_pre : ast;
     }
-  and parse_state = 
-    { 
+  and parse_state =
+    {
       parsed : ast;
       rest : Tokenizer.token list;
      }
-   and if_statement = 
+   and if_statement =
      {
        condition: ast;
        true_branch : ast;
        false_branch : ast;
     }
+   and assignment =
+     {
+       var_name : string;
+       set_to : ast;
+       context : ast;
+     }
 
   type error = string
 
@@ -76,42 +83,46 @@ module PrattParser = struct
 
   (* END OF TYPES *)
 
-  let blank_parse : parse_state = 
+  let blank_parse : parse_state =
     {
       parsed = Blank;
       rest = [];
     }
 
   let rec ast_to_string op : string =
-    begin match op with 
-    | Statements ls -> 
+    begin match op with
+    | Statements ls ->
         (
-        List.fold 
+        List.fold
         ls
-        ~init:"" 
+        ~init:""
         ~f: (fun left right ->  left ^ (ast_to_string right))
         )
-    | InfixOperator infix -> 
-        sprintf "(%s  %s  %s)" 
+    | InfixOperator infix ->
+        sprintf "(%s  %s  %s)"
           (ast_to_string infix.left)
           (Tokenizer.to_string infix.token)
           (ast_to_string infix.right)
-    | PrefixOperator prefix -> 
-        sprintf "(%s %s)" 
+    | PrefixOperator prefix ->
+        sprintf "(%s %s)"
           (Tokenizer.to_string prefix.token_pre)
           (ast_to_string prefix.right_pre)
     | Term x -> begin
-      match x with 
+      match x with
       | Float f -> sprintf "%.f" f;
       | QuoteString s -> sprintf "\"%s\"" s
+      | Symbol s -> sprintf "%s" s
       end
     | Blank -> sprintf "<blank>"
-    | IfStatement ifs -> 
-        sprintf 
-        "if %s \n  then %s \n  else %s end" 
-          (ast_to_string ifs.condition) 
-          (ast_to_string ifs.true_branch) 
+    | IfStatement ifs ->
+        sprintf
+        "if %s \n  then %s \n  else %s end"
+          (ast_to_string ifs.condition)
+          (ast_to_string ifs.true_branch)
           (ast_to_string ifs.false_branch)
+    | Assignment {var_name; set_to ; context} ->
+      sprintf "box %s = %s;\n%s"
+        (var_name) (ast_to_string set_to) (ast_to_string context)
     end
 
   let to_string pm =
@@ -132,25 +143,25 @@ module PrattParser = struct
     rest = new_val;
   }
 
-  let lbp token = 
+  let lbp token =
     let module T = Tokenizer in
     match token with
     | (T.Slash | T.Star) -> 200
     | (T.Plus | T.Minus) -> 100
     | T.LogicAnd -> 60
     | T.LogicOr  -> 50
-    | ( T.GreaterThan 
-      | T.GreaterThanOrEqual 
-      | T.LessThan 
+    | ( T.GreaterThan
+      | T.GreaterThanOrEqual
+      | T.LessThan
       | T.LessThanOrEqual
       | T.Equal
       ) -> 40
-    | T.EndOfStatement -> 20
     | ( T.ClosingRound
+      | T.EndOfStatement
       | T.Then
       | T.Else
       | T.End
-      | T.Newline 
+      | T.Newline
       ) -> 0 (* always stop parsing *)
     | (T.Assignment
       | T.LogicNot (* this is a prefix operator *)
@@ -171,11 +182,11 @@ module PrattParser = struct
       | T.Until
       | T.Symbol _
       | T.Comma)
-    as x -> 
-        (*TODO convert to result *) 
+    as x ->
+        (*TODO convert to result *)
         failwith ("lbp called on something that isn't good ->  " ^ (Tokenizer.to_string_debug x))
-  
-  let rbp token = 
+
+  let rbp token =
     let module T = Tokenizer in
     match token with
     | (T.Slash | T.Star)  -> 200
@@ -183,9 +194,9 @@ module PrattParser = struct
     | T.LogicNot -> 65
     | T.LogicAnd -> 60
     | T.LogicOr  -> 50
-    | ( T.GreaterThan 
-      | T.GreaterThanOrEqual 
-      | T.LessThan 
+    | ( T.GreaterThan
+      | T.GreaterThanOrEqual
+      | T.LessThan
       | T.LessThanOrEqual
       | T.Equal) -> 40
     | (T.Assignment
@@ -211,47 +222,47 @@ module PrattParser = struct
       |T.Symbol _
       |T.Comma
       |T.Then
-      |T.EndOfStatement)   
+      |T.EndOfStatement)
     as x -> failwith ("rbp called on something that isn't good" ^ (Tokenizer.to_string_debug x))
-  
-  let advance p = 
+
+  let advance p =
       match List.hd p.rest with
         |  None -> expected_err (sprintf "something after %s" @@ ast_to_string p.parsed) "nothing"
         |  Some _ -> Ok {
           parsed = p.parsed;
           rest   = List.drop p.rest 1;
-        } 
-  
+        }
+
   let is_more_tokens p =  p.rest <> []
-  
+
   (* gets the next token and returns an option *)
   let next p = List.hd p.rest
 
-  (* checks to see if the curent token is the right one. 
+  (* checks to see if the curent token is the right one.
    * If so it advances. Else it errors. *)
   let match_next expected_token p =
     let exp_err = expected_err (Tokenizer.to_string_debug expected_token) in
     (* note the currying --^ *)
     match next p with
-    | Some found_token -> 
-        if expected_token = found_token 
-        then p |> advance 
+    | Some found_token ->
+        if expected_token = found_token
+        then p |> advance
         else exp_err (Tokenizer.to_string_debug found_token)
-    | None -> 
+    | None ->
         exp_err "end of expression or file"
-  
-  let bigger p rbp = 
+
+  let bigger p rbp =
     match next p with
     | Some token -> rbp < (lbp token)
     | None -> false (* to end progression *)
-  
-  let print_p name p rbp = 
+
+  let print_p name p rbp =
     if debugging then (
       printf "%s (%d) : " name rbp ;
       printf "   tokens="; Tokenizer.print_tokens p.rest;
       printf "   parsed=%s\n" (ast_to_string p.parsed)
     ) else ()
-  
+
   (* The python code I was working off of
       while rbp < token.lbp:
         prev_t = token
@@ -259,97 +270,130 @@ module PrattParser = struct
         left = prev_t.led(left) // old_left
         // these two are set to the new stuff
     *)
-  let rec power_loop (left_state : parse_state) ~rbp  = 
+  let rec power_loop (left_state : parse_state) ~rbp  =
     print_p "-> power_loop!" left_state rbp;
-    if is_more_tokens left_state 
-       && bigger left_state rbp     
-        then (left_state 
-              |> led 
+    if is_more_tokens left_state
+       && bigger left_state rbp
+        then (left_state
+              |> led
               |>= power_loop ~rbp)
         else Result.return left_state
 
-  
+
   (* The python code I was working off of
     def expression(rbp=0):
       global token
       t = token              // current one
       left = t.nud()         // assume it's a prefix / term char
       token = next()         // move token marker to next one
-  
+
       // insert "power_loop" here
-  
+
       return left
-  
+
     *)
-  and expression ?(rbp = 0) state : parse_monad = 
+  and expression ?(rbp = 0) state : parse_monad =
     print_p "-> expression" state rbp;
-    state 
+    state
     |> nud
     |>= power_loop ~rbp
-  
-  and nud p : parse_monad = 
+
+  and nud p : parse_monad =
     let module T = Tokenizer in
     (* TODO: transfer to using is_more_tokens *)
     (match p.rest with
-
-    | T.Float f :: _ -> 
+     | T.Float f :: _ ->
         p
-        |> set_parsed (Term (Float f))  
+        |> set_parsed (Term (Float f))
         |>= advance
-    | T.QuoteString s :: _ -> 
+    | T.QuoteString s :: _ ->
         p
-        |> set_parsed (Term (QuoteString s))  
+        |> set_parsed (Term (QuoteString s))
         |>= advance
-    | T.LogicNot :: _ -> 
+    | T.Symbol s :: _ ->
+        p
+        |> set_parsed (Term (Symbol s))
+        |>= advance
+    | T.LogicNot :: _ ->
         p
         |> advance (* past LogicNot *)
         |>= expression ~rbp:(rbp T.LogicNot) >>= fun right_exp ->
         right_exp |> set_parsed (PrefixOperator {
-          token_pre = T.LogicNot;
-          right_pre = right_exp.parsed;
-        })
+            token_pre = T.LogicNot;
+            right_pre = right_exp.parsed;
+          })
     | T.OpenRound :: _ ->
         p
         |>  advance
         |>= expression
         |>= match_next T.ClosingRound
-    | T.If :: _ ->
+    | T.If :: _ -> begin
         p
         |>  advance
         |>= expression
-        |>= match_next T.Then 
-        >>= fun condition_p -> 
+        |>= match_next T.Then
+        >>= fun condition_p ->
           condition_p
         |>  match_many ~rbp:0
         |>= match_next T.Else
-        >>= fun true_branch -> 
+        >>= fun true_branch ->
           true_branch
         |>  match_many ~rbp:0
         |>= match_next T.End
         >>= fun false_branch ->
-          false_branch 
+          false_branch
           |> set_parsed (IfStatement {
             condition = condition_p.parsed;
             true_branch = true_branch.parsed;
             false_branch = false_branch.parsed;
-        }) 
+        })
+      end
+    | T.Box :: _ -> (
+      p
+      |> advance >>= fun p_next ->
+        match p_next.rest with
+      | [] -> expected_err
+                "A variable name (Symbol)"
+                "end of file"
+      | T.Symbol var_name :: _ ->
+        p_next
+        |> advance
+        |>= match_next T.Assignment
+        |>= expression >>= fun right ->
+        right
+        |> match_next T.EndOfStatement >>= fun p ->
+        if p.rest = []
+        then expected_err "An expression after the Box to use it in" "Nothing! :'("
+        else
+          expression p >>= fun ctx ->
+          ctx |> set_parsed (Assignment {
+              var_name = var_name;
+              set_to = right.parsed;
+              context = ctx.parsed})
+      | got :: _ ->
+        expected_err
+          "A variable name (Symbol)"
+          (T.to_string (got))
+      )
 
-    | x :: _ -> Error (err ("nud: Token was not a literal or a prefix operator! It was:" ^ (T.to_string x)))
+    | x :: _ ->
+      Error
+        (err ("nud: Token was not a literal or a prefix operator! It was:" ^ (T.to_string x)))
     | []     -> Error (err "nud: I was expecting a literal or prefix operator! But there none :,-(")
     )
-  
+
   and led left_s : parse_monad =
     let module T = Tokenizer in
     let infix_option = next(left_s) in
     match infix_option with
     | None -> Error (err "I was especting some sort of infix/postfix operator but got an end of file")
-    | Some infix -> 
+    | Some infix ->
     match T.operator_type infix with
     | T.InfixOperator -> (
       (* get right hand *)
       left_s
       |> advance (* get rid of infix operator *)
-      |>= expression ~rbp:(rbp infix) 
+      |>= expression ~rbp:(rbp infix)
       >>= fun right ->
         print_p ("<- led of operator " ^ (Tokenizer.to_string_debug infix)) right (rbp infix);
         Ok
@@ -367,23 +411,23 @@ module PrattParser = struct
     | T.PleaseAddThisToOperatorTypeFunction -> Error (err "The creator of this language needs to define this")
   and match_many (p : parse_state) ~rbp : parse_monad =
     (
-      expression p   ~rbp >>= fun exp -> 
+      expression p   ~rbp >>= fun exp ->
       match_many exp ~rbp >>= fun rest_maybe ->
       match rest_maybe.parsed with
-      | Statements rest -> 
+      | Statements rest ->
         Result.return (
           rest_maybe |> set_parsed (Statements (exp.parsed :: rest)))
       | _ -> Error "IDK something crazy with match_many"
     ) <|> (set_parsed (Statements []) p) (* base case *)
 
-  
-  
-  let begin_parse tlist =  
+
+
+  let begin_parse tlist =
     blank_parse
-    |> set_rest tlist 
+    |> set_rest tlist
     |>= expression
-  
-  
+
+
   let next_higher _pm = Error (err "This is undefined 0 .0")
-  
+
 end
