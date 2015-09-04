@@ -9,7 +9,6 @@ display(score); # 2
 
 score = score + 1; 
 
-
 display("your score is:", score); # your score is: 3
 
 box name = get_result();

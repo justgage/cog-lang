@@ -27,11 +27,6 @@ module PrattParser : sig
 
   (**** TYPES ****)
 
-  (* terminating character *)
-  type term =
-    | Float of float
-    | QuoteString of string
-    | Symbol of string
 
   (* abstract syntax tree *)
   type ast =
@@ -42,6 +37,13 @@ module PrattParser : sig
     | PrefixOperator of prefix_operator
     | IfStatement of if_statement
     | Assignment of assignment
+  (* terminating character *)
+  and term =
+    | Float of float
+    | QuoteString of string
+    | Symbol of string
+    | Boolean of bool
+    | List of ast  (* <-- Should this be a list? *)
   and infix_operator =
      {
         token : Tokenizer.token;

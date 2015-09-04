@@ -9,10 +9,6 @@ module PrattParser = struct
   (* the monadic |> *)
   let (|>=) ex f = ex >>= fun x -> f x
 
-  let (<|>) l r =
-    match l with
-    | Ok x -> x
-    | Error _ -> r
 
   (* NOTE:
     * p and pm are used to mean "parser monad" which is
@@ -26,11 +22,6 @@ module PrattParser = struct
     * the definition of these are below
     *)
 
-  type term =
-    | Float of float
-    | QuoteString of string
-    | Symbol of string
-
   type ast = (* represents the tree *)
     | Blank
     | Statements of ast list
@@ -39,6 +30,12 @@ module PrattParser = struct
     | PrefixOperator of prefix_operator
     | IfStatement of if_statement
     | Assignment of assignment
+  and term =
+    | Float of float
+    | QuoteString of string
+    | Symbol of string
+    | Boolean of bool
+    | List of ast  (* <-- Should this be a list? *)
   and infix_operator =
     {
       token : Tokenizer.token;
@@ -81,6 +78,11 @@ module PrattParser = struct
    *)
   type parse_monad = (parse_state, error) Core.Result.t
 
+  let (<|>) (l : parse_monad) (r : parse_monad) : parse_monad =
+    match l with
+    | Ok _ -> l
+    | Error _  -> r
+
   (* END OF TYPES *)
 
   let blank_parse : parse_state =
@@ -112,6 +114,8 @@ module PrattParser = struct
       | Float f -> sprintf "%.f" f;
       | QuoteString s -> sprintf "\"%s\"" s
       | Symbol s -> sprintf "%s" s
+      | Boolean b -> sprintf "%b" b
+      | List x -> sprintf "[%s]" (ast_to_string x)
       end
     | Blank -> sprintf "<blank>"
     | IfStatement ifs ->
@@ -150,25 +154,28 @@ module PrattParser = struct
     | (T.Plus | T.Minus) -> 100
     | T.LogicAnd -> 60
     | T.LogicOr  -> 50
-    | ( T.GreaterThan
-      | T.GreaterThanOrEqual
-      | T.LessThan
+    | T.OpenSquare -> 1
+    | ( T.LessThan
       | T.LessThanOrEqual
       | T.Equal
-      ) -> 40
+      | T.GreaterThan
+      | T.GreaterThanOrEqual) -> 40
     | ( T.ClosingRound
-      | T.EndOfStatement
+      | T.ClosingSquare
       | T.Then
       | T.Else
       | T.End
       | T.Newline
+      | T.EndOfStatement
       ) -> 0 (* always stop parsing *)
+    | T.Comma -> 2 (*is this right?*)
     | (T.Assignment
-      | T.LogicNot (* this is a prefix operator *)
+      (* prefix operator *)
+      | T.LogicNot
+      (* nuds *)
       | T.QuoteString _
       | T.Boolean _
       | T.Box
-      | T.ClosingSquare
       | T.CommentBegin
       | T.Comment _
       | T.DoubleQuote
@@ -176,15 +183,10 @@ module PrattParser = struct
       | T.FuncDef
       | T.If
       | T.OpenRound
-      | T.OpenSquare
       | T.Repeat
       | T.Display
       | T.Until
-      | T.Symbol _
-      | T.Comma)
-    as x ->
-        (*TODO convert to result *)
-        failwith ("lbp called on something that isn't good ->  " ^ (Tokenizer.to_string_debug x))
+      | T.Symbol _) as x -> failwith ("lbp called on something that isn't good ->  " ^ (Tokenizer.to_string x))
 
   let rbp token =
     let module T = Tokenizer in
@@ -199,6 +201,7 @@ module PrattParser = struct
       | T.LessThan
       | T.LessThanOrEqual
       | T.Equal) -> 40
+    | T.Comma -> 1 (*is this right?*)
     | (T.Assignment
       |T.Boolean _
       |T.Box
@@ -220,7 +223,6 @@ module PrattParser = struct
       |T.Display
       |T.Until
       |T.Symbol _
-      |T.Comma
       |T.Then
       |T.EndOfStatement)
     as x -> failwith ("rbp called on something that isn't good" ^ (Tokenizer.to_string_debug x))
@@ -279,7 +281,6 @@ module PrattParser = struct
               |>= power_loop ~rbp)
         else Result.return left_state
 
-
   (* The python code I was working off of
     def expression(rbp=0):
       global token
@@ -300,20 +301,30 @@ module PrattParser = struct
 
   and nud p : parse_monad =
     let module T = Tokenizer in
-    (* TODO: transfer to using is_more_tokens *)
     (match p.rest with
      | T.Float f :: _ ->
         p
         |> set_parsed (Term (Float f))
         |>= advance
+
     | T.QuoteString s :: _ ->
         p
         |> set_parsed (Term (QuoteString s))
         |>= advance
+
     | T.Symbol s :: _ ->
         p
         |> set_parsed (Term (Symbol s))
         |>= advance
+
+    | T.Boolean b :: _ ->
+      let b = match b with
+        | T.True -> true
+        | T.False -> false in
+        p
+        |> set_parsed (Term (Boolean b))
+        |>= advance
+
     | T.LogicNot :: _ ->
         p
         |> advance (* past LogicNot *)
@@ -322,11 +333,28 @@ module PrattParser = struct
             token_pre = T.LogicNot;
             right_pre = right_exp.parsed;
           })
+
     | T.OpenRound :: _ ->
         p
         |>  advance
         |>= expression
         |>= match_next T.ClosingRound
+    | T.OpenSquare :: _ ->
+      p
+      |> advance >>= fun exp ->
+      ((exp |> match_next T.ClosingSquare)
+       <|>
+       (exp
+        |> expression
+        |>= match_next T.ClosingSquare))
+      >>= fun inside ->
+      inside |>
+      set_parsed
+        (PrefixOperator {
+          token_pre = Tokenizer.OpenSquare;
+          right_pre = inside.parsed;
+        })
+
     | T.If :: _ -> begin
         p
         |>  advance
@@ -348,6 +376,7 @@ module PrattParser = struct
             false_branch = false_branch.parsed;
         })
       end
+
     | T.Box :: _ -> (
       p
       |> advance >>= fun p_next ->
@@ -375,10 +404,35 @@ module PrattParser = struct
           "A variable name (Symbol)"
           (T.to_string (got))
       )
-
-    | x :: _ ->
-      Error
-        (err ("nud: Token was not a literal or a prefix operator! It was:" ^ (T.to_string x)))
+    | (
+      T.Assignment
+      |T.ClosingRound
+      |T.ClosingSquare
+      |T.CommentBegin
+      |T.Comment _
+      |T.DoubleQuote
+      |T.Else
+      |T.End
+      |T.GreaterThan
+      |T.GreaterThanOrEqual
+      |T.Equal
+      |T.LessThan
+      |T.LessThanOrEqual
+      |T.LogicAnd
+      |T.LogicOr
+      |T.Minus
+      |T.Newline
+      |T.Plus
+      |T.Slash
+      |T.Star
+      |T.Comma
+      |T.Then
+      |T.Display
+      (* Shouldn't be here *)
+      |T.FuncDef
+      |T.Repeat
+      |T.Until
+      |T.EndOfStatement) as x :: _ -> Error (err ("nud: Token was not a literal or a prefix operator! It was:" ^ (T.to_string x)))
     | []     -> Error (err "nud: I was expecting a literal or prefix operator! But there none :,-(")
     )
 
@@ -409,18 +463,18 @@ module PrattParser = struct
     | T.PrefixOperator -> expected_err "led: some sort if infix operator like a `+`" "a Prefix operator"
     | T.Value -> expected_err "led: some sort if infix operator like a `+`" "a normal value"
     | T.PleaseAddThisToOperatorTypeFunction -> Error (err "The creator of this language needs to define this")
+
+  (* keep on matching expressions till they break then return them as elements of the list
+     NOTE: I have no idea if this works
+  *)
   and match_many (p : parse_state) ~rbp : parse_monad =
-    (
       expression p   ~rbp >>= fun exp ->
-      match_many exp ~rbp >>= fun rest_maybe ->
+      match_many exp ~rbp >>= fun rest_maybe -> (
       match rest_maybe.parsed with
-      | Statements rest ->
-        Result.return (
+      | Statements rest -> (
           rest_maybe |> set_parsed (Statements (exp.parsed :: rest)))
       | _ -> Error "IDK something crazy with match_many"
     ) <|> (set_parsed (Statements []) p) (* base case *)
-
-
 
   let begin_parse tlist =
     blank_parse

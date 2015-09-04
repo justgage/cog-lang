@@ -159,6 +159,8 @@ module Tokenizer = struct
       | LessThan
       | LessThanOrEqual
       | EndOfStatement
+      | OpenRound
+      | Comma
         ) -> InfixOperator
     | (Boolean _
       | Float _
