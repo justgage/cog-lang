@@ -9,13 +9,20 @@ Is this legit? or does it go against what I said to do?
 ***** Clojure
 ***** C?
 ** Tokenizer
-*** TODO Functions? :EXTRA:
-*** TODO Make Type checker not have catchall :DEBT:
+*** TODO Functions?  :EXTRA:
+*** TODO Make Type checker not have catchall                         :DEBT:
 ** Pratt Parser
-*** TODO Lists Parse
+*** DONE Lists Parse
+
+CLOSED: [2015-09-04 Fri 07:22]
+:PROPERTIES:
+:Effort:
+:END:
 :LOGBOOK:
 CLOCK: [2015-09-03 Thu 21:02]--[2015-09-03 Thu 21:27] =>  0:25
 :END:
+*** TODO Fix broken "If statements" (match many)
+**** Looks like it broke in adding lists?
 *** TODO Function Run 
 ***** TODO Arguments
 ***** TODO How to find them?
@@ -27,10 +34,10 @@ CLOCK: [2015-09-03 Thu 21:02]--[2015-09-03 Thu 21:27] =>  0:25
 *** TODO Make List a list :DEBT:
 ** Executor (Requirements):
 *** Meta
-**** TODO How to store state?
+**** How to store state?
 ***** Map that's passed along
-***** Monad?
-**** TODO How to deal with stuff that doesn't type check :P
+***** Monad? <- most likely
+**** How to deal with stuff that doesn't type check :P
 ***** Polymorphic functions?
 ***** Just throw errors <- Most likely
 *** TODO Be able to print primitives
@@ -51,7 +58,7 @@ CLOCK: [2015-09-03 Thu 21:02]--[2015-09-03 Thu 21:27] =>  0:25
 *** TODO Be able to parse and execute in 1 second
 *** TODO MAYBE: debug mode :maybe
 ** Tech Debt:
-*** TODO nud to use is_more_tokens :DEBT:
-*** TODO Convert lbp/rbp to using Result :DEBT: 
+*** TODO nud to use is_more_tokens :DEBT:                              :DEBT: 
+*** TODO Convert lbp/rbp to using Result
 **** NOTE: this may require to store lbp/rbp in the monad.
 which may be less clean!

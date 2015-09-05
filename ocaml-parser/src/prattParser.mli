@@ -25,6 +25,7 @@ module PrattParser : sig
   open Tokenizer
   open Core.Result
 
+
   (**** TYPES ****)
 
 
@@ -81,6 +82,9 @@ module PrattParser : sig
      }
 
   type parse_monad = (parse_state, error) Result.t
+
+  (* the monadic |> *)
+  val (|>=) : parse_monad -> (parse_state -> parse_monad) -> parse_monad
 
   (**** FUNCTIONS ****)
 
