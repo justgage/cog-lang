@@ -1,22 +1,34 @@
 module Cog = struct
   open Core.Std
   open Tokenizer
-  open Parser
+  open PrattParser
+  open Eval
 
-    let run_ast filename = 
-      Core.In_channel.read_all filename
-       |> Tokenizer.tokenize
-       |> Parser.parse
+  let run_ast str =
+    str
+     |> Tokenizer.tokenize
+     |> PrattParser.begin_parse
 
-    let run_fmt filename = 
-      Core.In_channel.read_all filename
-       |> Tokenizer.tokenize
-       |> Parser.parse
-       |> Parser.print_tree
+    let run_string str =
+      str
+      |> run_ast
+      |> PrattParser.to_string
 
-    let run filename = 
+    let run_fmt str =
+      str
+      |> run_ast
+      |> PrattParser.print
+
+    let run str =
+      let ast_result = run_ast str in
+      match ast_result with
+      | Error _ as x -> printf "Parser problem:\n%s" (PrattParser.to_string x)
+      | Ok ps ->
+        PrattParser.(ps.parsed)
+        |> Eval.eval
+        |> Eval.display
+
+    let run_file filename =
       Core.In_channel.read_all filename
-       |> Tokenizer.tokenize
-       |> Parser.parse
-       |> Parser.print_tree
+      |> run
 end

@@ -1,2 +1,4 @@
 _build
 *.byte
+testPrattParser.native
+testPrattParser.byte

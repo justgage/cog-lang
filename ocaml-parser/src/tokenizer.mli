@@ -21,11 +21,13 @@ module Tokenizer : sig
     | FuncDef
     | GreaterThan
     | GreaterThanOrEqual
+    | Equal
     | If
     | LessThan
     | LessThanOrEqual
     | LogicAnd
     | LogicOr
+    | LogicNot
     | Minus
     | Newline
     | OpenRound
@@ -39,6 +41,15 @@ module Tokenizer : sig
     | Symbol of string
     | Comma
     | Then
+    | EndOfStatement
+
+  type operator_cat = 
+    | InfixOperator
+    | PrefixOperator
+    | Value
+    | PleaseAddThisToOperatorTypeFunction
+
+  val operator_type : token -> operator_cat
 
   val tokenize : string -> token list
   val print_token : token -> unit
@@ -46,4 +57,5 @@ module Tokenizer : sig
   val print_tokens_debug : token list -> token list
   val from_char_list : symbol -> token list
   val to_string : token -> string
+  val to_string_debug : token -> string
 end

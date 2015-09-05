@@ -1,28 +1,39 @@
 # NOTE: this is my behvior driven tests
 # this represents a the score of player1
-box score = 2;
-box scores = [1, 2, 4];
+box score = 2
+box scores = [1 2 4]
 
-display("I'm printing out something");
+display("I'm printing out something")
 
-display(score); # 2
+display(score) # 2
 
-score = score + 1; 
+# possibly this if it's not too hard
+# score = + score 1 
+# score = +(score 1)
+# score = (+ score 1)
 
-display("your score is:", score); # your score is: 3
+mathz = +(1 1 1 1 1) # 5 => 
+mathz_1 = /(+(1 1 1 1 1) 5) # 1 => 
+mathz_1 = divide(add(1 1 1 1 1) 5) # 1 => 
+mathz_2 = *(+(1 1 1 1 1) 5) # 25 => 
+mathz_3 = mult(add(1 1) 5) # 25 => 
 
-box name = get_result();
 
-display(score) ; display(2); # two things on one line!
+display("your score is:" score) # your score is: 3
+
+box name = get_result()
+
+display(score); display(2) # two things on one line!
 
               # this is indented a huge amount
 
 until turns >= 10 then
-        display("Enter your guess:");
-        box guess = get_result();
+        display("Enter your guess:")
+        box guess = get_result()
 end
 
-if score == 0 or score == 1 then display("your score is tiny") else "nothing" end;
+if score == 0 or score == 1 then display("your score is tiny")
+
 
 if score > 0 then
    and score < 1000
@@ -33,7 +44,7 @@ if score > 0 then
         box guess = get_result()
   end
 
-  display("You won! your score is:", score)
+  display("You won! your score is:" score)
 else
   display("You lost.")
 end
@@ -54,7 +65,7 @@ func say_hi_to(name)
   display(name)
 end
 
-func add(x, y)
+func add(x y)
   x + y # implicit return value
 end
 

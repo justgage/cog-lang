@@ -22,12 +22,13 @@ module Parser : sig
     | Until of until
     | StringEx of string
     | Float of float
-    | BadToken of bad_token 
     | ParenExp of expression
     | Boolean of bool
     | List of expression list 
     | VarGet of string
+    | BadToken of bad_token 
     | NoExpression
+    | Newline of new_line
     | Error of errors
   and operator = { 
     symbol: string;
@@ -47,7 +48,7 @@ module Parser : sig
     condition : expression;
     true_body : expression;
     else_body : expression;
-    if_contex : expression;
+    if_context : expression;
   }
   and function_exec = {
     name : string;
@@ -71,10 +72,14 @@ module Parser : sig
     bad_token : Tokenizer.token;
     bad_context : expression;
   }
+  and new_line = {
+    new_line_context : expression;
+  }
   and ast = expression (* abstract syntax tree *)
 
   (********** TYPES END **********)
 
   val parse : Tokenizer.token list -> ast
+  val string_tree : ast -> string
   val print_tree : ast -> unit
 end
