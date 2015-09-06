@@ -325,14 +325,8 @@ module PrattParser = struct
         |> set_parsed (Term (Boolean b))
         |>= advance
 
-    | T.LogicNot :: _ ->
-        p
-        |> advance (* past LogicNot *)
-        |>= expression ~rbp:(rbp T.LogicNot) >>= fun right_exp ->
-        right_exp |> set_parsed (PrefixOperator {
-            token_pre = T.LogicNot;
-            right_pre = right_exp.parsed;
-          })
+    | (T.LogicNot | T.Minus) as token :: _ ->
+      add_prefix_operator p token
 
     | T.OpenRound :: _ ->
         p
@@ -420,7 +414,6 @@ module PrattParser = struct
       |T.LessThanOrEqual
       |T.LogicAnd
       |T.LogicOr
-      |T.Minus
       |T.Newline
       |T.Plus
       |T.Slash
@@ -435,6 +428,14 @@ module PrattParser = struct
       |T.EndOfStatement) as x :: _ -> Error (err ("nud: Token was not a literal or a prefix operator! It was:" ^ (T.to_string x)))
     | []     -> Error (err "nud: I was expecting a literal or prefix operator! But there none :,-(")
     )
+    and add_prefix_operator p token = 
+        p
+        |> advance (* past LogicNot *)
+        |>= expression ~rbp:(rbp token) >>= fun right_exp ->
+        right_exp |> set_parsed (PrefixOperator {
+            token_pre = token;
+            right_pre = right_exp.parsed;
+          })
 
   and led left_s : parse_monad =
     let module T = Tokenizer in

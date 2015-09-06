@@ -51,10 +51,20 @@ and eval_prefix prefix =
   let open PrattParser in
   match prefix.token_pre with
   | Tokenizer.Minus ->
-    let result = eval prefix.right_pre in
-    (match result with
-    | x -> failwith "cog eval: this is not a prefix operator")
-| x -> failwith "cog eval: this is not a prefix operator"
+    (
+      let result = eval prefix.right_pre in
+      let negate v = (
+          match v with
+          | Float v -> Value (Float (-.v))
+          | x -> failwith "tried to negate something that wasn't a number")
+      in (
+        match result with
+        | Value v -> negate v
+        | NoOp -> failwith "trying to negate somthign that isn't a value like 'display'"
+        | Values _ -> failwith "Trying to eval more than just a number"
+      )
+    )
+    | x -> failwith "cog eval: this is not a prefix operator"
 
 and if_eval ifs =
   let open PrattParser in
