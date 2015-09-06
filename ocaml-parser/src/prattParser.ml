@@ -362,11 +362,11 @@ module PrattParser = struct
         |>= match_next T.Then
         >>= fun condition_p ->
           condition_p
-        |>  match_many ~rbp:0
+        |>  expression ~rbp:0
         |>= match_next T.Else
         >>= fun true_branch ->
           true_branch
-        |>  match_many ~rbp:0
+        |>  expression ~rbp:0
         |>= match_next T.End
         >>= fun false_branch ->
           false_branch
@@ -467,14 +467,14 @@ module PrattParser = struct
   (* keep on matching expressions till they break then return them as elements of the list
      NOTE: I have no idea if this works
   *)
-  and match_many (p : parse_state) ~rbp : parse_monad =
-      expression p   ~rbp >>= fun exp ->
-      match_many exp ~rbp >>= fun rest_maybe -> (
-      match rest_maybe.parsed with
-      | Statements rest -> (
-          rest_maybe |> set_parsed (Statements (exp.parsed :: rest)))
-      | _ -> Error "IDK something crazy with match_many"
-    ) <|> (set_parsed (Statements []) p) (* base case *)
+  (* and match_many (p : parse_state) ~rbp : parse_monad = *)
+  (*     expression p   ~rbp >>= fun exp -> *)
+  (*     match_many exp ~rbp >>= fun rest_maybe -> ( *)
+  (*     match rest_maybe.parsed with *)
+  (*     | Statements rest -> ( *)
+  (*         rest_maybe |> set_parsed (Statements (exp.parsed :: rest))) *)
+  (*     | _ -> Error "IDK something crazy with match_many" *)
+  (*   ) <|> (set_parsed (Statements []) p) (\* base case *\) *)
 
   let begin_parse tlist =
     blank_parse
