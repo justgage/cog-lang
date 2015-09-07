@@ -128,7 +128,7 @@ module PrattParser = struct
           (ast_to_string prefix.right_pre)
     | Term x -> begin
       match x with
-      | Float f -> sprintf "%.f" f;
+      | Float f -> sprintf "%.0f" f;
       | QuoteString s -> sprintf "\"%s\"" s
       | Symbol s -> sprintf "%s" s
       | Boolean b -> sprintf "%b" b
@@ -172,14 +172,14 @@ module PrattParser = struct
     | T.OpenRound -> 300
     | (T.Slash | T.Star) -> 200
     | (T.Plus | T.Minus) -> 100
-    | T.LogicAnd -> 60
-    | T.LogicOr  -> 50
-    | T.OpenSquare -> 1
     | ( T.LessThan
       | T.LessThanOrEqual
       | T.Equal
       | T.GreaterThan
-      | T.GreaterThanOrEqual) -> 40
+      | T.GreaterThanOrEqual) -> 70
+    | T.LogicAnd -> 60
+    | T.LogicOr  -> 50
+    | T.OpenSquare -> 1
     | ( T.ClosingRound
       | T.ClosingSquare
       | T.Then
@@ -213,14 +213,14 @@ module PrattParser = struct
     match token with
     | (T.Slash | T.Star)  -> 200
     | (T.Plus | T.Minus)  -> 100
-    | T.LogicNot -> 65
-    | T.LogicAnd -> 60
-    | T.LogicOr  -> 50
     | ( T.GreaterThan
       | T.GreaterThanOrEqual
       | T.LessThan
       | T.LessThanOrEqual
-      | T.Equal) -> 40
+      | T.Equal) -> 75
+    | T.LogicNot -> 65
+    | T.LogicAnd -> 60
+    | T.LogicOr  -> 50
     | T.Comma -> 1 (*is this right?*)
     | T.OpenRound -> 0
     | (T.Assignment

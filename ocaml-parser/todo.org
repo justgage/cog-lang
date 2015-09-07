@@ -26,14 +26,15 @@ CLOCK: [2015-09-03 Thu 21:02]--[2015-09-03 Thu 21:27] =>  0:25
 CLOSED: [2015-09-07 Mon 11:05]
 **** Looks like it broke in adding lists?
 *** TODO Function Run 
-***** TODO Parse them 
+***** DONE Parse them 
+CLOSED: [2015-09-07 Mon 14:06]
 ***** TODO Parse Arguments
 *** TODO Function Define
 *** TODO Repeat
 *** TODO Functions
 *** TODO Until :EXTRA:
 *** TODO Make List a list :DEBT:
-** Executor (Requirements):
+** Eval (Requirements):
 *** Meta
 **** How to store state?
 ***** Map that's passed along
@@ -41,23 +42,30 @@ CLOSED: [2015-09-07 Mon 11:05]
 **** How to deal with stuff that doesn't type check :P
 ***** Polymorphic functions?
 ***** Just throw errors <- Most likely
-*** TODO Be able to print primitives
+*** DONE Be able to print primitives
+CLOSED: [2015-09-07 Mon 14:56]
 **** Float
 **** String
 **** List
-*** TODO If statements
-*** TODO Store in a variable
+*** DONE If statements
+CLOSED: [2015-09-07 Mon 14:56]
+*** DONE ==, <, <=, >= for floats
+CLOSED: [2015-09-07 Mon 15:21]
+*** DONE Boolean
+CLOSED: [2015-09-07 Mon 15:24]
+**** DONE Negate
+CLOSED: [2015-09-07 Mon 15:52]
+**** DONE And
+CLOSED: [2015-09-07 Mon 15:52]
+**** DONE Or
+CLOSED: [2015-09-07 Mon 15:52]
 *** TODO Repeat statements
+*** TODO Store in a variable
 *** TODO Define and run functions
-*** TODO ==, <, <=, >= for floats
 *** TODO Equality for Lists
 *** TODO Equality for strings
-*** TODO Boolean
-**** Negate
-**** And
-**** Or
 *** TODO Be able to parse and execute in 1 second
-*** TODO MAYBE: debug mode :maybe
+*** TODO debug  mode                                                 :maybe:
 ** Tech Debt:
 *** TODO nud to use is_more_tokens :DEBT:                              :DEBT: 
 *** TODO Convert lbp/rbp to using Result

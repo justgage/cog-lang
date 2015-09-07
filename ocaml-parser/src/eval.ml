@@ -19,13 +19,26 @@ let try_float func_name eval_res =
     (
     match v with
     | PrattParser.Float f -> f
-    | _  as item ->
+    | _  ->
       failwith
         (func_name ^ " > try_float: Expected this to be a float but got  something else")
     )
   | Values _ -> failwith (func_name ^ "> try_float: Expected a value but got multiple")
   | NoOp -> failwith (func_name ^ "> try_float: Expected a value but got NoOp")
 
+
+let try_bool func_name eval_res =
+  match eval_res with
+  | Value v ->
+    (
+    match v with
+    | PrattParser.Boolean b -> b
+    | _  ->
+      failwith
+        (func_name ^ " > try_bool: Expected this to be a boolean (true or false) but got something else")
+    )
+  | Values _ -> failwith (func_name ^ "> try_float: Expected a value but got multiple")
+  | NoOp -> failwith (func_name ^ "> try_float: Expected a value but got NoOp")
 
 (* Cog core lib 0 .0*)
 
@@ -63,29 +76,61 @@ let rec eval (tree : PrattParser.ast) : eval_result =
 and infix_eval infix =
   let module T = Tokenizer in
   let open PrattParser in
+
+  let apply_bool_op infix op =
+    let l = eval infix.left |> try_bool "infix_eval" in
+    let r = eval infix.right |> try_bool "infix_eval" in
+    Value (PrattParser.Boolean (op l r))
+
+  and apply_compare infix op =
+    let l = eval infix.left |> try_float "infix_eval" in
+    let r = eval infix.right |> try_float "infix_eval" in
+    Value (PrattParser.Boolean (op l r))
+
+  and apply_float_op infix op =
+    let l = eval infix.left |> try_float "infix_eval" in
+    let r = eval infix.right |> try_float "infix_eval" in
+    Value (PrattParser.Float (op l r))
+  in
+
   match infix.token with
   | T.OpenRound -> func_eval infix
 
+  (* float operations *)
   | Tokenizer.Plus ->
-    let l = eval infix.left |> try_float "infix_eval" in
-    let r = eval infix.right |> try_float "infix_eval" in
-    Value (PrattParser.Float (l +. r))
+    apply_float_op infix ( +. )
 
   | Tokenizer.Minus ->
-    let l = eval infix.left |> try_float "infix_eval" in
-    let r = eval infix.right |> try_float "infix_eval" in
-    Value (PrattParser.Float (l -. r))
+    apply_float_op infix ( -. )
 
   | Tokenizer.Slash ->
-    let l = eval infix.left |> try_float "infix_eval" in
-    let r = eval infix.right |> try_float "infix_eval" in
-    Value (PrattParser.Float (l /. r))
+    apply_float_op infix ( /. )
 
   | Tokenizer.Star ->
-    let l = eval infix.left |> try_float "infix_eval" in
-    let r = eval infix.right |> try_float "infix_eval" in
-    Value (PrattParser.Float (l *. r))
+    apply_float_op infix ( *. )
 
+  (* float operations *)
+  | Tokenizer.Equal ->
+    apply_compare infix ( = )
+
+  | Tokenizer.LessThan ->
+    apply_compare infix ( <. )
+
+  | Tokenizer.LessThanOrEqual ->
+    apply_compare infix ( <=. )
+
+  | Tokenizer.GreaterThan ->
+    apply_compare infix ( >. )
+
+  | Tokenizer.GreaterThanOrEqual ->
+    apply_compare infix ( >=. )
+
+  (* logic operations *)
+  | Tokenizer.LogicAnd ->
+    apply_bool_op infix ( && )
+
+  | Tokenizer.LogicOr ->
+    apply_bool_op infix ( && )
 
   | _ as t -> failwith ((Tokenizer.to_string t) ^ "isn't an implemented operator yet!")
 
@@ -116,25 +161,22 @@ and repeat_eval r =
 and eval_prefix prefix =
   let module T = Tokenizer in
   let open PrattParser in
+
+  let apply_bool_op prefix op =
+    let l = eval prefix.right_pre |> try_bool "prefix_eval" in
+    Value (PrattParser.Boolean (op l))
+
+  and apply_float_op prefix op =
+    let l = eval prefix.right_pre |> try_float "prefix_eval" in
+    Value (PrattParser.Float (op l))
+  in
+
   match prefix.token_pre with
   | Tokenizer.Minus ->
-    (
-      let result = eval prefix.right_pre in
-      let negate v = (
-          match v with
-          | Float v -> Value (Float (-.v))
-          | x -> failwith "tried to negate something that wasn't a number")
-      in (
-        match result with
-        | Value v -> negate v
-        | NoOp -> failwith "trying to negate somthign that isn't a value like 'display'"
-        | Values _ -> failwith "Trying to eval more than just a number"
-      )
-    )
-    | x -> failwith "cog eval: this is not a prefix operator"
-
-
-
+    let negate x = x *. -1. in
+    apply_float_op prefix negate
+  | Tokenizer.LogicNot -> apply_bool_op prefix (not)
+  | _ -> failwith "cog eval: this is not a prefix operator"
 
 and if_eval ifs =
   let open PrattParser in
