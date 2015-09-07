@@ -40,7 +40,7 @@ module Tokenizer = struct
     | OpenSquare
     | Plus
     | Repeat
-    | Display
+    | Display (* DEPRECATED *)
     | Until
     | Slash
     | Star
@@ -48,9 +48,11 @@ module Tokenizer = struct
     | Comma
     | Then
     | EndOfStatement
+    | Arrow
 
   let to_string x =
     match x with
+    | Arrow -> "->"
     | Boolean True -> "true"
     | Boolean False -> "false"
     | If -> "if"
@@ -101,6 +103,7 @@ module Tokenizer = struct
 
   let from_str x =
     match x with
+    | "->" -> Arrow
     | "true" -> Boolean True
     | "false" -> Boolean False
     | "if" -> If
@@ -130,7 +133,6 @@ module Tokenizer = struct
     | "then" -> Then
     | "#" -> CommentBegin
     | "repeat" -> Repeat
-    | "display" -> Display
     | "until" -> Until
     | "," -> Comma
     | ";" -> EndOfStatement
@@ -142,7 +144,7 @@ module Tokenizer = struct
     | InfixOperator
     | PrefixOperator
     | Value
-    | PleaseAddThisToOperatorTypeFunction
+    | OtherSyntax
 
   let operator_type token =
     match token with
@@ -162,10 +164,30 @@ module Tokenizer = struct
       | OpenRound
       | Comma
         ) -> InfixOperator
-    | (Boolean _
+    | ( Boolean _
       | Float _
+      | QuoteString _
+      | Symbol _
+      | Display
       ) -> Value
-    | _ -> PleaseAddThisToOperatorTypeFunction (* FIX ME *)
+    | LogicNot -> PrefixOperator
+    | ( Box
+      | ClosingRound
+      | ClosingSquare
+      | CommentBegin
+      | Comment _
+      | DoubleQuote
+      | Else
+      | End
+      | FuncDef
+      | If
+      | Repeat
+      | Until
+      | Newline
+      | OpenSquare
+      | Then
+      | Arrow) -> OtherSyntax
+
 
   (* Butterfly operator? (this is my first operator in OCaml so I must
    * give it a name, obviously)
@@ -186,7 +208,8 @@ module Tokenizer = struct
     | '[' ::rest -> " [ "  >< spacer rest
     | ']' ::rest -> " ] "  >< spacer rest
     | '+' ::rest -> " + "  >< spacer rest
-    | '-' ::rest -> " - "  >< spacer rest
+    (* v--- this breaks the arrow *)
+    (* | '-' ::rest -> " - "  >< spacer rest *)
     | '/' ::rest -> " / "  >< spacer rest
     | '*' ::rest -> " * "  >< spacer rest
     | '\n'::rest -> " \n " >< spacer rest

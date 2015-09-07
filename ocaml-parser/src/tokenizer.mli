@@ -42,12 +42,13 @@ module Tokenizer : sig
     | Comma
     | Then
     | EndOfStatement
+    | Arrow
 
-  type operator_cat = 
+  type operator_cat =
     | InfixOperator
     | PrefixOperator
     | Value
-    | PleaseAddThisToOperatorTypeFunction
+    | OtherSyntax
 
   val operator_type : token -> operator_cat
 

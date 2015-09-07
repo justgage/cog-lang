@@ -9,7 +9,8 @@ open Cog
  *)
 
 let basic_math _test_ctxt =
-  let got = Cog.run_string "2+2*3-4-5*9" in
+  (*                              v-- due to tokenizer*)
+  let got = Cog.run_string "2+2*3 - 4 - 5 *9" in
   let expected =
   "printing result:
  (((2  +  (2  *  3))  -  4)  -  (5  *  9))
@@ -22,8 +23,8 @@ let basic_math_whitespace _test_ctxt =
   +
   2  *
   3
-  -4
-  -5 *  9" in
+  - 4
+  - 5 *  9" in
   let expected =
   "printing result:
  (((2  +  (2  *  3))  -  4)  -  (5  *  9))

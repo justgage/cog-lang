@@ -9,11 +9,11 @@ Is this legit? or does it go against what I said to do?
 ***** Clojure
 ***** C?
 ** Tokenizer
-*** TODO Functions?  :EXTRA:
+*** TODO Change how Functions look?                                   :EXTRA:
 *** TODO Make Type checker not have catchall                         :DEBT:
+*** Remove "Display" from everywhere                                   :DEBT: 
 ** Pratt Parser
 *** DONE Lists Parse
-
 CLOSED: [2015-09-04 Fri 07:22]
 :PROPERTIES:
 :Effort:
@@ -21,13 +21,14 @@ CLOSED: [2015-09-04 Fri 07:22]
 :LOGBOOK:
 CLOCK: [2015-09-03 Thu 21:02]--[2015-09-03 Thu 21:27] =>  0:25
 :END:
-*** TODO Fix broken "If statements" (match many)
+**** Make it turn into a real list :debt:
+*** DONE Fix broken "If statements" (match many)
+CLOSED: [2015-09-07 Mon 11:05]
 **** Looks like it broke in adding lists?
 *** TODO Function Run 
-***** TODO Arguments
-***** TODO How to find them?
+***** TODO Parse them 
+***** TODO Parse Arguments
 *** TODO Function Define
-*** TODO Display
 *** TODO Repeat
 *** TODO Functions
 *** TODO Until :EXTRA:

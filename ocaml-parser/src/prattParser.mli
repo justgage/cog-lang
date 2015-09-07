@@ -38,6 +38,7 @@ module PrattParser : sig
     | PrefixOperator of prefix_operator
     | IfStatement of if_statement
     | Assignment of assignment
+    | Repeat of repeat
   (* terminating character *)
   and term =
     | Float of float
@@ -67,6 +68,11 @@ module PrattParser : sig
        var_name : string;
        set_to : ast;
        context : ast;
+     }
+   and repeat =
+     {
+       times : ast;
+       rep_body : ast;
      }
 
   type error
@@ -105,9 +111,6 @@ module PrattParser : sig
   val expression : ?rbp:int -> parse_state -> parse_monad
 
   val begin_parse : Tokenizer.token list -> parse_monad
-
-  (* get the next expression that's lower than *)
-  val next_higher : parse_state -> parse_monad
 
   val print : parse_monad -> unit
   val to_string : parse_monad -> string
