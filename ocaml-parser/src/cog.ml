@@ -28,6 +28,14 @@ module Cog = struct
         |> Eval.eval
         |> Eval.display
 
+    let run_value str =
+      let ast_result = run_ast str in
+      match ast_result with
+      | Error _ as x -> x
+      | Ok ps ->
+        Ok (PrattParser.(ps.parsed)
+            |> Eval.eval)
+
     let run_file filename =
       Core.In_channel.read_all filename
       |> run

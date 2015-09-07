@@ -7,12 +7,12 @@ let spec =
   empty
   +> flag "-f" (required string) ~doc: "file to parse"
 
-let command = 
+let command =
   Command.basic
-  ~summary: "Add a jrnl entry :)"
+  ~summary: "The Cog programing language interpeter"
   ~readme:(fun () -> "More detailed info")
   spec
-  (fun filename () -> Cog.run_fmt filename; ())
+  (fun filename () -> Cog.run_file filename; ())
 
 let () =
   Command.run ~version:"0.1" ~build_info:"RWO" command
