@@ -9,7 +9,7 @@ module Cog = struct
      |> Tokenizer.tokenize
      |> PrattParser.begin_parse
 
-    let run_string str =
+    let run_fmt_string str =
       str
       |> run_ast
       |> PrattParser.to_string
@@ -27,6 +27,15 @@ module Cog = struct
         PrattParser.(ps.parsed)
         |> Eval.eval
         |> Eval.display
+
+    let run_str str : string =
+      let ast_result = run_ast str in
+      match ast_result with
+      | Error _ as err-> PrattParser.to_string err
+      | Ok ps ->
+        (PrattParser.(ps.parsed)
+            |> Eval.eval
+            |> Eval.to_string)
 
     let run_value str =
       let ast_result = run_ast str in

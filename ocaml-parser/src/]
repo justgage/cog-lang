@@ -56,8 +56,8 @@ let rec to_string result =
       | _               -> sprintf  "Woops, looks like there's a problem with that code so I am unable to print this. Later I plan to add better error messaging but so far this is what you get. Sorry.\n"
     end
 
-let display result =
-  (printf "%s" (to_string result))
+let display result = printf "%s" (to_string result)
+
 
 (* evaluates the Cog code *)
 let rec eval (tree : PrattParser.ast) : eval_result =
