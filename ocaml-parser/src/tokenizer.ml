@@ -140,11 +140,13 @@ module Tokenizer = struct
         Float (Float.of_string x)
     | x -> Symbol x
 
+
   type operator_cat =
     | InfixOperator
     | PrefixOperator
     | Value
     | OtherSyntax
+    | Seperator
 
   let operator_type token =
     match token with
@@ -162,7 +164,6 @@ module Tokenizer = struct
       | LessThanOrEqual
       | EndOfStatement
       | OpenRound
-      | Comma
         ) -> InfixOperator
     | ( Boolean _
       | Float _
@@ -171,6 +172,7 @@ module Tokenizer = struct
       | Display
       ) -> Value
     | LogicNot -> PrefixOperator
+    | Comma -> Seperator
     | ( Box
       | ClosingRound
       | ClosingSquare

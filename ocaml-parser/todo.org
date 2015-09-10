@@ -25,13 +25,14 @@ CLOCK: [2015-09-03 Thu 21:02]--[2015-09-03 Thu 21:27] =>  0:25
 *** DONE Fix broken "If statements" (match many)
 CLOSED: [2015-09-07 Mon 11:05]
 **** Looks like it broke in adding lists?
-*** TODO Function Run 
+*** DONE Function Run 
+CLOSED: [2015-09-09 Wed 07:03]
 ***** DONE Parse them 
 CLOSED: [2015-09-07 Mon 14:06]
 ***** TODO Parse Arguments
 *** TODO Function Define
-*** TODO Repeat
-*** TODO Functions
+*** DONE Repeat
+CLOSED: [2015-09-09 Wed 18:21]
 *** TODO Until :EXTRA:
 *** TODO Make List a list :DEBT:
 ** Eval (Requirements):
@@ -42,6 +43,8 @@ CLOSED: [2015-09-07 Mon 14:06]
 **** How to deal with stuff that doesn't type check :P
 ***** Polymorphic functions?
 ***** Just throw errors <- Most likely
+*** TODO write tests for all of the below
+there's quite a few that are not implemented yet
 *** DONE Be able to print primitives
 CLOSED: [2015-09-07 Mon 14:56]
 **** Float
@@ -59,9 +62,13 @@ CLOSED: [2015-09-07 Mon 15:52]
 CLOSED: [2015-09-07 Mon 15:52]
 **** DONE Or
 CLOSED: [2015-09-07 Mon 15:52]
-*** TODO Repeat statements
+*** DONE Repeat statements
+CLOSED: [2015-09-09 Wed 18:20]
 *** TODO Store in a variable
-*** TODO Define and run functions
+*** TODO Define functions
+*** DONE Run functions
+*** TODO Run Defined functions
+**** Global
 *** TODO Equality for Lists
 *** TODO Equality for strings
 *** TODO Be able to parse and execute in 1 second
@@ -70,4 +77,4 @@ CLOSED: [2015-09-07 Mon 15:52]
 *** TODO nud to use is_more_tokens :DEBT:                              :DEBT: 
 *** TODO Convert lbp/rbp to using Result
 **** NOTE: this may require to store lbp/rbp in the monad.
-which may be less clean!
+which may be less cle

@@ -31,6 +31,7 @@ module PrattParser = struct
     | IfStatement of if_statement
     | Assignment of assignment
     | Repeat of repeat
+    | FuncCall of func_call
   and term =
     | Float of float
     | QuoteString of string
@@ -41,7 +42,7 @@ module PrattParser = struct
     {
       token : Tokenizer.token;
       right : ast;
-       left : ast;
+      left : ast;
     }
   and prefix_operator =
     {
@@ -52,24 +53,29 @@ module PrattParser = struct
     {
       parsed : ast;
       rest : Tokenizer.token list;
-     }
-   and if_statement =
-     {
-       condition: ast;
-       true_branch : ast;
-       false_branch : ast;
     }
-   and assignment =
-     {
-       var_name : string;
-       set_to : ast;
-       context : ast;
-     }
-   and repeat =
-     {
-       times : ast;
-       rep_body : ast;
-     }
+  and if_statement =
+    {
+      condition: ast;
+      true_branch : ast;
+      false_branch : ast;
+    }
+  and assignment =
+    {
+      var_name : string;
+      set_to : ast;
+      context : ast;
+    }
+  and repeat =
+    {
+      times : ast;
+      rep_body : ast;
+    }
+  and func_call =
+    {
+      func_name : string;
+      func_args : ast list;
+    }
 
   type error = string
 
@@ -108,12 +114,8 @@ module PrattParser = struct
         )
     | InfixOperator infix -> (
         match infix.token with
-        | Tokenizer.OpenRound ->
-          sprintf "%s(%s)"
-            (ast_to_string infix.left)
-            (ast_to_string infix.right)
         | Tokenizer.Comma ->
-          sprintf "%s, %s"
+          sprintf "(%s, %s)"
             (ast_to_string infix.left)
             (ast_to_string infix.right)
         | _ ->
@@ -146,6 +148,15 @@ module PrattParser = struct
         (var_name) (ast_to_string set_to) (ast_to_string context)
     | Repeat rep ->
       sprintf "repeat %s ->\n\t%s" (ast_to_string rep.times) (ast_to_string rep.rep_body)
+    | FuncCall func ->
+      sprintf "%s(%s)"
+        func.func_name
+        (
+          func.func_args
+          |> List.map ~f:ast_to_string
+          |> List.intersperse ~sep:", "
+          |> List.fold ~init:"" ~f:(^)
+        )
     end
 
   let to_string pm =
@@ -188,8 +199,8 @@ module PrattParser = struct
       | T.Newline
       | T.EndOfStatement
       | T.Arrow
+      | T.Comma
       ) -> 0 (* always stop parsing *)
-    | T.Comma -> 2 (*is this right?*)
     | (T.Assignment
       (* prefix operator *)
       | T.LogicNot
@@ -221,31 +232,31 @@ module PrattParser = struct
     | T.LogicNot -> 65
     | T.LogicAnd -> 60
     | T.LogicOr  -> 50
-    | T.Comma -> 1 (*is this right?*)
     | T.OpenRound -> 0
-    | (T.Assignment
-      |T.Boolean _
-      |T.Box
-      |T.ClosingRound
-      |T.ClosingSquare
-      |T.CommentBegin
-      |T.Comment _
-      |T.DoubleQuote
-      |T.QuoteString _
-      |T.Else
-      |T.End
-      |T.Float _
-      |T.FuncDef
-      |T.If
-      |T.Newline
-      |T.OpenSquare
-      |T.Repeat
-      |T.Display
-      |T.Until
-      |T.Symbol _
-      |T.Then
-      |T.EndOfStatement
-      |T.Arrow
+    | ( T.Assignment
+      | T.Boolean _
+      | T.Box
+      | T.ClosingRound
+      | T.ClosingSquare
+      | T.CommentBegin
+      | T.Comment _
+      | T.DoubleQuote
+      | T.QuoteString _
+      | T.Else
+      | T.End
+      | T.Float _
+      | T.FuncDef
+      | T.If
+      | T.Newline
+      | T.OpenSquare
+      | T.Repeat
+      | T.Display
+      | T.Until
+      | T.Symbol _
+      | T.Then
+      | T.EndOfStatement
+      | T.Arrow
+      | T.Comma
       )
     as x -> failwith ("rbp called on something that isn't good" ^ (Tokenizer.to_string_debug x))
 
@@ -286,6 +297,16 @@ module PrattParser = struct
       printf "   tokens="; Tokenizer.print_tokens p.rest;
       printf "   parsed=%s\n" (ast_to_string p.parsed)
     ) else ()
+
+  let rec commas_to_list (ast : ast) =
+    match ast with
+    | InfixOperator infix -> (
+        match infix.token with
+        | Tokenizer.Comma -> infix.left :: (commas_to_list infix.right)
+        | _ -> []
+      )
+    | _ -> []
+
 
   (* The python code I was working off of
       while rbp < token.lbp:
@@ -468,7 +489,7 @@ module PrattParser = struct
       |T.FuncDef
       |T.Until
       ) as x :: _ -> Error (err ("nud: Token was not a literal or a prefix operator! It was: " ^ (T.to_string x)))
-    | []     -> Error (err "nud: I was expecting a literal or prefix operator! But there none :,-(")
+    | []          -> Error (err "nud: I was expecting a literal or prefix operator! But there none :,-(")
     )
     and add_prefix_operator p token =
         p
@@ -487,7 +508,10 @@ module PrattParser = struct
       | Some infix ->
         match T.operator_type infix with
         | T.InfixOperator -> (
+            (parse_function left_s)
+            <|>
             (* get right hand *)
+            (
             left_s
             |> advance (* get rid of infix operator *)
             |>= expression ~rbp:(rbp infix)
@@ -502,10 +526,88 @@ module PrattParser = struct
                     right = right.parsed;
                   };
               }
+            )
           )
-        | T.PrefixOperator -> expected_err "led: some sort if infix operator like a `+`" "a Prefix operator"
-        | T.Value -> expected_err "led: some sort if infix operator like a `+`" "a normal value"
-        | T.OtherSyntax -> Error (err "The creator of this language needs to define this")
+        | T.Seperator -> expected_err "an infix operator like a +" ","
+
+        | T.PrefixOperator ->
+          expected_err "led: some sort if infix operator like a `+`" "a Prefix operator"
+
+        | T.Value ->
+          expected_err "led: some sort if infix operator like a `+`" "a normal value"
+
+        | T.OtherSyntax ->
+          Error (err "The creator of this language needs to define this")
+
+    (* a(a,b,c)
+          ^-- where it starts
+    *)
+
+    and parse_function (p : parse_state) : parse_monad =
+      (*  PrattParser.parsed = PrattParser.Term (PrattParser.Float 1.); *)
+      let name =
+        match p.parsed with
+        | Term Symbol name -> Some name
+        | _ -> None
+      in
+      match name with
+      | None -> expected_err "the function name to be just letters and numbers" (ast_to_string p.parsed)
+      | Some name ->
+      let module T = Tokenizer in
+      p
+      |> match_next T.OpenRound
+      >>= fun after_open ->
+      (
+        ( (* at least 1 arg *)
+          after_open
+          |> parse_commas
+          >>= fun args_parsed ->
+          match args_parsed.parsed with
+          | Statements arg_list ->
+            set_parsed (FuncCall {
+                func_name = name;
+                func_args = arg_list;
+              }) args_parsed
+          | x -> Error "failed to parse arguments"
+        )
+        <|>
+        ( (* else no args *)
+          set_parsed (FuncCall {
+              func_name = name;
+              func_args = [];
+            }) after_open
+        )
+      )
+
+
+    and parse_commas (p : parse_state) =
+      p (* display(1,2,3)
+                   ^--- starts in this state   *)
+      |> expression >>= fun left_item ->
+      match next left_item with
+      | None ->
+        expected_err "another expression after a `,`" "end of file"
+
+      | Some Tokenizer.ClosingRound ->
+        left_item
+        |> advance
+        |>= set_parsed (Statements [left_item.parsed]) (* base case *)
+
+      | Some Tokenizer.Comma -> (
+          left_item
+          |> advance (* get rid of the ','*)
+          |>= parse_commas
+          >>= fun rest_p ->
+
+          (* verify and unwrap the statement *)
+          match rest_p.parsed with
+          | Statements rest ->
+            rest_p |> set_parsed
+              (Statements (left_item.parsed :: rest))
+
+          | _ -> Error "parse_commas to always return a statement but it returned something else"
+        )
+      | Some t -> expected_err "either a ',' or a ')'" (Tokenizer.to_string t)
 
   let begin_parse tlist =
     blank_parse

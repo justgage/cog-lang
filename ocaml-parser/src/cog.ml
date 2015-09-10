@@ -26,7 +26,7 @@ module Cog = struct
       | Ok ps ->
         PrattParser.(ps.parsed)
         |> Eval.eval
-        |> Eval.display
+        |> Eval.print_op
 
     let run_str str : string =
       let ast_result = run_ast str in

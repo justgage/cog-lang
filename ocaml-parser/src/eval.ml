@@ -50,14 +50,22 @@ let rec to_string result =
   | Values vs -> List.fold ~init:"" ~f:(fun acc next -> acc ^ "\n" ^ (to_string next)) vs
   | Value value -> begin
       match value with
-      | P.Float f       -> sprintf "%f" f
+      | P.Float f       -> sprintf "%.2f" f
       | P.QuoteString s -> sprintf "%s" s
       | P.Boolean b     -> sprintf "%s" (if b then "true" else "false")
       | _               -> sprintf  "Woops, looks like there's a problem with that code so I am unable to print this. Later I plan to add better error messaging but so far this is what you get. Sorry.\n"
     end
 
-let display result =
+let print_op result =
   (printf "%s" (to_string result))
+
+let display args =
+  let str_list = List.map ~f:to_string args in
+  printf "%s" (List.fold ~init:"" ~f:(^) str_list);
+  NoOp
+
+let display_newline args =
+  display (List.append args [Value (PrattParser.QuoteString "\n")])
 
 (* evaluates the Cog code *)
 let rec eval (tree : PrattParser.ast) : eval_result =
@@ -73,6 +81,7 @@ let rec eval (tree : PrattParser.ast) : eval_result =
     | P.InfixOperator op -> infix_eval op
     | P.Assignment x -> NoOp
     | P.Repeat r -> repeat_eval r
+    | P.FuncCall fn -> func_eval fn
   end
 
 and infix_eval infix =
@@ -95,48 +104,54 @@ and infix_eval infix =
     Value (PrattParser.Float (op l r))
   in
 
+  let module T = Tokenizer in
   match infix.token with
-  | T.OpenRound -> func_eval infix
-
   (* float operations *)
-  | Tokenizer.Plus ->
+  | T.Plus ->
     apply_float_op infix ( +. )
 
-  | Tokenizer.Minus ->
+  | T.Minus ->
     apply_float_op infix ( -. )
 
-  | Tokenizer.Slash ->
+  | T.Slash ->
     apply_float_op infix ( /. )
 
-  | Tokenizer.Star ->
+  | T.Star ->
     apply_float_op infix ( *. )
 
   (* float operations *)
-  | Tokenizer.Equal ->
+  | T.Equal ->
     apply_compare infix ( = )
 
-  | Tokenizer.LessThan ->
+  | T.LessThan ->
     apply_compare infix ( <. )
 
-  | Tokenizer.LessThanOrEqual ->
+  | T.LessThanOrEqual ->
     apply_compare infix ( <=. )
 
-  | Tokenizer.GreaterThan ->
+  | T.GreaterThan ->
     apply_compare infix ( >. )
 
-  | Tokenizer.GreaterThanOrEqual ->
+  | T.GreaterThanOrEqual ->
     apply_compare infix ( >=. )
 
   (* logic operations *)
-  | Tokenizer.LogicAnd ->
+  | T.LogicAnd ->
     apply_bool_op infix ( && )
 
-  | Tokenizer.LogicOr ->
+  | T.LogicOr ->
     apply_bool_op infix ( && )
 
-  | _ as t -> failwith ((Tokenizer.to_string t) ^ "isn't an implemented operator yet!")
+  | _ as t -> failwith ((T.to_string t) ^ "isn't an implemented operator yet!")
 
-and func_eval func = NoOp
+and func_eval func =
+  let module P = PrattParser in
+  let args = List.map ~f:eval (func.P.func_args) in
+  match func.P.func_name with
+  | "display" -> display args
+  | "display_newline" -> display_newline args
+  | x         -> failwith ("function not defined: " ^ x)
+
 
 
 and repeat_eval r =

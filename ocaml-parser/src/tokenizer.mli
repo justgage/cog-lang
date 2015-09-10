@@ -49,6 +49,7 @@ module Tokenizer : sig
     | PrefixOperator
     | Value
     | OtherSyntax
+    | Seperator
 
   val operator_type : token -> operator_cat
 

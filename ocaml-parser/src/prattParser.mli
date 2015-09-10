@@ -39,6 +39,7 @@ module PrattParser : sig
     | IfStatement of if_statement
     | Assignment of assignment
     | Repeat of repeat
+    | FuncCall of func_call
   (* terminating character *)
   and term =
     | Float of float
@@ -74,6 +75,11 @@ module PrattParser : sig
        times : ast;
        rep_body : ast;
      }
+  and func_call =
+    {
+      func_name : string;
+      func_args : ast list;
+    }
 
   type error
   val getErr : error -> string
