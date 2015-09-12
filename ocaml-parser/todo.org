@@ -30,9 +30,12 @@ CLOSED: [2015-09-09 Wed 07:03]
 ***** DONE Parse them 
 CLOSED: [2015-09-07 Mon 14:06]
 ***** TODO Parse Arguments
-*** TODO Function Define
 *** DONE Repeat
 CLOSED: [2015-09-09 Wed 18:21]
+*** TODO Lists
+*** TODO Function Define
+**** Recursive? Hopefully?
+this may require some sort of stack
 *** TODO Until :EXTRA:
 *** TODO Make List a list :DEBT:
 ** Eval (Requirements):
@@ -43,8 +46,6 @@ CLOSED: [2015-09-09 Wed 18:21]
 **** How to deal with stuff that doesn't type check :P
 ***** Polymorphic functions?
 ***** Just throw errors <- Most likely
-*** TODO write tests for all of the below
-there's quite a few that are not implemented yet
 *** DONE Be able to print primitives
 CLOSED: [2015-09-07 Mon 14:56]
 **** Float
@@ -64,17 +65,31 @@ CLOSED: [2015-09-07 Mon 15:52]
 CLOSED: [2015-09-07 Mon 15:52]
 *** DONE Repeat statements
 CLOSED: [2015-09-09 Wed 18:20]
-*** TODO Store in a variable
-*** TODO Define functions
 *** DONE Run functions
+*** DONE Store in a variable
+CLOSED: [2015-09-11 Fri 08:18]
+:LOGBOOK:
+CLOCK: [2015-09-10 Thu 20:54]--[2015-09-10 Thu 21:19] =>  0:25
+CLOCK: [2015-09-10 Thu 20:24]--[2015-09-10 Thu 20:49] =>  0:25
+:END:
+HOW?
+**** Create a scope that you can pass around?
+***** Preferably one that thinks about functional scope 
+*** TODO Define functions
 *** TODO Run Defined functions
 **** Global
 *** TODO Equality for Lists
 *** TODO Equality for strings
 *** TODO Be able to parse and execute in 1 second
 *** TODO debug  mode                                                 :maybe:
+*** TODO write tests for all of the below
+:PROPERTIES:
+:Effort:   hard
+:END:
+there's quite a few that are not implemented yet 3
 ** Tech Debt:
 *** TODO nud to use is_more_tokens :DEBT:                              :DEBT: 
 *** TODO Convert lbp/rbp to using Result
 **** NOTE: this may require to store lbp/rbp in the monad.
 which may be less cle
+*** TODO don't use exceptions in eval, at all.

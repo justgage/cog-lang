@@ -46,7 +46,7 @@ module PrattParser : sig
     | QuoteString of string
     | Symbol of string
     | Boolean of bool
-    | List of ast  (* <-- Should this be a list? *)
+    | List of ast list
   and infix_operator =
      {
         token : Tokenizer.token;
@@ -120,4 +120,6 @@ module PrattParser : sig
 
   val print : parse_monad -> unit
   val to_string : parse_monad -> string
+
+  val ast_to_string :  ast -> string
 end

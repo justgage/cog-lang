@@ -37,7 +37,7 @@ module PrattParser = struct
     | QuoteString of string
     | Symbol of string
     | Boolean of bool
-    | List of ast  (* <-- Should this be a list? *)
+    | List of ast list
   and infix_operator =
     {
       token : Tokenizer.token;
@@ -134,7 +134,12 @@ module PrattParser = struct
       | QuoteString s -> sprintf "\"%s\"" s
       | Symbol s -> sprintf "%s" s
       | Boolean b -> sprintf "%b" b
-      | List x -> sprintf "[%s]" (ast_to_string x)
+      | List lst ->
+        sprintf "[%s]"
+          (lst
+        |> List.map ~f:ast_to_string
+        |> List.intersperse ~sep: ", "
+        |> List.fold ~init:"" ~f:(^))
       end
     | Blank -> sprintf "<blank>"
     | IfStatement ifs ->
@@ -298,16 +303,6 @@ module PrattParser = struct
       printf "   parsed=%s\n" (ast_to_string p.parsed)
     ) else ()
 
-  let rec commas_to_list (ast : ast) =
-    match ast with
-    | InfixOperator infix -> (
-        match infix.token with
-        | Tokenizer.Comma -> infix.left :: (commas_to_list infix.right)
-        | _ -> []
-      )
-    | _ -> []
-
-
   (* The python code I was working off of
       while rbp < token.lbp:
         prev_t = token
@@ -378,19 +373,17 @@ module PrattParser = struct
         |>= match_next T.ClosingRound
     | T.OpenSquare :: _ ->
       p
-      |> advance >>= fun exp ->
-      ((exp |> match_next T.ClosingSquare)
-       <|>
-       (exp
-        |> expression
-        |>= match_next T.ClosingSquare))
-      >>= fun inside ->
-      inside |>
-      set_parsed
-        (PrefixOperator {
-          token_pre = Tokenizer.OpenSquare;
-          right_pre = inside.parsed;
-        })
+      |> advance >>= fun after_square ->
+      (
+        (* empty list *)
+        (after_square
+         |> match_next T.ClosingSquare
+         |>=set_parsed (Term (List []))
+        )
+        <|>
+        (* non-empty list *)
+        (after_square |> parse_list)
+      )
 
     | T.Repeat :: _ -> begin
         p
@@ -542,8 +535,17 @@ module PrattParser = struct
     (* a(a,b,c)
           ^-- where it starts
     *)
+    and parse_list (p:parse_state) : parse_monad =
+      let module T = Tokenizer in
+      p
+      |> parse_commas_list
+      >>= fun list_parsed ->
+      match list_parsed.parsed with
+      | Statements lst ->
+        set_parsed (Term (List lst)) list_parsed
+      | _ -> Error "parse_list Sorry this is wrong for a list"
 
-    and parse_function (p : parse_state) : parse_monad =
+    and parse_function (p : parse_state) : parse_monad = (
       (*  PrattParser.parsed = PrattParser.Term (PrattParser.Float 1.); *)
       let name =
         match p.parsed with
@@ -568,7 +570,7 @@ module PrattParser = struct
                 func_name = name;
                 func_args = arg_list;
               }) args_parsed
-          | x -> Error "failed to parse arguments"
+          | _ -> Error "failed to parse arguments"
         )
         <|>
         ( (* else no args *)
@@ -578,7 +580,37 @@ module PrattParser = struct
             }) after_open
         )
       )
+    )
 
+
+    (* DUPLICATION WITH NEXT THING *)
+    and parse_commas_list (p : parse_state) =
+      p
+      |> expression >>= fun left_item ->
+      match next left_item with
+      | None ->
+        expected_err "another expression after a `,`" "end of file"
+
+      | Some Tokenizer.ClosingSquare ->
+        left_item
+        |> advance
+        |>= set_parsed (Statements [left_item.parsed]) (* base case *)
+
+      | Some Tokenizer.Comma -> (
+          left_item
+          |> advance (* get rid of the ','*)
+          |>= parse_commas_list
+          >>= fun rest_p ->
+
+          (* verify and unwrap the statement *)
+          match rest_p.parsed with
+          | Statements rest ->
+            rest_p |> set_parsed
+              (Statements (left_item.parsed :: rest))
+
+          | _ -> Error "parse_commas_list to always return a statement but it returned something else"
+        )
+      | Some t -> expected_err "either a ',' or a ']'" (Tokenizer.to_string t)
 
     and parse_commas (p : parse_state) =
       p (* display(1,2,3)
