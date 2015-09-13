@@ -32,6 +32,8 @@ module PrattParser = struct
     | Assignment of assignment
     | Repeat of repeat
     | FuncCall of func_call
+    | FuncDef of func_def
+    | Args of string list
   and term =
     | Float of float
     | QuoteString of string
@@ -76,6 +78,13 @@ module PrattParser = struct
       func_name : string;
       func_args : ast list;
     }
+  and func_def =
+    {
+      def_func_name : ast;
+      def_func_args : ast;
+      def_func_body : ast;
+      def_func_ctx : ast;
+    }
 
   type error = string
 
@@ -96,6 +105,7 @@ module PrattParser = struct
     | Error _  -> r
 
   (* END OF TYPES *)
+
 
   let blank_parse : parse_state =
     {
@@ -162,6 +172,17 @@ module PrattParser = struct
           |> List.intersperse ~sep:", "
           |> List.fold ~init:"" ~f:(^)
         )
+    | FuncDef func ->
+      sprintf "%s %s =\n%s\n;\n%s"
+        (ast_to_string func.def_func_name)
+        (func.def_func_args |> ast_to_string)
+        (func.def_func_body |> ast_to_string)
+        (func.def_func_ctx  |> ast_to_string)
+    | Args args ->
+      args
+      |> List.intersperse ~sep:" "
+      |> List.fold ~init:"" ~f:(^)
+
     end
 
   let to_string pm =
@@ -177,7 +198,8 @@ module PrattParser = struct
     rest = p.rest;
   }
 
-  let set_rest new_val p  = Result.return {
+  let set_rest new_val p  =
+    Result.return {
     parsed = p.parsed;
     rest = new_val;
   }
@@ -268,10 +290,16 @@ module PrattParser = struct
   let advance p =
       match List.hd p.rest with
         |  None -> expected_err (sprintf "something after %s" @@ ast_to_string p.parsed) "nothing"
-        |  Some _ -> Ok {
-          parsed = p.parsed;
-          rest   = List.drop p.rest 1;
-        }
+        |  Some _ -> p |> set_rest (List.drop p.rest 1)
+
+  let parse_symbol p =
+      match List.hd p.rest with
+        | Some Tokenizer.Symbol sym ->
+          p
+          |> set_parsed (Term (Symbol sym))
+          |>= advance
+        | Some _ -> expected_err "a symbol" "somthing else weird"
+        | None -> expected_err "a symbol" "nothing"
 
   let is_more_tokens p =  p.rest <> []
 
@@ -453,6 +481,28 @@ module PrattParser = struct
           "A variable name (Symbol)"
           (T.to_string (got))
       )
+
+    | T.FuncDef :: _ -> (
+        p
+        |> advance (* get rid of funcDef*)
+        |>= parse_symbol
+        >>= fun name -> name           |> grab_args
+        >>= fun args_p -> args_p       |> expression
+        >>= fun func_body -> func_body |> match_next T.EndOfStatement
+        >>= fun context ->
+        if context.rest = []
+        then expected_err
+            "An expression after the Function Definition to use it in" "Nothing! :'("
+        else
+          expression context
+          >>= fun ctx ->
+          ctx
+          |> set_parsed (FuncDef {
+                def_func_name = name.parsed;
+                def_func_args = args_p.parsed;
+                def_func_body = func_body.parsed;
+                def_func_ctx = ctx.parsed;
+              }))
     | (
       T.Assignment
       |T.ClosingRound
@@ -479,7 +529,6 @@ module PrattParser = struct
       |T.Arrow
       |T.EndOfStatement
       (* Shouldn't be here *)
-      |T.FuncDef
       |T.Until
       ) as x :: _ -> Error (err ("nud: Token was not a literal or a prefix operator! It was: " ^ (T.to_string x)))
     | []          -> Error (err "nud: I was expecting a literal or prefix operator! But there none :,-(")
@@ -533,8 +582,7 @@ module PrattParser = struct
           Error (err "The creator of this language needs to define this")
 
     (* a(a,b,c)
-          ^-- where it starts
-    *)
+          ^-- where it starts *)
     and parse_list (p:parse_state) : parse_monad =
       let module T = Tokenizer in
       p
@@ -640,6 +688,36 @@ module PrattParser = struct
           | _ -> Error "parse_commas to always return a statement but it returned something else"
         )
       | Some t -> expected_err "either a ',' or a ')'" (Tokenizer.to_string t)
+
+
+  (** This will grab the args for a function *)
+  and grab_args p : parse_monad =
+    let module T = Tokenizer in
+    let get_args = function
+      | Args lst -> Ok lst
+      | _ -> Error "args not a list"
+    in
+    match p.rest with
+    | [] -> expected_err
+              "A variable name (Symbol)"
+              "end of file"
+    | T.Symbol var_name :: _ -> (
+        advance p
+        |>= grab_args
+        >>= fun rest_args ->
+        get_args rest_args.parsed
+        >>= fun rest ->
+        rest_args
+        |> set_parsed (Args (var_name :: rest))
+      )
+
+    | T.Assignment :: _ ->
+      advance p >>= fun next_p ->
+      next_p |> set_parsed (Args [])
+
+    | _ -> Error "something weird in your args"
+
+
 
   let begin_parse tlist =
     blank_parse

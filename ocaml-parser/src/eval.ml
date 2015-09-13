@@ -48,7 +48,6 @@ let try_lookup func_name name  ~f:callback =
   | None -> failwith (func_name ^ " > try_lookup: no varaible with name: " ^ name)
   | Some value -> value |> callback func_name
 
-
 let rec try_float func_name eval_res =
   match eval_res with
   | Value v ->
@@ -73,7 +72,7 @@ let rec try_float func_name eval_res =
     failwith (func_name ^ "> try_float: Expected a float but got a list")
 
 
-let rec try_bool func_name eval_res =
+let try_bool func_name eval_res =
   match eval_res with
   | Value v ->
     (
@@ -89,17 +88,13 @@ let rec try_bool func_name eval_res =
   | List _ -> failwith (func_name ^ "> try_bool: Expected a float but got a list")
 
 (* makes values *)
-let rec compare_pratt func_name comp_touple =
+let compare_pratt func_name comp_touple =
   let module P = PrattParser in
   match comp_touple with
-  | P.Float l, P.Float r ->
-    l = r
-  | P.QuoteString l, P.QuoteString r ->
-    l = r
-  | P.List l, P.List r ->
-    l = r
-  | P.Boolean l, P.Boolean r ->
-    l = r
+  | P.Float l,       P.Float r       -> l = r
+  | P.QuoteString l, P.QuoteString r -> l = r
+  | P.List l,        P.List r        -> l = r
+  | P.Boolean l,     P.Boolean r     -> l = r
   | l, r ->
     failwith (func_name ^ "These two types aren't compareable: "
               ^ (P.ast_to_string (P.Term l)) ^ "=/=" ^ (P.ast_to_string (P.Term r)))
@@ -121,7 +116,7 @@ let rec to_string result =
       | P.Symbol var_name -> (
         match (scope_lookup var_name ) with
         | Some value -> value |> to_string
-        | None -> failwith "Sorry that variable doesn't exist in this scope" ^ var_name
+        | None -> failwith "Sorry that variable doesn't exist in this scope: " ^ var_name
         )
       | _ as bad_p -> sprintf  "Welp, Trying to turn a pratt parser thing into a string that shouldn't have happened, it was: %s" (PrattParser.ast_to_string (P.Term bad_p))
     end
@@ -157,10 +152,10 @@ let rec eval (tree : PrattParser.ast) : eval_result =
     | P.Term t -> (
       match t with
       | P.List lst -> List (List.map ~f:eval lst)
-      | P.Symbol smb ->
-        (match scope_lookup smb with
+      | P.Symbol func_name ->
+        (match scope_lookup func_name with
          | Some value -> value
-         | None -> failwith "Sorry that variable isn't in the scope")
+         | None -> failwith ("Sorry that variable isn't in the scope : `" ^ func_name ^ "`"))
       | _ -> Value t
       )
     | P.PrefixOperator x -> eval_prefix x
@@ -172,6 +167,26 @@ let rec eval (tree : PrattParser.ast) : eval_result =
         eval box.P.context (* box's context *)
     | P.Repeat r -> repeat_eval r
     | P.FuncCall fn -> func_eval fn
+    | P.Args _ -> failwith "args are not eval-able (if that's a word)"
+    | P.FuncDef func_def ->
+      match func_def.P.def_func_name with
+      | P.Term P.Symbol name -> (
+          match func_def.P.def_func_args with
+          | P.Args args ->
+            let the_func = (FuncDef {
+                fd_name = name;
+                fd_args = args;
+                fd_ast  = func_def.P.def_func_body;
+              })
+            in
+            scope_begin ();
+            scope_add name the_func;
+            let value = eval func_def.P.def_func_ctx in
+            scope_end ();
+            value
+          | _ -> failwith "args are the wrong type"
+        )
+      | _ -> failwith "the name of function needs to be a symbol"
   end
 
 and infix_eval infix =
@@ -211,7 +226,7 @@ and infix_eval infix =
 
   (* float operations *)
   | T.Equal -> (
-    let {left; right} = infix in
+    let {left; right; _} = infix in
     let l = eval left in
     let r = eval right in
     match (l, r) with
@@ -249,11 +264,40 @@ and func_eval func =
   let module P = PrattParser in
   let args = List.map ~f:eval (func.P.func_args) in
   match func.P.func_name with
-  | "display" -> display args
+  | "display"         -> display args
   | "display_newline" -> display_newline args
-  | x         -> failwith ("function not defined: " ^ x)
+  | other_func_name   -> eval_user_func other_func_name args
 
-
+and eval_user_func func_name args =
+  match scope_lookup func_name with
+  | Some FuncDef fn -> (
+      let maybe_args = List.zip fn.fd_args args in
+      (
+        match maybe_args with
+        | None ->
+          failwith (sprintf "`%s`'s args was (%s) but you called it with (%s) which is the wrong number"
+                      func_name
+                      (fn.fd_args
+                       |> List.intersperse ~sep:", "
+                       |> List.fold ~init:"" ~f:(^)
+                      )
+                      (args
+                       |> List.map ~f:to_string
+                       |> List.intersperse ~sep:", "
+                       |> List.fold ~init:"" ~f:(^)
+                      )
+                      )
+        | Some arg_pairs ->
+          scope_begin ();
+          List.iter arg_pairs
+            ~f:(fun (name, value) -> scope_add name value);
+          let result = eval fn.fd_ast in
+          scope_end ();
+          result
+      )
+    )
+  | None -> failwith ("no function with the name " ^ func_name)
+  | _ -> failwith (func_name ^ "is not a function")
 
 and repeat_eval r =
     begin

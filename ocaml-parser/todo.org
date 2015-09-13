@@ -32,12 +32,14 @@ CLOSED: [2015-09-07 Mon 14:06]
 ***** TODO Parse Arguments
 *** DONE Repeat
 CLOSED: [2015-09-09 Wed 18:21]
-*** TODO Lists
-*** TODO Function Define
+*** DONE Lists
+CLOSED: [2015-09-12 Sat 10:56]
+*** DONE Function Define
+CLOSED: [2015-09-12 Sat 19:53]
 **** Recursive? Hopefully?
-this may require some sort of stack
-*** TODO Until :EXTRA:
-*** TODO Make List a list :DEBT:
+uhhh no
+*** TODO Until                                                        :EXTRA:
+*** TODO Make List a list                                             :DEBT:
 ** Eval (Requirements):
 *** Meta
 **** How to store state?
@@ -76,17 +78,28 @@ HOW?
 **** Create a scope that you can pass around?
 ***** Preferably one that thinks about functional scope 
 *** TODO Define functions
-*** TODO Run Defined functions
+**** Definition 
+***** capture scope?                                              :maybe:
+dynamic scope!
+**** Evoke
+***** DONE body is not executed
+CLOSED: [2015-09-12 Sat 20:37]
+***** bind variables to the right name when evoked
+*** DONE Run Defined functions
+CLOSED: [2015-09-12 Sat 20:37]
 **** Global
-*** TODO Equality for Lists
-*** TODO Equality for strings
-*** TODO Be able to parse and execute in 1 second
-*** TODO debug  mode                                                 :maybe:
+*** DONE Equality for Lists
+CLOSED: [2015-09-12 Sat 10:55]
+*** DONE Equality for strings
+CLOSED: [2015-09-12 Sat 10:55]
+*** DONE Be able to parse and execute in 1 second
+CLOSED: [2015-09-12 Sat 10:55]
 *** TODO write tests for all of the below
 :PROPERTIES:
 :Effort:   hard
 :END:
 there's quite a few that are not implemented yet 3
+*** TODO debug  mode                                                 :maybe:
 ** Tech Debt:
 *** TODO nud to use is_more_tokens :DEBT:                              :DEBT: 
 *** TODO Convert lbp/rbp to using Result

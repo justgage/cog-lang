@@ -1,4 +1,6 @@
-if 1 == 2 or 1 == 0.5 * 4 / 2 
+box is_true = if 1 == 2 or 1 == 0.5 * 4 / 2 
 then "the statement is true\n"
 else "the statement is false\n"
-end
+end;
+
+display(is_true, "in cause you where wondering")

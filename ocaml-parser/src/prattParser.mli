@@ -40,6 +40,8 @@ module PrattParser : sig
     | Assignment of assignment
     | Repeat of repeat
     | FuncCall of func_call
+    | FuncDef of func_def
+    | Args of string list
   (* terminating character *)
   and term =
     | Float of float
@@ -80,8 +82,16 @@ module PrattParser : sig
       func_name : string;
       func_args : ast list;
     }
+  and func_def =
+    {
+      def_func_name : ast;
+      def_func_args : ast;
+      def_func_body : ast;
+      def_func_ctx : ast;
+    }
 
   type error
+
   val getErr : error -> string
 
   (**
