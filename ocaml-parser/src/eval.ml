@@ -71,7 +71,6 @@ let rec try_float func_name eval_res =
   | List _ ->
     failwith (func_name ^ "> try_float: Expected a float but got a list")
 
-
 let try_bool func_name eval_res =
   match eval_res with
   | Value v ->
@@ -366,5 +365,3 @@ and if_eval ifs =
         end
     | _ -> failwith "This isn't a value! you can't put things like display inside the condiiton of an if statement"
 end;;
-
-

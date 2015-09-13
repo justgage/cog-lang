@@ -1,6 +1,10 @@
-box is_true = if 1 == 2 or 1 == 0.5 * 4 / 2 
-then "the statement is true\n"
-else "the statement is false\n"
-end;
+# this is a simple add function, pretty useless
+func add l r = l + r;
 
-display(is_true, "in cause you where wondering")
+func subtract = add(l, (- r));
+
+display(2, " plus ", 2, " is ", add(2,2));
+
+display("I can have as many as I want");
+
+display("Statements that is");

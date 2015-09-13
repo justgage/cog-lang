@@ -9,8 +9,11 @@ Is this legit? or does it go against what I said to do?
 ***** Clojure
 ***** C?
 ** Tokenizer
-*** TODO Change how Functions look?                                   :EXTRA:
-*** TODO Make Type checker not have catchall                         :DEBT:
+*** DONE Make Type checker not have catchall                         :DEBT:
+*** TODO Don't mess up stuff while reading it in
+CLOSED: [2015-09-12 Sat 22:13]
+*** TODO [#B] Strip out comments
+*** TODO [#C] Change how Functions look?                            :EXTRA:
 *** Remove "Display" from everywhere                                   :DEBT: 
 ** Pratt Parser
 *** DONE Lists Parse
@@ -93,7 +96,11 @@ CLOSED: [2015-09-12 Sat 10:55]
 *** DONE Equality for strings
 CLOSED: [2015-09-12 Sat 10:55]
 *** DONE Be able to parse and execute in 1 second
+
 CLOSED: [2015-09-12 Sat 10:55]
+*** TODO [#A] Input from the user????
+*** TODO make lists actually usefull
+**** Add std lib funcitons
 *** TODO write tests for all of the below
 :PROPERTIES:
 :Effort:   hard
@@ -101,6 +108,8 @@ CLOSED: [2015-09-12 Sat 10:55]
 there's quite a few that are not implemented yet 3
 *** TODO debug  mode                                                 :maybe:
 ** Tech Debt:
+*** TODO [#A] make scope less crazy
+*** TODO [#A] figure out weird crazy stuff
 *** TODO nud to use is_more_tokens :DEBT:                              :DEBT: 
 *** TODO Convert lbp/rbp to using Result
 **** NOTE: this may require to store lbp/rbp in the monad.

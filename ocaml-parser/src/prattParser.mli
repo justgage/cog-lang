@@ -132,4 +132,6 @@ module PrattParser : sig
   val to_string : parse_monad -> string
 
   val ast_to_string :  ast -> string
+
+  val parse_all : parse_state -> parse_monad
 end

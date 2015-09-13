@@ -359,7 +359,7 @@ module PrattParser = struct
       return left
 
     *)
-  and expression ?(rbp = 0) state : parse_monad =
+  and expression ?(rbp = 0) state =
     print_p "-> expression" state rbp;
     state
     |> nud
@@ -718,10 +718,31 @@ module PrattParser = struct
     | _ -> Error "something weird in your args"
 
 
+  let rec parse_all (p : parse_state) : parse_monad =
+    p
+    |> expression
+    |>= match_next Tokenizer.EndOfStatement
+    >>= fun left_over ->
+    match left_over.rest with
+    | [] ->
+        set_parsed
+          (Statements [left_over.parsed])
+          left_over
+    | _ ->
+      left_over
+      |> parse_all
+      >>= fun rest_state -> (
+      match rest_state.parsed with
+      | Statements rest ->
+        set_parsed
+          (Statements (left_over.parsed :: rest))
+          left_over
+      | _ -> expected_err "parse all statements" "something else"
+      )
 
   let begin_parse tlist =
     blank_parse
     |> set_rest tlist
-    |>= expression
+    |>= parse_all
 
 end
