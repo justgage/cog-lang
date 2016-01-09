@@ -320,9 +320,13 @@ module PrattParser = struct
         exp_err "end of expression or file"
 
   let bigger p rbp =
+      try (
     match next p with
-    | Some token -> rbp < (lbp token)
+    | Some token ->
+      let the_lbp = lbp token in
+      rbp < the_lbp
     | None -> false (* to end progression *)
+      ) with Failure err -> failwith ( err ^ "at ->"^  (ast_to_string p.parsed))
 
   let print_p name p rbp =
     if debugging then (

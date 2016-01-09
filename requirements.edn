@@ -3,8 +3,8 @@
  :author "Gage Peterson"
  :date "May 30th 2015"
  :lang-name "The programing language"
- :definitions 
- { 
+ :definitions
+ {
 
   "Standard out"
   "Usually the main output of a console. Some place specified for most output of the program to go."
@@ -36,39 +36,39 @@
   {
    :type :shall
    :functional-requirement "be able to print the primitives to standard out"
-   :demonstration-scenarios 
+   :demonstration-scenarios
    [
     "print 1.0"
     "print 'hi'"
     "print [1.0 2.0 3.0]"
-    ] 
-   :success-measure 
+    ]
+   :success-measure
    [
     "prints 1.0 to standard out"
     "prints hi to standard out"
     "prints [1.0 2.0 3.0] to standard out"
-    ] 
+    ]
    }
 
   {
    :type :shall
    :functional-requirement "have constructs that allow for a block of code to be executed or not executed based on a condition"
-   :demonstration-scenarios 
+   :demonstration-scenarios
    [
     "if true then print 'hello'"
     "if false then print 'hello'"
-    ] 
-   :success-measure 
-   [ 
+    ]
+   :success-measure
+   [
     "prints 'hello' to standard out"
     "does nothing"
-    ] 
+    ]
    }
 
   {
    :type :shall
    :functional-requirement "be able to store primitives in a variable"
-   :demonstration-scenarios 
+   :demonstration-scenarios
    [
     "box a = 1.0
     print a"
@@ -76,297 +76,295 @@
     print a"
     "box a = \"hello\"
     print a"
-    ] 
-   :success-measure 
+    ]
+   :success-measure
    [
     "1.0 is printed to standard out"
     "[1.0 2.0 3.0] is printed to standard out"
     "'hello' is printed to standard out"
-    ] 
-   } 
+    ]
+   }
 
   {
    :type :shall
    :functional-requirement "be able to repeat blocks of code"
-   :demonstration-scenarios 
+   :demonstration-scenarios
    [
     "repeat 4 print 'hello '"
-    ] 
-   :success-measure  
+    ]
+   :success-measure
    [
     "standard out contains: 'hello hello hello hello'"
-    ] 
+    ]
    }
 
   {
    :type :shall
    :functional-requirement "be able to define and run functions with return values"
-   :demonstration-scenarios 
+   :demonstration-scenarios
    [
     "fun add x y = x + y
     print (add 2.0 5.0)"
-    ] 
-   :success-measure 
+    ]
+   :success-measure
    [
     "7.0 is printed to standard out"
-    ] 
+    ]
    }
 
   {
    :type :shall
    :functional-requirement "be able to check if two floats are equal"
-   :demonstration-scenarios 
+   :demonstration-scenarios
    [
     "2.5 == 2.5"
     "2.5 == 2.0"
     "2.0 == 3.0"
-    ] 
-   :success-measure 
+    ]
+   :success-measure
    [
     "returns true"
     "returns false"
     "returns false"
-    ] 
+    ]
    }
-{
- :type :shall
- :functional-requirement "be able to check if one float is greater than another"
- :demonstration-scenarios 
- [
-  "2.0 < 0.0"
-  "2.0 < 3.0"
-  "2.0 > 3.0"
-  "2.0 > 2.0"
-  ] 
- :success-measure 
- [
-  "returns false"
-  "returns true"
-  "returns false"
-  "returns false"
-  ] 
- }
+  {
+   :type :shall
+   :functional-requirement "be able to check if one float is greater than another"
+   :demonstration-scenarios
+   [
+    "2.0 < 0.0"
+    "2.0 < 3.0"
+    "2.0 > 3.0"
+    "2.0 > 2.0"
+    ]
+   :success-measure
+   [
+    "returns false"
+    "returns true"
+    "returns false"
+    "returns false"
+    ]
+   }
 
-{
- :type :shall
- :functional-requirement "be able to tell if one float is less than or equal to another"
- :demonstration-scenarios 
- [
-  "2.0 <= 3.0"
-  "2.0 <= 1.0"
-  "2.0 <= 2.0"
-  ] 
- :success-measure 
- [
-  "returns true"
-  "returns false"
-  "returns true"
-  ] 
- }
+  {
+   :type :shall
+   :functional-requirement "be able to tell if one float is less than or equal to another"
+   :demonstration-scenarios
+   [
+    "2.0 <= 3.0"
+    "2.0 <= 1.0"
+    "2.0 <= 2.0"
+    ]
+   :success-measure
+   [
+    "returns true"
+    "returns false"
+    "returns true"
+    ]
+   }
 
-{
- :type :shall
- :functional-requirement "be able to tell if one float is greater than or equal to another"
- :demonstration-scenarios 
- [
-  "2.0 >= 3.0"
-  "2.0 >= 1.0"
-  "2.0 >= 2.0"
-  ] 
- :success-measure 
- [
-  "returns false"
-  "returns true"
-  "returns true"
-  ] 
- }
+  {
+   :type :shall
+   :functional-requirement "be able to tell if one float is greater than or equal to another"
+   :demonstration-scenarios
+   [
+    "2.0 >= 3.0"
+    "2.0 >= 1.0"
+    "2.0 >= 2.0"
+    ]
+   :success-measure
+   [
+    "returns false"
+    "returns true"
+    "returns true"
+    ]
+   }
 
 
-{
- :type :shall
- :functional-requirement "be able to tell if two lists are equal"
- :demonstration-scenarios 
- [
-  "[] == []"
-  "[1.0 2.0 3.0] == [1.0 2.0 3.0]"
-  "[1.0 10.0 3.0] == [1.0 2.0 3.0]"
-  "[] == [1.0 2.0 3.0]"
-  ] 
- :success-measure 
- [
-  "return true"
-  "return true"
-  "return false"
-  "return false"
-  ] 
- }
+  {
+   :type :shall
+   :functional-requirement "be able to tell if two lists are equal"
+   :demonstration-scenarios
+   [
+    "[] == []"
+    "[1.0 2.0 3.0] == [1.0 2.0 3.0]"
+    "[1.0 10.0 3.0] == [1.0 2.0 3.0]"
+    "[] == [1.0 2.0 3.0]"
+    ]
+   :success-measure
+   [
+    "return true"
+    "return true"
+    "return false"
+    "return false"
+    ]
+   }
 
-{
- :type :shall
- :functional-requirement "be able to tell if two strings are equal"
- :demonstration-scenarios 
- [
-  "'' == ''"
-  "'a' == 'a'"
-  "'yellow' == 'hello'"
-  "'yellow' == 'yellow'"
-  ] 
- :success-measure 
- [
-  "return true"
-  "return true"
-  "return false"
-  "return true"
-  ] 
- }
+  {
+   :type :shall
+   :functional-requirement "be able to tell if two strings are equal"
+   :demonstration-scenarios
+   [
+    "'' == ''"
+    "'a' == 'a'"
+    "'yellow' == 'hello'"
+    "'yellow' == 'yellow'"
+    ]
+   :success-measure
+   [
+    "return true"
+    "return true"
+    "return false"
+    "return true"
+    ]
+   }
 
-{
- :type :shall
- :functional-requirement "be able to negate a boolean statement"
- :demonstration-scenarios 
- [
-  "not true"
-  "not false"
-  ] 
- :success-measure 
- [
-  "returns false"
-  "returns true"
-  ] 
- }
+  {
+   :type :shall
+   :functional-requirement "be able to negate a boolean statement"
+   :demonstration-scenarios
+   [
+    "not true"
+    "not false"
+    ]
+   :success-measure
+   [
+    "returns false"
+    "returns true"
+    ]
+   }
 
-{
- :type :shall
- :functional-requirement "be able to connect two boolean statements with an 'and' operator"
- :demonstration-scenarios 
- [
-  "false and false"
-  "false and true"
-  "true and false"
-  "true and true"
-  ] 
- :success-measure 
- [
-  "returns false"
-  "returns false"
-  "returns false"
-  "returns true"
-  ] 
- }
+  {
+   :type :shall
+   :functional-requirement "be able to connect two boolean statements with an 'and' operator"
+   :demonstration-scenarios
+   [
+    "false and false"
+    "false and true"
+    "true and false"
+    "true and true"
+    ]
+   :success-measure
+   [
+    "returns false"
+    "returns false"
+    "returns false"
+    "returns true"
+    ]
+   }
 
-{
- :type :shall
- :functional-requirement "be able to connect two boolean expressions with a 'or' operator"
- :demonstration-scenarios 
- [
-  "false or false"
-  "false or true"
-  "true  or false"
-  "true  or true"
-  ] 
- :success-measure 
- [
-  "returns false"
-  "returns true"
-  "returns true"
-  "returns true"
-  ] 
- }
+  {
+   :type :shall
+   :functional-requirement "be able to connect two boolean expressions with a 'or' operator"
+   :demonstration-scenarios
+   [
+    "false or false"
+    "false or true"
+    "true  or false"
+    "true  or true"
+    ]
+   :success-measure
+   [
+    "returns false"
+    "returns true"
+    "returns true"
+    "returns true"
+    ]
+   }
 
-{
- :type :SHALL
- :functional-requirement "be able to parse and execute the basic statement outlined in demonstration scenarios in a file in 1 second"
- :demonstration-scenarios 
- [
-  "print 'hello'"
-  "print 2+2"
-  ] 
- :success-measure 
- [
-  "the program prints 'hello' and exits within 1 second"
-  "the program prints '4' and exits within 1 second"
-  ] 
- }
+  {
+   :type :SHALL
+   :functional-requirement "be able to parse and execute the basic statement outlined in demonstration scenarios in a file in 1 second"
+   :demonstration-scenarios
+   [
+    "print 'hello'"
+    "print 2+2"
+    ]
+   :success-measure
+   [
+    "the program prints 'hello' and exits within 1 second"
+    "the program prints '4' and exits within 1 second"
+    ]
+   }
 
-{
- :type :MAY
- :functional-requirement "be able to step through the code line by line and see how variables change"
- :demonstration-scenarios 
- [
-  "debugger run on a code file containing:
-  
+  {
+   :type :MAY
+   :functional-requirement "be able to step through the code line by line and see how variables change"
+   :demonstration-scenarios
+   [
+    "debugger run on a code file containing:
+
   box a = 2
   box a = a + 2"
-  ] 
- :success-measure 
- [
-  "The debugger outputs:
+    ]
+   :success-measure
+   [
+    "The debugger outputs:
   box a = 2
   box a = 4
   "
-  ] 
+    ]
+   }
+
+  {
+   :type :SHALL
+   :functional-requirement "be able to add two floats together"
+   :demonstration-scenarios
+   [
+    "2.0 + 3.0"
+    "2.0 + -3.0"
+    ]
+   :success-measure
+   [
+    "5.0"
+    "-1.0"
+    ]
+   }
+
+  {
+   :type :SHALL
+   :functional-requirement "be able to divide one float by another"
+   :demonstration-scenarios
+   [
+    "6.0 / 3.0"
+    "6.0 / -3.0"
+    ]
+   :success-measure
+   [
+    "2.0"
+    "-2.0"
+    ]
+   }
+
+  {
+   :type :SHALL
+   :functional-requirement "be able to multiply one number by another"
+   :demonstration-scenarios
+   [
+    "6.0 * 2.0"
+    "6.0 * -2.0"
+    ]
+   :success-measure
+   [
+    "12.0"
+    "-12.0"
+    ]
+   }
+
+  {
+   :type :SHALL
+   :functional-requirement "be able to subtract one float from another"
+   :demonstration-scenarios
+   [
+    "6.0 - 2.0"
+    "6.0 - -2.0"
+    ]
+   :success-measure
+   [
+    "4.0"
+    "8.0"
+    ]
+   }
+  ]
  }
-
-{
- :type :SHALL
- :functional-requirement "be able to add two floats together"
- :demonstration-scenarios 
- [
-  "2.0 + 3.0"
-  "2.0 + -3.0"
-  ] 
- :success-measure 
- [
-  "5.0"
-  "-1.0"
-  ] 
- }
-
-{
- :type :SHALL
- :functional-requirement "be able to divide one float by another"
- :demonstration-scenarios 
- [
-  "6.0 / 3.0"
-  "6.0 / -3.0"
-  ] 
- :success-measure 
- [
-  "2.0"
-  "-2.0"
-  ] 
- }
-
-{
- :type :SHALL
- :functional-requirement "be able to multiply one number by another"
- :demonstration-scenarios 
- [
-  "6.0 * 2.0"
-  "6.0 * -2.0"
-  ] 
- :success-measure 
- [
-  "12.0"
-  "-12.0"
-  ] 
- }
-
-{
- :type :SHALL
- :functional-requirement "be able to subtract one float from another"
- :demonstration-scenarios 
- [
-  "6.0 - 2.0"
-  "6.0 - -2.0"
-  ] 
- :success-measure 
- [
-  "4.0"
-  "8.0"
-  ] 
- }
-
-]
-}
-

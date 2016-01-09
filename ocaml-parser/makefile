@@ -5,7 +5,11 @@ main:
 	corebuild -quiet -pkg core src/eval.native
 	corebuild -quiet -pkg core src/cog.native
 	corebuild -quiet -pkg core src/main.native
+	corebuild -quiet -pkg core src/main.byte
+	mv _build/src/main.native cog
+	mv _build/src/main.byte cog_byte
 	rm *.byte
+
 	$(info Compiled sucsessfully)
 
 tests:

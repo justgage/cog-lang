@@ -3,11 +3,11 @@
 box score = 2;
 box scores = [1, 2, 4];
 
-display("I'm printing out something");
-
 display(score); # 2
 
-score = score + 1; 
+display("I'm printing out something");
+
+box score = score + 1; 
 
 display("your score is:", score); # your score is: 3
 

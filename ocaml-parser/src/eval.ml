@@ -132,7 +132,7 @@ let print_op result =
 
 let display args =
   let str_list = List.map ~f:to_string args in
-  printf "%s" (List.fold ~init:"" ~f:(^) str_list);
+  printf "%s\n" (List.fold ~init:" " ~f:(^) str_list);
   NoOp
 
 (* Cog core lib 0 .0*)
@@ -255,7 +255,7 @@ and infix_eval infix =
     apply_bool_op infix ( && )
 
   | T.LogicOr ->
-    apply_bool_op infix ( && )
+    apply_bool_op infix ( || )
 
   | _ as t -> failwith ((T.to_string t) ^ "isn't an implemented operator yet!")
 

@@ -1,10 +1,150 @@
-# this is a simple add function, pretty useless
+
+display("-------------------Begining of tests -----------------");
+
+display(""); # poor man's newline
+display("----TEST: be able to print the primitives to standard out");
+
+display(2.0, [1,2,3], "string", false);
+
+
+display("");
+display("----TEST: have constructs that allow for a block of code to be executed or not executed based on a condition");
+
+display(
+    if 11 == 12 then
+        "11 =='s 12"
+    else 
+        "11 !='s 12"
+    end
+);
+
+
+display("");
+display("----TEST: be able to store primitives in a variable");
+
+box pi = 3.14;
+box meaning-of-life = 42;
+box abc = ["a","b","c"];
+display(pi, meaning-of-life, abc);
+
+
+display("");
+display("----TEST: be able to repeat blocks of code");
+
+repeat 5 -> display("5 times!");
+
+display("");
+display("----TEST: be able to define and run functions with return values");
+
 func add l r = l + r;
+display("2 + 4 == ", add(2, 4));
 
-func subtract = add(l, (- r));
+display("");
+display("----TEST: be able to check if two floats are equal");
 
-display(2, " plus ", 2, " is ", add(2,2));
+display("2 == 3", 2.0 == 3.0);
+display("2 == 2", 2.0 == 2.0);
+
+display("");
+display("----TEST: be able to check if one float is greater than another");
+display("2<3 ", 2.0 < 3.0);
+display("2>3 ", 2.0 > 3.0);
+
+
+display("");
+display("----TEST: be able to tell if one float is less than or equal to another");
+display("3<=2", 3 <= 2);
+display("2<=3", 2 <= 3);
+display("2<=2", 2 <= 2);
+
+display("");
+display("----TEST: be able to tell if one float is greater than or equal to another");
+display("3>=2", 3 >= 2);
+display("2>=3", 2 >= 3);
+display("2>=2", 2 >= 2);
+
+display("");
+display("----TEST: be able to tell if two lists are equal");
+display("[1,2,3] == [1,2,3]",[1,2,3] == [1,2,3]);
+display("[1,2,3] == [2,3]",[1,2,3] == [2,3]);
+
+display("");
+display("----TEST: be able to tell if two strings are equal");
+display("asdf == asdf","asdf" == "asdf");
+display("asdf == foo","asdf" == "foo");
+
+display("");
+display("----TEST: be able to negate a boolean statement");
+display("not true -> ", not true);
+display("not false -> ", not false);
+
+display("");
+display("----TEST: be able to connect two boolean statements with an 'and' operator");
+display("-> ", false == false and true);
+display("-> ", false == (true and false));
+display("-> ", false == (false and false));
+display("-> ", true == true and true);
+
+display("");
+display("----TEST: be able to connect two boolean expressions with a 'or' operator");
+display("-> ", false == false or false);
+display("-> ", true == false or true);
+display("-> ", true == true or false);
+display("-> ", true  == true or true);
+
+display("");
+display("----TEST: be able to add two floats together");
+display("2.0 + 2.0 == ", 2.0 + 2.0);
+
+display("");
+display("----TEST: be able to divide one float by another");
+display("10/7 == ", 10/7);
+
+display("");
+display("----TEST: be able to multiply one number by another");
+display("10*7 == ", 10*7);
+
+display("");
+display("----TEST: be able to subtract one float from another");
+display("10-7 == ", 10 - 7);
+
+display("");
+display("----TEST: be able to parse and execute the basic statement outlined in demonstration scenarios in a file in 1 second");
+
+display("I think that's less than 1 second.");
+
+display("");
+display("-- END OF TESTS, SOME OTHER BASIC FUNCTIONALITY --");
+display("");
+
+func add l r = l + r;
+func subtract l r = add(l, (- r));
+
+box left = 12;
+box right = 100;
+
+display(left, " minus ", right, " is ", subtract(left,right));
 
 display("I can have as many as I want");
 
 display("Statements that is");
+
+repeat 12 -> 
+display("this will 
+display 12 times");
+
+box score = 12;
+
+if score >= 12 then
+  if score == 12 then 
+    display("it's a tie")
+  else 
+    display("you win")
+  end
+else 
+    display("you loose")
+end;
+
+box list = [1,2,3 + 3];
+
+display("here's a list", list);

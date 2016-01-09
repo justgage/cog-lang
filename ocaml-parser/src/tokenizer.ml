@@ -275,7 +275,7 @@ module Tokenizer = struct
         let ftoken = from_str @@ String.of_char_list next in
         match ftoken with
          | CommentBegin -> let (comment, after_comment) = comment_grab rest in
-             comment :: Newline :: (from_char_list after_comment)
+             (* comment :: Newline :: *) (from_char_list after_comment)
          | DoubleQuote -> let (str, after_comment) = string_grab rest in
              str :: (from_char_list after_comment)
          | (Symbol "" | Newline) ->  from_char_list rest (* ignore *)
